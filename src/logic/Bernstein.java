@@ -26,12 +26,15 @@ public class Bernstein {
 	
 	//Input an arrayList of FD
 	public static ArrayList<FD> removeExtraneousAttribute(ArrayList<FD> array){
+		ArrayList<FD> tempArray = new ArrayList<FD>(array);
+		tempArray = removeTrivial(tempArray);
+		
 		//Require an array of FD
-		for(int i=0;i<array.size();i++){
+		for(int i=0;i<tempArray.size();i++){
 			//For each LHS, check if it can be reduced smaller by determining if there is a smaller subset whose closure can reach this LHS
-			String tempAttri = array.get(i).LHS;
-			
+			String tempAttri = tempArray.get(i).LHS;
 			//For each letter, find the closure of it and see if it can reach the LHS. If yes, remove all other attributes
+			
 			//If all letters could not reach the LHS, use combination of them
 		}
 		return new ArrayList<FD>();

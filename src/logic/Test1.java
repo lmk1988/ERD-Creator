@@ -57,6 +57,11 @@ public class Test1 {
 		System.out.println(Attribute.INVERSE("1010").compareTo("0101")==0);
 		System.out.println(Attribute.INVERSE("0").compareTo("1")==0);
 		System.out.println(Attribute.INVERSE("").compareTo("")==0);*/
+		
+		System.out.println("Testing ALL SUBSET OF");
+		System.out.println(Attribute.ALL_SUBSET_OF("1011"));
+		System.out.println(Attribute.ALL_SUBSET_OF("1001"));
+		System.out.println(Attribute.ALL_SUBSET_OF("1010011"));
 	
 		Relation r = new Relation();
 		ArrayList<String> attrList1 = new ArrayList<String>();
