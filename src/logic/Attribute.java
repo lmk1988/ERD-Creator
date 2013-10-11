@@ -3,7 +3,7 @@ package logic;
 import java.util.*;
 
 /*
- * Only allow to store up to 8 variables as each 1 bits is mapped to a var.
+ * Only allow to store up to 31 variables as each 1 bits is mapped to a var.
  * 
  */
 public class Attribute {
@@ -20,8 +20,8 @@ public class Attribute {
 		String tempFill="";
 		
 		tempBit=String.valueOf(Integer.toBinaryString(bitCount));
-		for(int i=0;i<=(8-tempBit.length());i++){		//Fill the front of 1 with zero
-			if(i==(8-tempBit.length())){
+		for(int i=0;i<=(31-tempBit.length());i++){		//Fill the front of 1 with zero
+			if(i==(31-tempBit.length())){
 				tempFill+=tempBit;
 			}else{
 				tempFill+="0";
@@ -32,6 +32,11 @@ public class Attribute {
 		return tempFill;
 	}
 	
+	public String AND(String bits1,String bits2){
+		
+		
+		return "";
+	}
 	public String GetBinAttr(String input){
 		String result = (String) attrTab.get(input);
 		return result;
@@ -43,4 +48,3 @@ public class Attribute {
 	
 	
 }
-

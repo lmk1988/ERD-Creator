@@ -18,15 +18,36 @@ public class Test1 {
 		System.out.println("return: "+attr.AddAttr("G"));
 		System.out.println("return: "+attr.AddAttr("H"));
 		System.out.println("return: "+attr.AddAttr("I"));
+		System.out.println("return: "+attr.AddAttr("J"));
+		System.out.println("return: "+attr.AddAttr("K"));
+		System.out.println("return: "+attr.AddAttr("L"));
+		System.out.println("return: "+attr.AddAttr("M"));
+		System.out.println("return: "+attr.AddAttr("N"));
+		System.out.println("return: "+attr.AddAttr("O"));
+		System.out.println("return: "+attr.AddAttr("P"));
+		System.out.println("return: "+attr.AddAttr("Q"));
+		System.out.println("return: "+attr.AddAttr("R"));
+		System.out.println("return: "+attr.AddAttr("S"));
+		System.out.println("return: "+attr.AddAttr("T"));
+		System.out.println("return: "+attr.AddAttr("U"));
+		System.out.println("return: "+attr.AddAttr("V"));
+		System.out.println("return: "+attr.AddAttr("W"));
+		System.out.println("return: "+attr.AddAttr("X"));
+		System.out.println("return: "+attr.AddAttr("Y"));
+		System.out.println("return: "+attr.AddAttr("Z"));
+		System.out.println("return: "+attr.AddAttr("AA"));
+		System.out.println("return: "+attr.AddAttr("BB"));
+		System.out.println("return: "+attr.AddAttr("CC"));
+		System.out.println("return: "+attr.AddAttr("DD"));
+		System.out.println("return: "+attr.AddAttr("EE"));
+
+		
+
 		System.out.println("-------------------");
-		System.out.println("Result: "+attr.GetBinAttr("00000001"));
-		System.out.println("Result: "+attr.GetBinAttr("00000010"));
-		System.out.println("Result: "+attr.GetBinAttr("00000100"));
-		System.out.println("Result: "+attr.GetBinAttr("00001000"));
-		System.out.println("Result: "+attr.GetBinAttr("00010000"));
-		System.out.println("Result: "+attr.GetBinAttr("00100000"));
-		System.out.println("Result: "+attr.GetBinAttr("01000000"));
-		System.out.println("Result: "+attr.GetBinAttr("10000000"));
+		System.out.println("Result: "+attr.GetBinAttr("0000000000000000000000000000001"));
+		System.out.println("Result: "+attr.GetBinAttr("0000000000000001000000000000000"));
+		System.out.println("Result: "+attr.GetBinAttr("1000000000000000000000000000000"));
+		
 		*/
 	
 		Relation r = new Relation();
