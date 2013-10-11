@@ -59,6 +59,15 @@ public class Attribute{
 		return result;
 	}
 	
+	public static String INVERSE(String inputBit){
+		if(inputBit.length()==0){
+			return "";
+		}
+		int bit = Integer.parseInt(inputBit,2);
+		String output = Integer.toBinaryString(~bit);
+		return output.substring(output.length()-inputBit.length());
+	}
+	
 	public void SetCandidKey(ArrayList key){
 		
 	}

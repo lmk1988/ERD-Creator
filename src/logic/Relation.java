@@ -113,9 +113,14 @@ public class Relation {
 	
 	//Attr should be in bitString and not words
 	public String computeClosure(String Attr){
+		return computeClosure(Attr,fDList);
+	}
+	
+	//Attr should be in bitString and not words
+	public static String computeClosure(String Attr,ArrayList<FD> FDs){
 		String currentClosure = Attr;
 		String ClosureBefore = Attr;
-		ArrayList<FD> tempFDList = new ArrayList<FD>(fDList);//Clone
+		ArrayList<FD> tempFDList = new ArrayList<FD>(FDs);//Clone
 		
 		do{
 			for(int i=0;i<tempFDList.size();i++){
