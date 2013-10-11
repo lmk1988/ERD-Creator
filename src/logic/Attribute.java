@@ -1,7 +1,6 @@
 package logic;
 
 import java.util.*;
-
 /*
  * Only allow to store up to 31 variables as each 1 bits is mapped to a var.
  * 
