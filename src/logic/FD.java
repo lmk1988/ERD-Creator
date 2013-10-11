@@ -1,8 +1,7 @@
 package logic;
 
 public class FD {
-	Attribute LHS,RHS;
-	
+	String LHS,RHS;
 	
 	public FD(){
 		

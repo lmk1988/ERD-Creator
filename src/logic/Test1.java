@@ -51,13 +51,13 @@ public class Test1 {
 		*/
 	
 		Relation r = new Relation();
-		ArrayList attrList1 = new ArrayList();
+		ArrayList<String> attrList1 = new ArrayList<String>();
 		attrList1.add("A");
 		attrList1.add("B");
 		attrList1.add("C");
 		attrList1.add("D");
 	
-		ArrayList attrList2 = new ArrayList();
+		ArrayList<String> attrList2 = new ArrayList<String>();
 		attrList2.add("A");
 		attrList2.add("C");
 		attrList2.add("E");

@@ -5,13 +5,18 @@ import java.util.*;
  * Only allow to store up to 31 variables as each 1 bits is mapped to a var.
  * 
  */
-public class Attribute {
+public class Attribute{
 	
-	Hashtable attrTab;
+	Hashtable<String,String> attrTab;
 	int bitCount=1;
 	
 	public Attribute(){
-		attrTab = new Hashtable(); 
+		attrTab = new Hashtable<String,String>(); 
+	}
+	
+	public Attribute(Attribute clone){
+		attrTab = (Hashtable<String,String>) clone.attrTab.clone();
+		bitCount = clone.bitCount;
 	}
 	
 	public String AddAttr(String input){
@@ -31,7 +36,7 @@ public class Attribute {
 		return tempFill;
 	}
 	
-	public String AND(String inputBit1,String inputBit2){
+	public static String AND(String inputBit1,String inputBit2){
 		int bit1,bit2,bit3;
 		
 		bit1=Integer.parseInt(inputBit1,2);
@@ -40,7 +45,7 @@ public class Attribute {
 		return Integer.toBinaryString(bit3);
 	}
 	
-	public String OR(String inputBit1,String inputBit2){			//OR operation between 2 string bits
+	public static String OR(String inputBit1,String inputBit2){			//OR operation between 2 string bits
 		int bit1,bit2,bit3;
 		
 		bit1=Integer.parseInt(inputBit1,2);
@@ -57,6 +62,5 @@ public class Attribute {
 	public void SetCandidKey(ArrayList key){
 		
 	}
-	
 	
 }

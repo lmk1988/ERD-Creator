@@ -8,7 +8,7 @@ public class Bernstein {
 		//Require an array of FD
 		for(int i=0;i<array.size();i++){
 			//For each LHS, check if it can be reduced smaller by determining if there is a smaller subset whose closure can reach this LHS
-			Attribute tempAttri = array.get(i).LHS;
+			String tempAttri = array.get(i).LHS;
 			
 			//For each letter, find the closure of it and see if it can reach the LHS. If yes, remove all other attributes
 			//If all letters could not reach the LHS, use combination of them

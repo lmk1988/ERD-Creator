@@ -3,19 +3,23 @@ package logic;
 import java.util.*;
 
 public class Relation {
-	ArrayList relList,attrList,unionList,joinList;
+	ArrayList<Relation> relList;
+	ArrayList<String> attrList;
+	ArrayList<FD> fDList;
+	ArrayList unionList,joinList;
 	String relName;
 	public Relation(){
-		relList = new ArrayList();
-		attrList = new ArrayList();
+		relList = new ArrayList<Relation>();
+		attrList = new ArrayList<String>();
+		fDList = new ArrayList<FD>();
 	}
 	
-	public Relation(String relName,ArrayList attrList){
+	public Relation(String relName,ArrayList<String> attrList){
 		this.relName=relName;
 		this.attrList=attrList;
 	}
 	
-	public ArrayList GetRels(){
+	public ArrayList<Relation> GetRels(){
 		return relList;
 	}
 	
@@ -27,12 +31,12 @@ public class Relation {
 		}
 	}
 	
-	public void SetRels(String relName,ArrayList attrList){
+	public void SetRels(String relName,ArrayList<String> attrList){
 		Relation r=new Relation(relName,attrList);
 		relList.add(r);												//Accumulate all the relations
 	}
 	
-	public void SetComputeRels(Relation tempR,int joinType,ArrayList attrList){
+	public void SetComputeRels(Relation tempR,int joinType,ArrayList<Attribute> attrList){
 		ArrayList unionList = new ArrayList();
 		ArrayList joinList = new ArrayList();
 		if(joinType==1){
@@ -102,8 +106,29 @@ public class Relation {
 		return tempR;
 	}
 	
-	public ArrayList GetAttrList(String relName){
+	public ArrayList<String> GetAttrList(String relName){
 		return attrList;
 	}
 	
+	
+	//Attr should be in bitString and not words
+	public String computeClosure(String Attr){
+		String currentClosure = Attr;
+		String ClosureBefore = Attr;
+		ArrayList<FD> tempFDList = new ArrayList<FD>(fDList);//Clone
+		
+		do{
+			for(int i=0;i<tempFDList.size();i++){
+				FD currentFD = tempFDList.get(i);
+				if(Attribute.AND(currentFD.LHS, currentClosure).compareTo(currentFD.LHS)==0){
+					//Remove FD from temp list because it has already served its purpose of generating a larger closure
+					tempFDList.remove(i);
+					i--; //minus again due to previously removing it
+					currentClosure = Attribute.OR(currentFD.RHS, currentClosure);
+				}
+			}
+		}while(currentClosure.compareTo(ClosureBefore)!=0);
+		
+		return currentClosure;
+	}
 }
