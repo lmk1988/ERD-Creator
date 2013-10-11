@@ -32,11 +32,24 @@ public class Attribute {
 		return tempFill;
 	}
 	
-	public String AND(String bits1,String bits2){
+	public String AND(String inputBit1,String inputBit2){
+		int bit1,bit2,bit3;
 		
-		
-		return "";
+		bit1=Integer.parseInt(inputBit1,2);
+		bit2=Integer.parseInt(inputBit2,2);
+		bit3=bit1 & bit2;
+		return Integer.toBinaryString(bit3);
 	}
+	
+	public String OR(String inputBit1,String inputBit2){			//OR operation between 2 string bits
+		int bit1,bit2,bit3;
+		
+		bit1=Integer.parseInt(inputBit1,2);
+		bit2=Integer.parseInt(inputBit2,2);							//Convert integer to binary
+		bit3=bit1 | bit2;
+		return Integer.toBinaryString(bit3);
+	}
+	
 	public String GetBinAttr(String input){
 		String result = (String) attrTab.get(input);
 		return result;
