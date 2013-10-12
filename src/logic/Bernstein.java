@@ -4,8 +4,8 @@ import java.util.*;
 
 public class Bernstein {
 	
-	public static ArrayList<FD> removeTrivial(ArrayList<FD> array){
-		ArrayList<FD> tempArray = new ArrayList<FD>(array);
+	public static ArrayList<FD> removeTrivial(ArrayList<FD> fDArray){
+		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		for(int i=0;i<tempArray.size();i++){
 			FD currentFD = tempArray.get(i);
 			if(currentFD.LHS.compareTo(currentFD.RHS)==0){
@@ -25,8 +25,8 @@ public class Bernstein {
 	}
 	
 	//Input an arrayList of FD
-	public static ArrayList<FD> removeExtraneousAttribute(ArrayList<FD> array){
-		ArrayList<FD> tempArray = new ArrayList<FD>(array);
+	public static ArrayList<FD> removeExtraneousAttribute(ArrayList<FD> fDArray){
+		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		tempArray = removeTrivial(tempArray);
 		//Require an array of FD
 		for(int i=0;i<tempArray.size();i++){
@@ -51,15 +51,57 @@ public class Bernstein {
 		return tempArray;
 	}
 	
-	//proper equivalent
-	//Use LHS of any of the FDs in the partition, 
-	//find closure using the FD in the partition. 
-	//Find a partition with LHS inside that closure. 
-	//Do closure for that LHS to see if it includes the first LHS. 
-	//If it is, i means they are functionally equivalent and thus we should merge the partition.
+	public static ArrayList<FD> removeFDUsingCovering(ArrayList<FD> fDArray){
+		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
+		tempArray = removeTrivial(tempArray);
+		for(int i=0;i<tempArray.size();i++){
+			ArrayList<FD> exclusionArray = new ArrayList<FD>(tempArray);
+			//exclusionArray includes all FD except the current FD we are checking
+			exclusionArray.remove(tempArray.get(i));
+			//Find closure of LHS using the other FDs
+			String closure = Relation.computeClosure(tempArray.get(i).LHS, exclusionArray);
+			//If RHS is inside the closure, it means that this FD can be remove due to covering
+			if(Attribute.AND(closure, tempArray.get(i).RHS).compareTo(tempArray.get(i).RHS)==0){
+				tempArray.remove(i);
+				i--;
+			}
+		}
+		return tempArray;
+	}
 	
-	//F+
+	//proper equivalent TODO
+	/*public static ArrayList<FD> getProperEquivalent(ArrayList<FD> fDArray){
+		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
+		tempArray = removeTrivial(tempArray);
+		ArrayList<FD> equivalentArray = new ArrayList<FD>();
+		//Use LHS of any of the FDs in the partition,
+		for(int i=0;i<tempArray.size();i++){
+			for(int j=i;j<tempArray.size();j++){
+				//If there exist another FD with RHS that is the same as LHS
+				if(tempArray.get(i).LHS.compareTo(tempArray.get(j).RHS)==0){
+					
+				}
+			}
+		}
+		//find closure using the FD in the partition. 
+		//Find a partition with LHS inside that closure. 
+		//Do closure for that LHS to see if it includes the first LHS. 
+		//If it is, i means they are functionally equivalent and thus we should merge the partition.
+		
+		return equivalentArray;
+	}*/
+	
+	
+	//F+ TODO
 	//For each FD, try to see if it can be expanded further
+	/*public static ArrayList<FD> expandFDs(ArrayList<FD> array){
+		ArrayList<FD> tempArray = new ArrayList<FD>(array);
+		tempArray = removeTrivial(tempArray);
+		for(int i=0;i<tempArray.size();i++){
+			
+		}
+		return tempArray;
+	}*/
 	
 	//transitive dependency
 	//Find F+, compare all the RHS with each. Group those with similar RHS
