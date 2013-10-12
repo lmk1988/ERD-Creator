@@ -64,6 +64,12 @@ public class Test1 {
 		System.out.println(Attribute.ALL_PROPER_SUBSET_OF("1001"));
 		System.out.println(Attribute.ALL_PROPER_SUBSET_OF("1011"));
 		System.out.println(Attribute.ALL_PROPER_SUBSET_OF("1111"));*/
+		
+		/*System.out.println("Testing comparable of FD");
+		System.out.println(new FD("10","01").equals(new FD("10","01"))); 
+		System.out.println(new FD("10","01").compareTo(new FD("10","01"))==0); 
+		System.out.println(new FD("10","01").equals(new FD("10","10"))==false);
+		System.out.println(new FD("10","01").compareTo(new FD("10","10"))!=0);*/
 	
 		Relation r = new Relation();
 		ArrayList<String> attrList1 = new ArrayList<String>();

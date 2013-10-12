@@ -39,7 +39,7 @@ public class FD implements Comparable<FD>{
 	     }
 
 	     FD that = (FD)aThat;
-	     if(LHS.compareTo(that.LHS)==0 && RHS.compareTo(that.RHS)==0){
+	     if(this.LHS.compareTo(that.LHS)==0 && this.RHS.compareTo(that.RHS)==0){
 	    	 return true;
 	     }else{
 	    	 return false;

@@ -69,6 +69,31 @@ public class Bernstein {
 		return tempArray;
 	}
 	
+	//F+
+	//For each FD, try to see if it can be expanded further
+	public static ArrayList<FD> expandFDs(ArrayList<FD> array){
+		ArrayList<FD> tempArray = new ArrayList<FD>(array);
+		tempArray = removeTrivial(tempArray);
+		//Brute force search and add if you can create a new FD via transitive
+		for(int i=0;i<tempArray.size();i++){
+			for(int j=i+1;j<tempArray.size();j++){
+				//If there is a transitive and the LHS is not RHS (trivial case)
+				if(tempArray.get(i).RHS.compareTo(tempArray.get(j).LHS)==0 && tempArray.get(i).LHS.compareTo(tempArray.get(j).RHS)!=0){
+					FD tempFD = new FD(tempArray.get(i).LHS,tempArray.get(j).RHS);
+					//Check if tempArray already contains this tempFD
+					//(FD implements custom comparable so it should be ok to do this)
+					if(!tempArray.contains(tempFD)){
+						tempArray.add(tempFD);
+					}
+				}
+			}
+		}
+		
+		//Remove trivial again just in case
+		tempArray = removeTrivial(tempArray);
+		return tempArray;
+	}
+	
 	//proper equivalent TODO
 	/*public static ArrayList<FD> getProperEquivalent(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
@@ -76,7 +101,7 @@ public class Bernstein {
 		ArrayList<FD> equivalentArray = new ArrayList<FD>();
 		//Use LHS of any of the FDs in the partition,
 		for(int i=0;i<tempArray.size();i++){
-			for(int j=i;j<tempArray.size();j++){
+			for(int j=i+1;j<tempArray.size();j++){
 				//If there exist another FD with RHS that is the same as LHS
 				if(tempArray.get(i).LHS.compareTo(tempArray.get(j).RHS)==0){
 					
@@ -89,18 +114,6 @@ public class Bernstein {
 		//If it is, i means they are functionally equivalent and thus we should merge the partition.
 		
 		return equivalentArray;
-	}*/
-	
-	
-	//F+ TODO
-	//For each FD, try to see if it can be expanded further
-	/*public static ArrayList<FD> expandFDs(ArrayList<FD> array){
-		ArrayList<FD> tempArray = new ArrayList<FD>(array);
-		tempArray = removeTrivial(tempArray);
-		for(int i=0;i<tempArray.size();i++){
-			
-		}
-		return tempArray;
 	}*/
 	
 	//transitive dependency
