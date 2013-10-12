@@ -28,16 +28,27 @@ public class Bernstein {
 	public static ArrayList<FD> removeExtraneousAttribute(ArrayList<FD> array){
 		ArrayList<FD> tempArray = new ArrayList<FD>(array);
 		tempArray = removeTrivial(tempArray);
-		
 		//Require an array of FD
 		for(int i=0;i<tempArray.size();i++){
 			//For each LHS, check if it can be reduced smaller by determining if there is a smaller subset whose closure can reach this LHS
-			String tempAttri = tempArray.get(i).LHS;
-			//For each letter, find the closure of it and see if it can reach the LHS. If yes, remove all other attributes
-			
-			//If all letters could not reach the LHS, use combination of them
+			String tempLHS = tempArray.get(i).LHS;
+			ArrayList<String> tempProperSubset = Attribute.ALL_PROPER_SUBSET_OF(tempLHS);
+			for(int j=0;j<tempProperSubset.size();j++){
+				//For each letter, find the closure of it and see if it can reach the LHS. If yes, remove all other attributes
+				//the ALL_PROPER_SUBSET_OF will return the smallest subset first
+				ArrayList<FD> exclusionArray = new ArrayList<FD>(tempArray);
+				//exclusionArray includes all FD except the current FD we are checking
+				exclusionArray.remove(tempArray.get(i));
+				//Find closure
+				String closure = Relation.computeClosure(tempProperSubset.get(j), exclusionArray);
+				//If it can reach LHS, it would be the minimum variables needed
+				if(Attribute.AND(closure, tempLHS).compareTo(tempLHS)==0){
+					tempArray.get(i).LHS=tempProperSubset.get(j);
+					break;
+				}
+			}
 		}
-		return new ArrayList<FD>();
+		return tempArray;
 	}
 	
 	//proper equivalent

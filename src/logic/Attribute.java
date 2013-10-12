@@ -72,7 +72,7 @@ public class Attribute{
 		return output.substring(output.length()-inputBit.length());
 	}
 	
-	public static ArrayList<String> ALL_SUBSET_OF(String inputBit){
+	public static ArrayList<String> ALL_PROPER_SUBSET_OF(String inputBit){
 		ArrayList<String> finalArray = new ArrayList<String>();
 		
 		//Find all single variables first
@@ -87,7 +87,10 @@ public class Attribute{
 			for(int i=currentOne+1;i<inputBit.length();i++){
 				tempInput+="0";
 			}
-			finalArray.add(tempInput);
+			
+			if(inputBit.compareTo(tempInput)!=0){
+				finalArray.add(tempInput);
+			}
 			nextIndex=currentOne+1;
 			currentOne = inputBit.indexOf("1",nextIndex);
 		}
@@ -96,9 +99,13 @@ public class Attribute{
 		int singleVariablesSize = finalArray.size();
 		int currentSize = finalArray.size();
 		for(int i=0;i<singleVariablesSize;i++){
-			for(int j=i+1;j<currentSize;j+=1+i){
-				String merge = OR(finalArray.get(i),finalArray.get(j));
-				finalArray.add(merge);
+			for(int j=i+1;j<currentSize;j++){
+				if(Integer.parseInt(Attribute.AND(finalArray.get(i), finalArray.get(j)),2)==0){
+					String merge = OR(finalArray.get(i),finalArray.get(j));
+					if(merge.compareTo(inputBit)!=0 && !finalArray.contains(merge)){
+						finalArray.add(merge);
+					}
+				}
 			}
 			currentSize = finalArray.size();
 		}
