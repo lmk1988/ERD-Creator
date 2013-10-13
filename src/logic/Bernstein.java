@@ -71,8 +71,8 @@ public class Bernstein {
 	
 	//F+
 	//For each FD, try to see if it can be expanded further
-	public static ArrayList<FD> expandFDs(ArrayList<FD> array){
-		ArrayList<FD> tempArray = new ArrayList<FD>(array);
+	public static ArrayList<FD> expandFDs(ArrayList<FD> fDArray){
+		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		tempArray = removeTrivial(tempArray);
 		//Brute force search and add if you can create a new FD via transitive
 		for(int i=0;i<tempArray.size();i++){
@@ -88,26 +88,69 @@ public class Bernstein {
 				}
 			}
 		}
-		
 		//Remove trivial again just in case
 		tempArray = removeTrivial(tempArray);
 		return tempArray;
 	}
 	
-	//proper equivalent TODO
-	/*public static ArrayList<FD> getProperEquivalent(ArrayList<FD> fDArray){
+	
+	//partition from FDs
+	public static ArrayList<Partition> partitionFromFD(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
-		tempArray = removeTrivial(tempArray);
-		ArrayList<FD> equivalentArray = new ArrayList<FD>();
-		//Use LHS of any of the FDs in the partition,
+		ArrayList<Partition> partArray = new ArrayList<Partition>();
+		
 		for(int i=0;i<tempArray.size();i++){
-			for(int j=i+1;j<tempArray.size();j++){
-				//If there exist another FD with RHS that is the same as LHS
-				if(tempArray.get(i).LHS.compareTo(tempArray.get(j).RHS)==0){
-					
+			String LHS = tempArray.get(i).LHS;
+			boolean bol_found = false;
+			//Find existing partition that has the same LHS
+			for(int j=0;j<partArray.size() && bol_found==false;j++){
+				if(partArray.get(j).getLHS().compareTo(LHS)==0){
+					partArray.get(j).fDList.add(tempArray.get(i));
+					bol_found=true;
 				}
 			}
+			
+			//If no partition found, add a new partition
+			if(bol_found==false){
+				partArray.add(new Partition(tempArray.get(i)));
+			}
 		}
+		
+		return partArray;
+	}
+	
+	
+	//transitive dependency
+	/*public static ArrayList<FD> eliminateTransitiveDependency(ArrayList<FD> fDArray){
+		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
+		tempArray = removeTrivial(tempArray);
+		ArrayList<FD> fPlus = expandFDs(fDArray);
+		//Find F+, compare all the RHS with each. Group those with similar RHS
+		
+		
+		
+		//For each group, there is a transitive dependency if one LHS closure includes another LHS
+		//but that LHS closure does not include that
+		
+		return tempArray;
+	}*/
+	
+	
+	
+	
+	//proper equivalent
+	//Return an array list of FD that is properEquivalent e.g. A->B B->A
+	//Only checks between 2 partitions. Please loop it if required to check for a list of partition
+	//fDArray is required because there might be a hidden transitive FD that is properEquivalent
+	/*public static ArrayList<FD> getProperEquivalent(Partition part1, Partition part2, ArrayList<FD> fDArray){
+		ArrayList<FD> equivalentArray = new ArrayList<FD>();
+		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
+		tempArray = removeTrivial(tempArray);
+		
+		//Characteristic of Partition is that all the LHS has to be the same
+		
+		
+		//Use LHS of any of the FDs in the partition,
 		//find closure using the FD in the partition. 
 		//Find a partition with LHS inside that closure. 
 		//Do closure for that LHS to see if it includes the first LHS. 
@@ -116,8 +159,5 @@ public class Bernstein {
 		return equivalentArray;
 	}*/
 	
-	//transitive dependency
-	//Find F+, compare all the RHS with each. Group those with similar RHS
-	//For each group, there is a transitive dependency if one LHS closure includes another LHS
-	//but that LHS closure does not include that
+	
 }
