@@ -131,7 +131,7 @@ public class Relation {
 					currentClosure = Attribute.OR(currentFD.RHS, currentClosure);
 				}
 			}
-		}while(currentClosure.compareTo(ClosureBefore)!=0);
+		}while(currentClosure.compareTo(ClosureBefore)!=0 && !Attribute.IS_ALL_ONES(currentClosure));
 		
 		return currentClosure;
 	}

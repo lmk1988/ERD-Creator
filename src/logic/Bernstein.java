@@ -199,7 +199,7 @@ public class Bernstein{
 		
 	
 	//transitive dependency
-	/*public static ArrayList<Partition> eliminateTransitiveDependency(ArrayList<Partition> partitionArray){
+	public static ArrayList<Partition> eliminateTransitiveDependency(ArrayList<Partition> partitionArray){
 		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
 		
 		//Get F+
@@ -214,15 +214,44 @@ public class Bernstein{
 			for(int j=i+1;j<Fplus.size();j++){
 				//Compare those with similar RHS
 				if(Fplus.get(i).RHS.compareTo(Fplus.get(j).RHS)==0){
-					
+					boolean bol_i_is_in_closureJ = (Attribute.AND(Relation.computeClosure(Fplus.get(j).LHS, Fplus), Fplus.get(i).LHS).compareTo(Fplus.get(i).LHS)==0);
+					boolean bol_j_is_in_closureI = (Attribute.AND(Relation.computeClosure(Fplus.get(i).LHS, Fplus), Fplus.get(j).LHS).compareTo(Fplus.get(j).LHS)==0);
+						
+					if(bol_i_is_in_closureJ && !bol_j_is_in_closureI){
+						//Transitive found
+						//remove the i since i can determine j which can then determine the RHS
+						partArray = removeFDFromPartitions(Fplus.get(i),partArray); //there is a chance that the FD is not in any of the partitions
+						Fplus.remove(i);
+						i--;
+						break;
+					}else if(!bol_i_is_in_closureJ && bol_j_is_in_closureI){
+						//Transitive found
+						//remove j since j can determine i which can then determine the RHS
+						partArray = removeFDFromPartitions(Fplus.get(j),partArray); //there is a chance that the FD is not in any of the partitions
+						Fplus.remove(j);
+						j--;
+						//Not required to break because it is the inner loop, there is possibility for more transitive dependency
+					}
 				}
 			}
 		}
-		//For each group, there is a transitive dependency if one LHS closure includes another LHS
-		//but that LHS closure does not include that
 		
 		return partArray;
-	}*/
+	}
+	
+	public static ArrayList<Partition> removeFDFromPartitions(FD fd,ArrayList<Partition> partitionArray){
+		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
+		for(int i=0;i<partArray.size();i++){
+			//don't need check if contains, just remove
+			partArray.get(i).fDList.remove(fd);
+			//If partition is empty, just remove from array
+			if(partArray.get(i).fDList.size()==0 && partArray.get(i).joinList.size()==0){
+				partArray.remove(i);
+				i--;
+			}
+		}
+		return partArray;
+	}
 	
 	//Compute Relation using Partition
 }
