@@ -133,7 +133,7 @@ public class Bernstein{
 			//Find existing partition that has the same LHS
 			for(int j=0;j<partArray.size() && bol_found==false;j++){
 				if(partArray.get(j).getLHS().compareTo(LHS)==0){
-					partArray.get(j).fDList.add(tempArray.get(i));
+					partArray.get(j).addFD(tempArray.get(i));
 					bol_found=true;
 				}
 			}
@@ -157,7 +157,7 @@ public class Bernstein{
 		//Get F+
 		ArrayList<FD> Fplus = new ArrayList<FD>();
 		for(int i=0;i<partArray.size();i++){
-			Fplus.addAll(partArray.get(i).fDList);
+			Fplus.addAll(partArray.get(i).getfDList());
 		}
 		Fplus = getFPlus(Fplus);
 
@@ -180,10 +180,10 @@ public class Bernstein{
 						FD fd2 = new FD(partArray.get(j).getLHS(),partArray.get(i).getLHS());
 						partArray.get(i).joinList.add(fd1);
 						partArray.get(i).joinList.add(fd2);
-						partArray.get(i).fDList.addAll(partArray.get(j).fDList);
+						partArray.get(i).addFDs(partArray.get(j).getfDList());
 						//Can remove like this because FD has implemented comparable
-						partArray.get(i).fDList.remove(fd1);
-						partArray.get(i).fDList.remove(fd2);
+						partArray.get(i).removeFD(fd1);
+						partArray.get(i).removeFD(fd2);
 						
 						//Remove J from both sides
 						closureArray.remove(j);
@@ -205,7 +205,7 @@ public class Bernstein{
 		//Get F+
 		ArrayList<FD> Fplus = new ArrayList<FD>();
 		for(int i=0;i<partArray.size();i++){
-			Fplus.addAll(partArray.get(i).fDList);
+			Fplus.addAll(partArray.get(i).getfDList());
 		}
 		
 		Fplus = getFPlus(Fplus);
@@ -243,9 +243,9 @@ public class Bernstein{
 		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
 		for(int i=0;i<partArray.size();i++){
 			//don't need check if contains, just remove
-			partArray.get(i).fDList.remove(fd);
+			partArray.get(i).removeFD(fd);
 			//If partition is empty, just remove from array
-			if(partArray.get(i).fDList.size()==0 && partArray.get(i).joinList.size()==0){
+			if(partArray.get(i).getFDSize()==0 && partArray.get(i).joinList.size()==0){
 				partArray.remove(i);
 				i--;
 			}

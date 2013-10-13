@@ -1,7 +1,7 @@
 package logic;
 
 public class FD implements Comparable<FD>{
-	String LHS,RHS;
+	public String LHS,RHS;
 	
 	public FD(){
 		LHS="";

@@ -5,7 +5,11 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ UnitTest_Attribute.class, UnitTest_FD.class })
+@SuiteClasses({ 
+	UnitTest_Attribute.class, 
+	UnitTest_FD.class,
+	UnitTest_Partition.class
+	})
 public class TestSuite_UnitTest {
 
 }

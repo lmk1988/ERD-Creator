@@ -10,6 +10,33 @@ public class UnitTest_Attribute {
 		IS_ALL_ONES();
 		INVERSE();
 		ALL_PROPER_SUBSET_OF();
+		OR();
+		AND();
+	}
+	
+	private void AND(){
+		assertEquals(Attribute.AND("",""),"");
+		assertEquals(Attribute.AND("1",""),"");
+		assertEquals(Attribute.AND("1","0"),"0");
+		assertEquals(Attribute.AND("01","10"),"00");
+		assertEquals(Attribute.AND("11","10"),"10");
+		assertEquals(Attribute.AND("01","11"),"01");
+		assertEquals(Attribute.AND("01001","10000000"),"00000000");
+		assertEquals(Attribute.AND("1111","11110000"),"00000000");
+	}
+	
+	private void OR(){
+		assertEquals(Attribute.OR("",""),"");
+		assertEquals(Attribute.OR("10",""),"10");
+		assertEquals(Attribute.OR("","1"),"1");
+		assertEquals(Attribute.OR("111","000"),"111");
+		assertEquals(Attribute.OR("01","10"),"11");
+		assertEquals(Attribute.OR("000","000"),"000");
+		assertEquals(Attribute.OR("101","101"),"101");
+		assertEquals(Attribute.OR("0","1"),"1");
+		assertEquals(Attribute.OR("00","100"),"100");
+		assertEquals(Attribute.OR("000","0"),"000");
+		assertEquals(Attribute.OR("10111","1"),"10111");
 	}
 	
 	private void IS_ALL_ONES(){

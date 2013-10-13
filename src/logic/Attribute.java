@@ -37,15 +37,29 @@ public class Attribute{
 	}
 	
 	public static String AND(String inputBit1,String inputBit2){
+		if(inputBit1.length()==0 || inputBit2.length()==0){
+			return "";
+		}
+		
 		int bit1,bit2,bit3;
 		
 		bit1=Integer.parseInt(inputBit1,2);
 		bit2=Integer.parseInt(inputBit2,2);
 		bit3=bit1 & bit2;
-		return Integer.toBinaryString(bit3);
+		String tempOutput = Integer.toBinaryString(bit3);
+		while(tempOutput.length()<inputBit1.length() || tempOutput.length()<inputBit2.length()){
+			tempOutput = "0"+tempOutput;
+		}
+		return tempOutput;
 	}
 	
 	public static String OR(String inputBit1,String inputBit2){			//OR operation between 2 string bits
+		if(inputBit1.length()==0){
+			return inputBit2;
+		}else if(inputBit2.length()==0){
+			return inputBit1;
+		}
+		
 		int bit1,bit2,bit3;
 		
 		bit1=Integer.parseInt(inputBit1,2);
