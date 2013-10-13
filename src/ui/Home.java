@@ -74,8 +74,8 @@ public class Home {
 		JButton btnSubmit = new JButton("Submit");
 		btnSubmit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				FD fd = new FD();
-				textField.setText(fd.processFD(txtrHi.getText()));
+				//FD fd = new FD();
+				//textField.setText(fd.processFD(txtrHi.getText()));
 			}
 		});
 		btnSubmit.setBounds(247, 17, 89, 23);

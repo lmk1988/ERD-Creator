@@ -21,10 +21,7 @@ public class UnitTest_FD {
 	}
 	
 	private void constructor(){
-		FD test1 = new FD();
-		assertEquals(test1.LHS,"");
-		assertEquals(test1.RHS,"");
-		test1 = new FD("001","010");
+		FD test1 = new FD("001","010");
 		assertEquals(test1.LHS,"001");
 		assertEquals(test1.RHS,"010");
 	}

@@ -18,7 +18,17 @@ public class Bernstein{
 			String compare = Attribute.AND(currentFD.LHS, currentFD.RHS);
 			if(Integer.parseInt(compare,2)>0){
 				//RHS contains some or all of LHS
-				currentFD.RHS = Attribute.AND(currentFD.RHS, Attribute.INVERSE(compare));
+				int tempInt =  Integer.parseInt(currentFD.RHS,2)-Integer.parseInt(compare,2);
+				if(tempInt==0){
+					tempArray.remove(i);
+					i--;
+					continue;
+				}
+				String tempStr = Integer.toBinaryString(tempInt);
+				while(tempStr.length()<currentFD.LHS.length()){
+					tempStr = "0"+tempStr;
+				}
+				currentFD.RHS = tempStr;
 			}
 		}
 		return tempArray;

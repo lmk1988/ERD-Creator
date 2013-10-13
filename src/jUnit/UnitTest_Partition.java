@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import logic.Partition;
 import logic.FD;
-import java.util.*;
+import java.util.ArrayList;
 
 
 public class UnitTest_Partition {

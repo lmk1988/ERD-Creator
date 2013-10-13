@@ -3,11 +3,6 @@ package logic;
 public class FD implements Comparable<FD>{
 	public String LHS,RHS;
 	
-	public FD(){
-		LHS="";
-		RHS="";
-	}
-	
 	public FD(String LHS,String RHS){
 		this.LHS = LHS;
 		this.RHS = RHS;
