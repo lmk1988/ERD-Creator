@@ -9,6 +9,7 @@ import org.junit.runners.Suite.SuiteClasses;
 	UnitTest_Attribute.class, 
 	UnitTest_FD.class,
 	UnitTest_Partition.class,
+	UnitTest_Relation.class,
 	UnitTest_Bernstein.class
 	})
 public class TestSuite_UnitTest {

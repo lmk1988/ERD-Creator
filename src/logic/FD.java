@@ -40,4 +40,9 @@ public class FD implements Comparable<FD>{
 	    	 return false;
 	     }
 	}
+	
+	@Override 
+	public String toString(){
+		return LHS+"->"+RHS;
+	}
 }

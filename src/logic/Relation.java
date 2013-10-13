@@ -118,10 +118,11 @@ public class Relation {
 	//Attr should be in bitString and not words
 	public static String computeClosure(String inputBit,ArrayList<FD> FDs){
 		String currentClosure = inputBit;
-		String ClosureBefore = inputBit;
+		String ClosureBefore;
 		ArrayList<FD> tempFDList = new ArrayList<FD>(FDs);//Clone
 		
 		do{
+			ClosureBefore = currentClosure;
 			for(int i=0;i<tempFDList.size();i++){
 				FD currentFD = tempFDList.get(i);
 				if(Attribute.AND(currentFD.LHS, currentClosure).compareTo(currentFD.LHS)==0){
