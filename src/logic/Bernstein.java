@@ -2,7 +2,7 @@ package logic;
 
 import java.util.*;
 
-public class Bernstein {
+public class Bernstein{
 	
 	public static ArrayList<FD> removeTrivial(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
@@ -71,9 +71,11 @@ public class Bernstein {
 	
 	//F+
 	//For each FD, try to see if it can be expanded further
-	public static ArrayList<FD> expandFDs(ArrayList<FD> fDArray){
+	public static ArrayList<FD> getFPlus(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		tempArray = removeTrivial(tempArray);
+		tempArray = splitRHS(tempArray);
+		
 		//Brute force search and add if you can create a new FD via transitive
 		for(int i=0;i<tempArray.size();i++){
 			for(int j=i+1;j<tempArray.size();j++){
@@ -93,6 +95,32 @@ public class Bernstein {
 		return tempArray;
 	}
 	
+	//Split all RHS (e.g. A->BC = A->B and A->C)
+	public static ArrayList<FD> splitRHS(ArrayList<FD> fDArray){
+		ArrayList<FD> tempArray = new ArrayList<FD>();
+		
+		for(int i=0;i<fDArray.size();i++){
+			//Find all single variables
+			int nextIndex = 0;
+			int currentOne = fDArray.get(i).RHS.indexOf("1",nextIndex);
+			while(currentOne>=0){
+				String tempInput = "";
+				for(int j=0;j<currentOne;j++){
+					tempInput+="0";
+				}
+				tempInput+="1";
+				for(int j=currentOne+1;j<fDArray.get(i).RHS.length();j++){
+					tempInput+="0";
+				}
+				
+				tempArray.add(new FD(fDArray.get(i).LHS,tempInput));
+				nextIndex=currentOne+1;
+				currentOne = fDArray.get(i).RHS.indexOf("1",nextIndex);
+			}
+		}
+		
+		return tempArray;
+	}
 	
 	//partition from FDs
 	public static ArrayList<Partition> partitionFromFD(ArrayList<FD> fDArray){
@@ -131,9 +159,8 @@ public class Bernstein {
 		for(int i=0;i<partArray.size();i++){
 			Fplus.addAll(partArray.get(i).fDList);
 		}
-		Fplus = removeTrivial(Fplus);
-		Fplus = expandFDs(Fplus);
-		
+		Fplus = getFPlus(Fplus);
+
 		//Generate closure for each partition
 		ArrayList<String> closureArray = new ArrayList<String>();
 		for(int i=0;i<partArray.size();i++){
@@ -172,18 +199,30 @@ public class Bernstein {
 		
 	
 	//transitive dependency
-	/*public static ArrayList<FD> eliminateTransitiveDependency(ArrayList<FD> fDArray){
-		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
-		tempArray = removeTrivial(tempArray);
-		ArrayList<FD> fPlus = expandFDs(fDArray);
-		//Find F+, compare all the RHS with each. Group those with similar RHS
+	/*public static ArrayList<Partition> eliminateTransitiveDependency(ArrayList<Partition> partitionArray){
+		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
 		
+		//Get F+
+		ArrayList<FD> Fplus = new ArrayList<FD>();
+		for(int i=0;i<partArray.size();i++){
+			Fplus.addAll(partArray.get(i).fDList);
+		}
 		
+		Fplus = getFPlus(Fplus);
 		
+		for(int i=0;i<Fplus.size();i++){
+			for(int j=i+1;j<Fplus.size();j++){
+				//Compare those with similar RHS
+				if(Fplus.get(i).RHS.compareTo(Fplus.get(j).RHS)==0){
+					
+				}
+			}
+		}
 		//For each group, there is a transitive dependency if one LHS closure includes another LHS
 		//but that LHS closure does not include that
 		
-		return tempArray;
+		return partArray;
 	}*/
 	
+	//Compute Relation using Partition
 }

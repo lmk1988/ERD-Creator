@@ -113,6 +113,15 @@ public class Attribute{
 		return finalArray;
 	}
 	
+	public static boolean IS_ALL_ONES(String inputBit){
+		if(inputBit.length()==0){
+			return false;
+		}
+		
+		int bit = Integer.parseInt(inputBit,2);
+		return bit==((Math.pow(2,(inputBit.length()-1)))-1);
+	}
+	
 	public void SetCandidKey(ArrayList key){
 		
 	}

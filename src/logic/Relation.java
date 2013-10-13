@@ -110,7 +110,6 @@ public class Relation {
 		return attrList;
 	}
 	
-	
 	//Attr should be in bitString and not words
 	public String computeClosure(String inputBit){
 		return computeClosure(inputBit,fDList);
