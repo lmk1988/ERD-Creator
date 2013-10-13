@@ -115,10 +115,61 @@ public class Bernstein {
 				partArray.add(new Partition(tempArray.get(i)));
 			}
 		}
-		
 		return partArray;
 	}
 	
+	//proper equivalent
+	//Return an array list of FD that is properEquivalent e.g. A->B B->A
+	//Only checks between 2 partitions. Please loop it if required to check for a list of partition
+	//fDArray is required because there might be a hidden transitive FD that is properEquivalent
+	public static ArrayList<Partition> MergeProperEquivalent(ArrayList<Partition> partitionArray){
+		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
+		//Characteristic of Partition is that all the LHS has to be the same
+		
+		//Get F+
+		ArrayList<FD> Fplus = new ArrayList<FD>();
+		for(int i=0;i<partArray.size();i++){
+			Fplus.addAll(partArray.get(i).fDList);
+		}
+		Fplus = removeTrivial(Fplus);
+		Fplus = expandFDs(Fplus);
+		
+		//Generate closure for each partition
+		ArrayList<String> closureArray = new ArrayList<String>();
+		for(int i=0;i<partArray.size();i++){
+			closureArray.add(Relation.computeClosure(partArray.get(i).getLHS(), Fplus));
+		}
+		
+		//Find a partition with LHS inside each closure.
+		for(int i=0;i<partArray.size();i++){
+			for(int j=i+1;j<closureArray.size();j++){
+				//Check if the LHS of this partition is inside any of the other closure
+				if(Attribute.AND(partArray.get(i).getLHS(),closureArray.get(j)).compareTo(partArray.get(i).getLHS())==0){
+					//if LHS is inside that closure, check if this partition's closure includes that partition's LHS
+					if(Attribute.AND(partArray.get(j).getLHS(),closureArray.get(i)).compareTo(partArray.get(j).getLHS())==0){
+						//if it is, they are proper equivalent and should join
+						//Merge partition in J into I (remove J)
+						FD fd1 = new FD(partArray.get(i).getLHS(),partArray.get(j).getLHS());
+						FD fd2 = new FD(partArray.get(j).getLHS(),partArray.get(i).getLHS());
+						partArray.get(i).joinList.add(fd1);
+						partArray.get(i).joinList.add(fd2);
+						partArray.get(i).fDList.addAll(partArray.get(j).fDList);
+						//Can remove like this because FD has implemented comparable
+						partArray.get(i).fDList.remove(fd1);
+						partArray.get(i).fDList.remove(fd2);
+						
+						//Remove J from both sides
+						closureArray.remove(j);
+						partArray.remove(j);
+						j--; //Continue checking due to possible many proper equivalent partitions
+					}
+				}
+			}
+		}
+		
+		return partArray;
+	}
+		
 	
 	//transitive dependency
 	/*public static ArrayList<FD> eliminateTransitiveDependency(ArrayList<FD> fDArray){
@@ -134,30 +185,5 @@ public class Bernstein {
 		
 		return tempArray;
 	}*/
-	
-	
-	
-	
-	//proper equivalent
-	//Return an array list of FD that is properEquivalent e.g. A->B B->A
-	//Only checks between 2 partitions. Please loop it if required to check for a list of partition
-	//fDArray is required because there might be a hidden transitive FD that is properEquivalent
-	/*public static ArrayList<FD> getProperEquivalent(Partition part1, Partition part2, ArrayList<FD> fDArray){
-		ArrayList<FD> equivalentArray = new ArrayList<FD>();
-		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
-		tempArray = removeTrivial(tempArray);
-		
-		//Characteristic of Partition is that all the LHS has to be the same
-		
-		
-		//Use LHS of any of the FDs in the partition,
-		//find closure using the FD in the partition. 
-		//Find a partition with LHS inside that closure. 
-		//Do closure for that LHS to see if it includes the first LHS. 
-		//If it is, i means they are functionally equivalent and thus we should merge the partition.
-		
-		return equivalentArray;
-	}*/
-	
 	
 }

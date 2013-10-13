@@ -3,6 +3,7 @@ package logic;
 import java.util.*;
 
 public class Partition {
+	//Warning: developer might add a wrong FD with different LHS
 	ArrayList<FD> fDList;
 	ArrayList<FD> joinList;
 	
