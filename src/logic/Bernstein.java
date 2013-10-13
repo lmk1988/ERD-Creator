@@ -253,5 +253,12 @@ public class Bernstein{
 		return partArray;
 	}
 	
-	//Compute Relation using Partition
+	//construct Relation using Partition
+	/*public static ArrayList<Relation> constructRelations(ArrayList<Partition> partitionArray){
+		ArrayList<Relation> relArray = new ArrayList<Relation>();
+		//No way to set keys yet
+		//Attribute is not a singleton, unable to get the attribute name
+		
+		return relArray;
+	}*/
 }

@@ -119,7 +119,7 @@ public class Attribute{
 		}
 		
 		int bit = Integer.parseInt(inputBit,2);
-		return bit==((Math.pow(2,(inputBit.length()-1)))-1);
+		return bit==((Math.pow(2,(inputBit.length())))-1);
 	}
 	
 	public void SetCandidKey(ArrayList key){

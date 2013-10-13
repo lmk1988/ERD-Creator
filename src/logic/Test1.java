@@ -49,27 +49,6 @@ public class Test1 {
 		System.out.println("Result: "+attr.GetBinAttr("1000000000000000000000000000000"));
 		
 		*/
-		
-		/*System.out.println("Testing inverse");
-		System.out.println(Attribute.INVERSE("0000").compareTo("1111")==0);
-		System.out.println(Attribute.INVERSE("0110").compareTo("1001")==0);
-		System.out.println(Attribute.INVERSE("1001").compareTo("0110")==0);
-		System.out.println(Attribute.INVERSE("1010").compareTo("0101")==0);
-		System.out.println(Attribute.INVERSE("0").compareTo("1")==0);
-		System.out.println(Attribute.INVERSE("").compareTo("")==0);*/
-		
-		/*System.out.println("Testing ALL PROPER SUBSET OF");
-		System.out.println(Attribute.ALL_PROPER_SUBSET_OF("0000"));
-		System.out.println(Attribute.ALL_PROPER_SUBSET_OF("0100"));
-		System.out.println(Attribute.ALL_PROPER_SUBSET_OF("1001"));
-		System.out.println(Attribute.ALL_PROPER_SUBSET_OF("1011"));
-		System.out.println(Attribute.ALL_PROPER_SUBSET_OF("1111"));*/
-		
-		/*System.out.println("Testing comparable of FD");
-		System.out.println(new FD("10","01").equals(new FD("10","01"))); 
-		System.out.println(new FD("10","01").compareTo(new FD("10","01"))==0); 
-		System.out.println(new FD("10","01").equals(new FD("10","10"))==false);
-		System.out.println(new FD("10","01").compareTo(new FD("10","10"))!=0);*/
 	
 		Relation r = new Relation();
 		ArrayList<String> attrList1 = new ArrayList<String>();
