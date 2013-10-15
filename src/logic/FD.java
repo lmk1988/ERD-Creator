@@ -7,6 +7,11 @@ public class FD implements Comparable<FD>{
 		this.LHS = LHS;
 		this.RHS = RHS;
 	}
+	
+	public FD(FD clone){
+		this.LHS = clone.LHS;
+		this.RHS = clone.RHS;
+	}
 
 	public String processFD(String input) {
 		return input;
