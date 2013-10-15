@@ -52,7 +52,7 @@ public class Bernstein{
 				//Find closure
 				String closure = Relation.computeClosure(tempProperSubset.get(j), exclusionArray);
 				//If it can reach LHS, it would be the minimum variables needed
-				if(Attribute.AND(closure, tempLHS).compareTo(tempLHS)==0){
+				if(Attribute.IS_BIT_EQUAL(Attribute.AND(closure, tempLHS), tempLHS)){
 					tempArray.get(i).LHS=tempProperSubset.get(j);
 					break;
 				}
@@ -71,7 +71,7 @@ public class Bernstein{
 			//Find closure of LHS using the other FDs
 			String closure = Relation.computeClosure(tempArray.get(i).LHS, exclusionArray);
 			//If RHS is inside the closure, it means that this FD can be remove due to covering
-			if(Attribute.AND(closure, tempArray.get(i).RHS).compareTo(tempArray.get(i).RHS)==0){
+			if(Attribute.IS_BIT_EQUAL(Attribute.AND(closure, tempArray.get(i).RHS),tempArray.get(i).RHS)){
 				tempArray.remove(i);
 				i--;
 			}
@@ -90,7 +90,7 @@ public class Bernstein{
 		for(int i=0;i<tempArray.size();i++){
 			for(int j=i+1;j<tempArray.size();j++){
 				//If there is a transitive and the LHS is not RHS (trivial case)
-				if(tempArray.get(i).RHS.compareTo(tempArray.get(j).LHS)==0 && tempArray.get(i).LHS.compareTo(tempArray.get(j).RHS)!=0){
+				if(Attribute.IS_BIT_EQUAL(tempArray.get(i).RHS,tempArray.get(j).LHS) && !Attribute.IS_BIT_EQUAL(tempArray.get(i).LHS,tempArray.get(j).RHS)){
 					FD tempFD = new FD(tempArray.get(i).LHS,tempArray.get(j).RHS);
 					//Check if tempArray already contains this tempFD
 					//(FD implements custom comparable so it should be ok to do this)
@@ -142,7 +142,7 @@ public class Bernstein{
 			boolean bol_found = false;
 			//Find existing partition that has the same LHS
 			for(int j=0;j<partArray.size() && bol_found==false;j++){
-				if(partArray.get(j).getLHS().compareTo(LHS)==0){
+				if(Attribute.IS_BIT_EQUAL(partArray.get(j).getLHS(),LHS)){
 					partArray.get(j).addFD(tempArray.get(i));
 					bol_found=true;
 				}
@@ -181,9 +181,9 @@ public class Bernstein{
 		for(int i=0;i<partArray.size();i++){
 			for(int j=i+1;j<closureArray.size();j++){
 				//Check if the LHS of this partition is inside any of the other closure
-				if(Attribute.AND(partArray.get(i).getLHS(),closureArray.get(j)).compareTo(partArray.get(i).getLHS())==0){
+				if(Attribute.IS_BIT_EQUAL(Attribute.AND(partArray.get(i).getLHS(),closureArray.get(j)),partArray.get(i).getLHS())){
 					//if LHS is inside that closure, check if this partition's closure includes that partition's LHS
-					if(Attribute.AND(partArray.get(j).getLHS(),closureArray.get(i)).compareTo(partArray.get(j).getLHS())==0){
+					if(Attribute.IS_BIT_EQUAL(Attribute.AND(partArray.get(j).getLHS(),closureArray.get(i)),partArray.get(j).getLHS())){
 						//if it is, they are proper equivalent and should join
 						//Merge partition in J into I (remove J)
 						FD fd1 = new FD(partArray.get(i).getLHS(),partArray.get(j).getLHS());
@@ -223,9 +223,9 @@ public class Bernstein{
 		for(int i=0;i<Fplus.size();i++){
 			for(int j=i+1;j<Fplus.size();j++){
 				//Compare those with similar RHS
-				if(Fplus.get(i).RHS.compareTo(Fplus.get(j).RHS)==0){
-					boolean bol_i_is_in_closureJ = (Attribute.AND(Relation.computeClosure(Fplus.get(j).LHS, Fplus), Fplus.get(i).LHS).compareTo(Fplus.get(i).LHS)==0);
-					boolean bol_j_is_in_closureI = (Attribute.AND(Relation.computeClosure(Fplus.get(i).LHS, Fplus), Fplus.get(j).LHS).compareTo(Fplus.get(j).LHS)==0);
+				if(Attribute.IS_BIT_EQUAL(Fplus.get(i).RHS,Fplus.get(j).RHS)){
+					boolean bol_i_is_in_closureJ = (Attribute.IS_BIT_EQUAL(Attribute.AND(Relation.computeClosure(Fplus.get(j).LHS, Fplus), Fplus.get(i).LHS),Fplus.get(i).LHS));
+					boolean bol_j_is_in_closureI = (Attribute.IS_BIT_EQUAL(Attribute.AND(Relation.computeClosure(Fplus.get(i).LHS, Fplus), Fplus.get(j).LHS),Fplus.get(j).LHS));
 						
 					if(bol_i_is_in_closureJ && !bol_j_is_in_closureI){
 						//Transitive found

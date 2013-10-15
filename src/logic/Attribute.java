@@ -1,39 +1,64 @@
 package logic;
 
-import java.util.*;
-/*
- * Only allow to store up to 31 variables as each 1 bits is mapped to a var.
- * 
- */
+import java.util.ArrayList;
+
+//Stores 31 max attributes at the moment
+
 public class Attribute{
+	private ArrayList<String> attrList;
+	private static Attribute instance;
 	
-	Hashtable<String,String> attrTab;
-	int bitCount=1;
-	
-	public Attribute(){
-		attrTab = new Hashtable<String,String>(); 
+	private Attribute(){
+		attrList = new ArrayList<String>();
 	}
 	
-	public Attribute(Attribute clone){
-		attrTab = new Hashtable<String,String>(clone.attrTab);
-		bitCount = clone.bitCount;
-	}
-	
-	public String AddAttr(String input){
-		String tempBit;
-		String tempFill="";
-		
-		tempBit=String.valueOf(Integer.toBinaryString(bitCount));
-		for(int i=0;i<=(31-tempBit.length());i++){		//Fill the front of 1 with zero
-			if(i==(31-tempBit.length())){
-				tempFill+=tempBit;
-			}else{
-				tempFill+="0";
-			}
+	public static Attribute getInstance(){
+		if(instance==null){
+			instance = new Attribute();
 		}
-		bitCount = bitCount << 1;						//Shifting the bit pos to left by 1
-		attrTab.put(tempFill, input);					//Storing the input into hashMap
-		return tempFill;
+		return instance;
+	}
+	
+	public void clear(){
+		attrList = new ArrayList<String>();
+	}
+	
+	public int numOfAttributes(){
+		return attrList.size();
+	}
+	
+	public String addAttribute(String variable){
+		if(!attrList.contains(variable)){
+			attrList.add(variable);
+		}
+		return getBitString(variable);
+	}
+	
+	public String getBitString(String variable){
+		int index =attrList.indexOf(variable);
+		if(index<0){
+			return "";
+		}else{
+			return  Integer.toBinaryString((int)Math.pow(2,index));
+		}
+	}
+	
+	public String getAttrString(String bitString){
+		int currentLength = numOfAttributes();
+		while(bitString.length()<currentLength){
+			bitString = "0"+bitString;
+		}
+		//bitString should only contain a single 1 and all zeros
+		int nextIndex = bitString.indexOf("1");
+		String tempAttr = "";
+		while(nextIndex>=0){
+			
+			int attrIndex = currentLength-1-nextIndex;
+			tempAttr = attrList.get(attrIndex)+tempAttr;
+			nextIndex = bitString.indexOf("1", nextIndex+1);
+		}
+		
+		return tempAttr;
 	}
 	
 	public static String AND(String inputBit1,String inputBit2){
@@ -72,11 +97,6 @@ public class Attribute{
 		return tempOutput;
 	}
 	
-	public String GetBinAttr(String input){
-		String result = (String) attrTab.get(input);
-		return result;
-	}
-	
 	public static String INVERSE(String inputBit){
 		if(inputBit.length()==0){
 			return "";
@@ -102,7 +122,7 @@ public class Attribute{
 				tempInput+="0";
 			}
 			
-			if(inputBit.compareTo(tempInput)!=0){
+			if(!IS_BIT_EQUAL(inputBit,tempInput)){
 				finalArray.add(tempInput);
 			}
 			nextIndex=currentOne+1;
@@ -116,7 +136,7 @@ public class Attribute{
 			for(int j=i+1;j<currentSize;j++){
 				if(Integer.parseInt(Attribute.AND(finalArray.get(i), finalArray.get(j)),2)==0){
 					String merge = OR(finalArray.get(i),finalArray.get(j));
-					if(merge.compareTo(inputBit)!=0 && !finalArray.contains(merge)){
+					if(!IS_BIT_EQUAL(merge,inputBit) && !finalArray.contains(merge)){
 						finalArray.add(merge);
 					}
 				}
@@ -127,6 +147,27 @@ public class Attribute{
 		return finalArray;
 	}
 	
+	public static boolean IS_BIT_EQUAL(String inputBit1, String inputBit2){
+		while(inputBit2.length()<inputBit1.length()){
+			inputBit2 = "0"+inputBit2;
+		}
+		while(inputBit1.length()<inputBit2.length()){
+			inputBit1 = "0"+inputBit1;
+		}
+		return (inputBit1.compareTo(inputBit2)==0);
+	}
+	
+	//Counts the number of ones 
+	public static int NUM_OF_ONES(String inputBit){
+		int count=0;
+		int index = inputBit.indexOf("1");
+		while(index>=0){
+			count++;
+			index = inputBit.indexOf("1",index+1);
+		}
+		return count;
+	}
+	
 	public static boolean IS_ALL_ONES(String inputBit){
 		if(inputBit.length()==0){
 			return false;
@@ -134,10 +175,5 @@ public class Attribute{
 		
 		int bit = Integer.parseInt(inputBit,2);
 		return bit==((Math.pow(2,(inputBit.length())))-1);
-	}
-	
-	public void SetCandidKey(ArrayList key){
-		
-	}
-	
+	}	
 }

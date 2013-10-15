@@ -12,6 +12,67 @@ public class UnitTest_Attribute {
 		ALL_PROPER_SUBSET_OF();
 		OR();
 		AND();
+		instance();
+		IS_BIT_EQUAL();
+	}
+	
+	private void instance(){
+		assertEquals(Attribute.getInstance().addAttribute("A"),"1");
+		assertEquals(Attribute.getInstance().addAttribute("B"),"10");
+		assertEquals(Attribute.getInstance().addAttribute("C"),"100");
+		assertEquals(Attribute.getInstance().addAttribute("D"),"1000");
+		assertEquals(Attribute.getInstance().addAttribute("E"),"10000");
+		assertEquals(Attribute.getInstance().addAttribute("F"),"100000");
+		assertEquals(Attribute.getInstance().addAttribute("G"),"1000000");
+		assertEquals(Attribute.getInstance().addAttribute("H"),"10000000");
+		assertEquals(Attribute.getInstance().addAttribute("I"),"100000000");
+		assertEquals(Attribute.getInstance().addAttribute("J"),"1000000000");
+		assertEquals(Attribute.getInstance().addAttribute("K"),"10000000000");
+		assertEquals(Attribute.getInstance().addAttribute("L"),"100000000000");
+		assertEquals(Attribute.getInstance().addAttribute("M"),"1000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("N"),"10000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("O"),"100000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("P"),"1000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Q"),"10000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("R"),"100000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("S"),"1000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("T"),"10000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("U"),"100000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("V"),"1000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("W"),"10000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("X"),"100000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Y"),"1000000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Z"),"10000000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Apple"),"100000000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Banana"),"1000000000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Grapes"),"10000000000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Durian"),"100000000000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Cherry"),"1000000000000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("A"),"1");
+		assertEquals(Attribute.getInstance().addAttribute("B"),"10");
+		
+		assertEquals(Attribute.getInstance().getBitString("A"),"1");
+		assertEquals(Attribute.getInstance().getBitString("B"),"10");
+		assertEquals(Attribute.getInstance().getBitString("C"),"100");
+		assertEquals(Attribute.getInstance().getBitString("D"),"1000");
+		assertEquals(Attribute.getInstance().getBitString("Grapes"),"10000000000000000000000000000");
+		assertEquals(Attribute.getInstance().addAttribute("Cherry"),"1000000000000000000000000000000");
+		
+		assertEquals(Attribute.getInstance().getAttrString("1"),"A");
+		assertEquals(Attribute.getInstance().getAttrString("10"),"B");
+		assertEquals(Attribute.getInstance().getAttrString("10000000000000000000000000"),"Z");
+		assertEquals(Attribute.getInstance().getAttrString("1000000000000000000000"),"V");
+		assertEquals(Attribute.getInstance().getAttrString("100000000000000000000000000000"),"Durian");
+		assertEquals(Attribute.getInstance().getAttrString("1000000000000000000000000000000"),"Cherry");
+		assertEquals(Attribute.getInstance().getAttrString("1000000000000000000000000000010"),"BCherry");
+	}
+	
+	private void IS_BIT_EQUAL(){
+		assertEquals(Attribute.IS_BIT_EQUAL("",""),true);
+		assertEquals(Attribute.IS_BIT_EQUAL("1",""),false);
+		assertEquals(Attribute.IS_BIT_EQUAL("","1"),false);
+		assertEquals(Attribute.IS_BIT_EQUAL("001","1"),true);
+		assertEquals(Attribute.IS_BIT_EQUAL("010","10"),true);
 	}
 	
 	private void AND(){
@@ -23,6 +84,8 @@ public class UnitTest_Attribute {
 		assertEquals(Attribute.AND("01","11"),"01");
 		assertEquals(Attribute.AND("01001","10000000"),"00000000");
 		assertEquals(Attribute.AND("1111","11110000"),"00000000");
+		assertEquals(Attribute.AND("10001","1"),"00001");
+		assertEquals(Attribute.AND("10001","10"),"00000");
 	}
 	
 	private void OR(){
@@ -37,6 +100,7 @@ public class UnitTest_Attribute {
 		assertEquals(Attribute.OR("00","100"),"100");
 		assertEquals(Attribute.OR("000","0"),"000");
 		assertEquals(Attribute.OR("10111","1"),"10111");
+		assertEquals(Attribute.OR("10001","10"),"10011");
 	}
 	
 	private void IS_ALL_ONES(){

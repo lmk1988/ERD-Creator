@@ -3,119 +3,73 @@ package logic;
 import java.util.*;
 
 public class Relation {
-	ArrayList<Relation> relList;
-	ArrayList<String> attrList;
-	ArrayList<FD> fDList;
-	ArrayList unionList,joinList;
+	ArrayList<String> attrList; //stores Alphabets only
+	public ArrayList<FD> fDList;
 	String relName;
+	
 	public Relation(){
-		relList = new ArrayList<Relation>();
 		attrList = new ArrayList<String>();
 		fDList = new ArrayList<FD>();
+		relName = "";
 	}
 	
 	public Relation(String relName,ArrayList<String> attrList){
 		this.relName=relName;
+		this.fDList = new ArrayList<FD>();
 		this.attrList=attrList;
-	}
-	
-	public ArrayList<Relation> GetRels(){
-		return relList;
-	}
-	
-	public ArrayList GetComputeRels(int joinType){
-		if(joinType==1){
-			return unionList;
-		}else{
-			return joinList;
+		for(int i=0;i<attrList.size();i++){
+			Attribute.getInstance().addAttribute(attrList.get(i));
 		}
 	}
 	
-	public void SetRels(String relName,ArrayList<String> attrList){
-		Relation r=new Relation(relName,attrList);
-		relList.add(r);												//Accumulate all the relations
-	}
-	
-	public void SetComputeRels(Relation tempR,int joinType,ArrayList<Attribute> attrList){
-		ArrayList unionList = new ArrayList();
-		ArrayList joinList = new ArrayList();
-		if(joinType==1){
-			tempR.unionList=attrList;
-		}else if(joinType==2){
-			tempR.joinList=attrList;
+	public static Relation UNION(Relation rel1, Relation rel2){
+		ArrayList<String> tempAttrList = new ArrayList<String>();
+		
+		for(int i=0;i<rel1.attrList.size();i++){
+			if(!tempAttrList.contains(rel1.attrList.get(i))){
+				tempAttrList.add(rel1.attrList.get(i));
+			}
 		}
-	}
-	
-	public Relation UnionRel(Relation tempR){
-		ArrayList tempTotalRel = new ArrayList();
-		ArrayList tempAttrList = new ArrayList();
-		String compare;
 		
-		//Relation tempR=new Relation();
-		for(int i=0;i<relList.size();i++){								//Looping through the different relations
-			tempAttrList=((Relation)relList.get(i)).attrList;
-			for(int a=0;a<tempAttrList.size();a++){						//Pass in the attribute from the supplied param for comparing 
-				compare = (String)tempAttrList.get(a);
-				if(tempTotalRel.size()==0){
-					tempTotalRel.add(compare);
-				}else{
-					for(int b=0;b<tempTotalRel.size();b++){				//Loop through the Overall relation attrList to compare duplicate attribute
-						if((tempTotalRel.get(b)).equals(compare)){
-							break;
-						}
-						if(b==tempTotalRel.size()-1){
-							tempTotalRel.add(compare);					//Add in the compare new attribute if reaches the end of the Overall relation attrList
-							break;
-						}
-					}
+		for(int i=0;i<rel2.attrList.size();i++){
+			if(!tempAttrList.contains(rel2.attrList.get(i))){
+				tempAttrList.add(rel2.attrList.get(i));
+			}
+		}
+		
+		return new Relation(rel1.relName+" U "+rel2.relName,tempAttrList);
+	}
+
+	public static Relation INTERSECT(Relation rel1,Relation rel2){
+		//GetAttrList will return a clone of that list
+		ArrayList<String> tempAttrList1 = rel1.GetAttrList(); 
+		ArrayList<String> tempAttrList2 = rel2.GetAttrList();
+		ArrayList<String> finalAttrList = new ArrayList<String>();
+		//
+		for(int i=0;i<tempAttrList1.size();i++){
+			for(int j=0;j<tempAttrList2.size();j++){
+				if(tempAttrList1.get(i).compareTo(tempAttrList2.get(j))==0){
+					finalAttrList.add(tempAttrList2.get(j));
+					tempAttrList2.remove(j);
+					tempAttrList1.remove(i);
+					j--;
+					i--;
+					break;
 				}
 			}
-		}	
-		tempR.SetComputeRels(tempR,1, tempTotalRel);						//Return back the Join Relations
-		return tempR;
+		}
+		return new Relation(rel1.relName+" Intersect "+rel2.relName,finalAttrList);
 	}
 	
-	public Relation IntersectRel(Relation tempR){
-		ArrayList tempTotalRel = new ArrayList();
-		ArrayList tempIntersectList = new ArrayList();
-		ArrayList tempAttrList = new ArrayList();
-		String compare;
-		
-		//Relation tempR=new Relation();
-		for(int i=0;i<relList.size();i++){								//Looping through the different relations
-			tempAttrList=((Relation)relList.get(i)).attrList;
-			for(int a=0;a<tempAttrList.size();a++){						//Pass in the attribute from the supplied param for comparing 
-				compare = (String)tempAttrList.get(a);
-				if(tempTotalRel.size()==0){
-					tempTotalRel.add(compare);
-				}else{
-					for(int b=0;b<tempTotalRel.size();b++){				//Loop through the Overall relation attrList to compare duplicate attribute
-						if((tempTotalRel.get(b)).equals(compare)){
-							tempIntersectList.add(compare);
-							break;
-						}
-						if(b==tempTotalRel.size()-1){
-							tempTotalRel.add(compare);					//Add in the compare new attribute if reaches the end of the Overall relation attrList
-							break;
-						}
-					}
-				}
-			}
-		}	
-		tempR.SetComputeRels(tempR,2,tempIntersectList);						//Return back the Intersect Relations
-		return tempR;
+	
+	public ArrayList<String> GetAttrList(){
+		return new ArrayList<String>(attrList);
 	}
 	
-	public ArrayList<String> GetAttrList(String relName){
-		return attrList;
-	}
-	
-	//Attr should be in bitString and not words
 	public String computeClosure(String inputBit){
 		return computeClosure(inputBit,fDList);
 	}
-	
-	//Attr should be in bitString and not words
+
 	public static String computeClosure(String inputBit,ArrayList<FD> FDs){
 		String currentClosure = inputBit;
 		String ClosureBefore;
@@ -125,15 +79,61 @@ public class Relation {
 			ClosureBefore = currentClosure;
 			for(int i=0;i<tempFDList.size();i++){
 				FD currentFD = tempFDList.get(i);
-				if(Attribute.AND(currentFD.LHS, currentClosure).compareTo(currentFD.LHS)==0){
+				if(Attribute.IS_BIT_EQUAL(Attribute.AND(currentFD.LHS, currentClosure),currentFD.LHS)){
 					//Remove FD from temp list because it has already served its purpose of generating a larger closure
 					tempFDList.remove(i);
 					i--; //minus again due to previously removing it
 					currentClosure = Attribute.OR(currentFD.RHS, currentClosure);
 				}
 			}
-		}while(currentClosure.compareTo(ClosureBefore)!=0 && !Attribute.IS_ALL_ONES(currentClosure));
+		}while(!Attribute.IS_BIT_EQUAL(currentClosure,ClosureBefore) && !Attribute.IS_ALL_ONES(currentClosure));
 		
 		return currentClosure;
+	}
+	
+	public String getAttrBitString(){
+		if(attrList.isEmpty()){
+			return "";
+		}
+		
+		String bitString = Attribute.getInstance().getBitString(attrList.get(0));
+		for(int i=1;i<attrList.size();i++){
+			String nextAttrBitString = Attribute.getInstance().getBitString(attrList.get(i));
+			bitString = Attribute.OR(bitString, nextAttrBitString);
+		}
+		
+		return bitString;
+	}
+	
+	public ArrayList<String> getCandidateBitStrings(){
+		ArrayList<String> tempArrayList = new ArrayList<String>();
+		String attrBitString = getAttrBitString();
+		ArrayList<String> subSets = Attribute.ALL_PROPER_SUBSET_OF(attrBitString);
+
+		for(int i=0;i<subSets.size();i++){
+			if(!tempArrayList.isEmpty() && Attribute.NUM_OF_ONES(tempArrayList.get(0))<Attribute.NUM_OF_ONES(subSets.get(i))){
+				break;
+			}
+			
+			String closure = computeClosure(subSets.get(i));
+			if(Attribute.IS_BIT_EQUAL(Attribute.AND(closure, attrBitString),attrBitString)){
+				tempArrayList.add(subSets.get(i));
+			}
+		}
+		
+		if(tempArrayList.isEmpty()){
+			tempArrayList.add(attrBitString);
+		}
+		
+		return tempArrayList;
+	}
+	
+	public ArrayList<String> getCandidateKeys(){
+		ArrayList<String> tempArrayList = getCandidateBitStrings();
+		ArrayList<String> tempAttrList = new ArrayList<String>();
+		for(int i=0;i<tempArrayList.size();i++){
+			tempAttrList.add(Attribute.getInstance().getAttrString(tempArrayList.get(i)));
+		}
+		return tempAttrList;
 	}
 }
