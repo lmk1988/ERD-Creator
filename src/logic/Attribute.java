@@ -175,5 +175,13 @@ public class Attribute{
 		
 		int bit = Integer.parseInt(inputBit,2);
 		return bit==((Math.pow(2,(inputBit.length())))-1);
-	}	
+	}
+	
+	public static boolean IS_SUPERKEY(String bitStringKey, String bitStringSuper){
+		if(IS_BIT_EQUAL(AND(bitStringKey,bitStringSuper),bitStringKey)){
+			return true;
+		}else{
+			return false;
+		}
+	}
 }

@@ -233,18 +233,18 @@ public class Bernstein{
 						
 					if(bol_i_is_in_closureJ && !bol_j_is_in_closureI){
 						//Transitive found
-						//remove the i since i can determine j which can then determine the RHS
-						partArray = removeFDFromPartitions(Fplus.get(i),partArray); //there is a chance that the FD is not in any of the partitions
-						Fplus.remove(i);
-						i--;
-						break;
-					}else if(!bol_i_is_in_closureJ && bol_j_is_in_closureI){
-						//Transitive found
 						//remove j since j can determine i which can then determine the RHS
 						partArray = removeFDFromPartitions(Fplus.get(j),partArray); //there is a chance that the FD is not in any of the partitions
 						Fplus.remove(j);
 						j--;
 						//Not required to break because it is the inner loop, there is possibility for more transitive dependency
+					}else if(!bol_i_is_in_closureJ && bol_j_is_in_closureI){
+						//Transitive found
+						//remove the i since i can determine j which can then determine the RHS
+						partArray = removeFDFromPartitions(Fplus.get(i),partArray); //there is a chance that the FD is not in any of the partitions
+						Fplus.remove(i);
+						i--;
+						break;	
 					}
 				}
 			}
@@ -273,39 +273,63 @@ public class Bernstein{
 		
 		for(int i=0;i<partitionArray.size();i++){
 			ArrayList<String> attrList = new ArrayList<String>();
-			ArrayList<Integer> priKeyIndex = new ArrayList<Integer>();
+			String priKeyBit = "";
 			
 			//Add attributes from join
 			for(int j=0;j<partitionArray.get(j).joinList.size();j++){
-				String attribute = Attribute.getInstance().getAttrString(partitionArray.get(j).joinList.get(j).LHS);
-				if(!attrList.contains(attribute)){
-					attrList.add(attribute);
-					priKeyIndex.add(attrList.size()-1);
+				int index = partitionArray.get(j).joinList.get(j).LHS.indexOf("1");
+				while(index>=0){
+					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
+					String attribute = Attribute.getInstance().getAttrString(bitString);
+					if(!attrList.contains(attribute)){
+						attrList.add(attribute);
+						priKeyBit = Attribute.OR(priKeyBit, bitString);
+					}
+					index = partitionArray.get(j).joinList.get(j).LHS.indexOf("1",index+1);
 				}
-				attribute = Attribute.getInstance().getAttrString(partitionArray.get(j).joinList.get(j).RHS);
-				if(!attrList.contains(attribute)){
-					attrList.add(attribute);
-					priKeyIndex.add(attrList.size()-1);
+				
+				index = partitionArray.get(j).joinList.get(j).RHS.indexOf("1");
+				while(index>=0){
+					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
+					String attribute = Attribute.getInstance().getAttrString(bitString);
+					if(!attrList.contains(attribute)){
+						attrList.add(attribute);
+						priKeyBit = Attribute.OR(priKeyBit, bitString);
+					}
+					index = partitionArray.get(j).joinList.get(j).RHS.indexOf("1",index+1);
 				}
 			}
 			
 			//Add attributes from FDs
 			ArrayList<FD> fDList = partitionArray.get(i).getfDList();
 			for(int j=0;j<fDList.size();j++){
-				String attribute = Attribute.getInstance().getAttrString(fDList.get(j).LHS);
-				if(!attrList.contains(attribute)){
-					attrList.add(attribute);
-					priKeyIndex.add(attrList.size()-1);
+				
+				int index = fDList.get(j).LHS.indexOf("1");
+				while(index>=0){
+					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
+					String attribute = Attribute.getInstance().getAttrString(bitString);
+					if(!attrList.contains(attribute)){
+						attrList.add(attribute);
+						priKeyBit = Attribute.OR(priKeyBit, bitString);
+					}
+					index = fDList.get(j).LHS.indexOf("1",index+1);
 				}
-				attribute = Attribute.getInstance().getAttrString(fDList.get(j).RHS);
-				if(!attrList.contains(attribute)){
-					attrList.add(attribute);
+				
+				index = fDList.get(j).RHS.indexOf("1");
+				while(index>=0){
+					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
+					String attribute = Attribute.getInstance().getAttrString(bitString);
+					if(!attrList.contains(attribute)){
+						attrList.add(attribute);
+						//Do not add primary key here
+					}
+					index = fDList.get(j).RHS.indexOf("1",index+1);
 				}
 			}
 			
 			Relation tempRelation = new Relation("R"+(i+1),attrList);
 			tempRelation.fDList = fDList;
-			tempRelation.priKeyIndex = priKeyIndex;
+			tempRelation.priKey = Attribute.getInstance().getAttrString(priKeyBit);
 			relArray.add(tempRelation);
 		}
 		

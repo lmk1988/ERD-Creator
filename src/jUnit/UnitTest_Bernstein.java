@@ -4,9 +4,12 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import org.junit.Test;
+
+import logic.Attribute;
 import logic.Bernstein;
 import logic.Partition;
 import logic.FD;
+import logic.Relation;
 
 public class UnitTest_Bernstein {
 
@@ -20,6 +23,8 @@ public class UnitTest_Bernstein {
 		getFPlus();
 		MergeProperEquivalent();
 		removeFDFromPartitions();
+		eliminateTransitiveDependency();
+		constructRelations();
 	}
 
 	private void removeTrivial(){
@@ -267,7 +272,6 @@ public class UnitTest_Bernstein {
 		assertEquals(returnList.get(0).joinList.get(3),new FD("010000","000010"));
 	}
 	
-	
 	private void removeFDFromPartitions(){
 		ArrayList<Partition> tempArray = new ArrayList<Partition>();
 		ArrayList<Partition> returnList;
@@ -299,5 +303,125 @@ public class UnitTest_Bernstein {
 		returnList = Bernstein.removeFDFromPartitions(new FD("100000","001000"), tempArray);
 		assertEquals(returnList.size(),3);
 		assertEquals(returnList.get(2).getFDSize(),1);
+	}
+
+	private void eliminateTransitiveDependency(){
+		ArrayList<Partition> tempArray = new ArrayList<Partition>();
+		ArrayList<Partition> returnList;
+
+		returnList = Bernstein.eliminateTransitiveDependency(tempArray);
+		assertEquals(returnList.size(),0);
+		
+		tempArray.clear();
+		Partition part1 = new Partition();
+		Partition part2 = new Partition();
+		tempArray.add(part1);
+		tempArray.add(part2);
+		
+		part1.addFD(new FD("010000","000001"));
+		part1.addFD(new FD("010000","000010"));
+		part2.addFD(new FD("000010","000001"));
+		
+		assertEquals(Attribute.IS_BIT_EQUAL(Attribute.AND(Relation.computeClosure(part1.getLHS(),part1.getfDList()),part2.getLHS()),part2.getLHS()),true);
+		assertEquals(Attribute.IS_BIT_EQUAL(Attribute.AND(Relation.computeClosure(part2.getLHS(),part2.getfDList()),part1.getLHS()),part1.getLHS()),false);
+			
+		returnList = Bernstein.eliminateTransitiveDependency(tempArray);
+		assertEquals(returnList.size(),2);
+		assertEquals(returnList.get(0).getFDSize(),1);
+		assertEquals(returnList.get(0).getfDList().get(0),new FD("010000","000010"));
+		assertEquals(returnList.get(1).getFDSize(),1);
+		assertEquals(returnList.get(1).getfDList().get(0),new FD("000010","000001"));
+		
+		tempArray.clear();
+		part1 = new Partition();
+		part2 = new Partition();
+		Partition part3 = new Partition();
+		tempArray.add(part1);
+		tempArray.add(part2);
+		tempArray.add(part3);
+		
+		part1.addFD(new FD("010000","000001"));
+		part1.addFD(new FD("010000","000010"));
+		part2.addFD(new FD("100000","010000"));
+		part3.addFD(new FD("001000","001000"));
+		returnList = Bernstein.eliminateTransitiveDependency(tempArray);
+		assertEquals(returnList.size(),3);
+		assertEquals(returnList.get(0).getFDSize(),2);
+		assertEquals(returnList.get(1).getFDSize(),1);
+		assertEquals(returnList.get(2).getFDSize(),1);
+		
+		tempArray.clear();
+		part1 = new Partition();
+		part2 = new Partition();
+		part3 = new Partition();
+		tempArray.add(part1);
+		tempArray.add(part2);
+		tempArray.add(part3);
+		
+		part1.addFD(new FD("010000","000001"));
+		part1.addFD(new FD("010000","100000"));
+		part2.addFD(new FD("100000","001000"));
+		part3.addFD(new FD("001000","000001"));
+		returnList = Bernstein.eliminateTransitiveDependency(tempArray);
+		assertEquals(returnList.size(),3);
+		assertEquals(returnList.get(0).getFDSize(),1);
+		assertEquals(returnList.get(1).getFDSize(),1);
+		assertEquals(returnList.get(2).getFDSize(),1);
+	}
+	
+	private void constructRelations(){
+		ArrayList<Partition> tempArray = new ArrayList<Partition>();
+		ArrayList<Relation> returnList;
+		
+		Partition part1 = new Partition();
+		Partition part2 = new Partition();
+		Partition part3 = new Partition();
+		tempArray.add(part1);
+		tempArray.add(part2);
+		tempArray.add(part3);
+		
+		part1.addFD(new FD("10001","00010"));
+		part2.addFD(new FD("01000","00001"));
+		part3.addFD(new FD("00110","00001"));
+		
+		Attribute.getInstance().addAttribute("A");
+		Attribute.getInstance().addAttribute("B");
+		Attribute.getInstance().addAttribute("C");
+		Attribute.getInstance().addAttribute("D");
+		Attribute.getInstance().addAttribute("E");
+		assertEquals(Attribute.getInstance().getBitString("A"),"1");
+		assertEquals(Attribute.getInstance().getBitString("B"),"10");
+		assertEquals(Attribute.getInstance().getBitString("C"),"100");
+		assertEquals(Attribute.getInstance().getBitString("D"),"1000");
+		assertEquals(Attribute.getInstance().getBitString("E"),"10000");
+		assertEquals(Attribute.getInstance().getAttrString("00001"),"A");
+		assertEquals(Attribute.getInstance().getAttrString("00010"),"B");
+		assertEquals(Attribute.getInstance().getAttrString("00100"),"C");
+		assertEquals(Attribute.getInstance().getAttrString("01000"),"D");
+		assertEquals(Attribute.getInstance().getAttrString("10000"),"E");
+		assertEquals(Attribute.getInstance().numOfAttributes(),5);
+		
+		returnList = Bernstein.constructRelations(tempArray);
+		assertEquals(returnList.size(),3);
+		assertEquals(returnList.get(0).fDList.size(),1);
+		assertEquals(returnList.get(1).fDList.size(),1);
+		assertEquals(returnList.get(2).fDList.size(),1);
+		assertEquals(returnList.get(0).GetAttrList().size(),3);
+		assertEquals(returnList.get(0).GetAttrList().get(0),"E");
+		assertEquals(returnList.get(0).GetAttrList().get(1),"A");
+		assertEquals(returnList.get(0).GetAttrList().get(2),"B");
+		assertEquals(returnList.get(1).GetAttrList().size(),2);
+		assertEquals(returnList.get(1).GetAttrList().get(0),"D");
+		assertEquals(returnList.get(1).GetAttrList().get(1),"A");
+		assertEquals(returnList.get(2).GetAttrList().size(),3);
+		assertEquals(returnList.get(2).GetAttrList().get(0),"C");
+		assertEquals(returnList.get(2).GetAttrList().get(1),"B");
+		assertEquals(returnList.get(2).GetAttrList().get(2),"A");
+		assertEquals(returnList.get(0).priKey,"AE");
+		assertEquals(returnList.get(1).priKey,"D");
+		assertEquals(returnList.get(2).priKey,"BC");
+		
+		Attribute.getInstance().clear();
+
 	}
 }
