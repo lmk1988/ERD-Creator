@@ -88,7 +88,11 @@ public class Bernstein{
 		
 		//Brute force search and add if you can create a new FD via transitive
 		for(int i=0;i<tempArray.size();i++){
-			for(int j=i+1;j<tempArray.size();j++){
+			for(int j=0;j<tempArray.size();j++){
+				if(i==j){
+					continue;
+				}
+				
 				//If there is a transitive and the LHS is not RHS (trivial case)
 				if(Attribute.IS_BIT_EQUAL(tempArray.get(i).RHS,tempArray.get(j).LHS) && !Attribute.IS_BIT_EQUAL(tempArray.get(i).LHS,tempArray.get(j).RHS)){
 					FD tempFD = new FD(tempArray.get(i).LHS,tempArray.get(j).RHS);
