@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import java.util.ArrayList;
 import org.junit.Test;
 import logic.Bernstein;
+import logic.Partition;
 import logic.FD;
 
 public class UnitTest_Bernstein {
@@ -14,6 +15,7 @@ public class UnitTest_Bernstein {
 		removeTrivial();
 		splitRHS();
 		removeExtraneousAttribute();
+		partitionFromFD();
 	}
 
 	private void removeTrivial(){
@@ -103,5 +105,34 @@ public class UnitTest_Bernstein {
 		assertEquals(testArray.get(0),new FD("11000000","00001111"));
 		assertEquals(testArray.get(1),new FD("10010000","01000000"));
 		assertEquals(testArray.get(2),new FD("01000000","00110000"));
+	}
+
+	private void partitionFromFD(){
+		ArrayList<FD> tempList = new ArrayList<FD>();
+		tempList.add(new FD("100","010"));
+		ArrayList<Partition> returnList;
+		returnList = Bernstein.partitionFromFD(tempList);
+		assertEquals(returnList.size(),1);
+		
+		tempList.add(new FD("010","001"));
+		returnList = Bernstein.partitionFromFD(tempList);
+		assertEquals(returnList.size(),2);
+		
+		tempList.add(new FD("100","1000"));
+		returnList = Bernstein.partitionFromFD(tempList);
+		assertEquals(returnList.size(),2);
+		
+		tempList.add(new FD("1000","10000"));
+		returnList = Bernstein.partitionFromFD(tempList);
+		assertEquals(returnList.size(),3);
+		assertEquals(returnList.get(0).joinList.size(),0);
+		assertEquals(returnList.get(0).getFDSize(),2);
+		assertEquals(returnList.get(0).getfDList().get(0),new FD("100","010"));
+		assertEquals(returnList.get(0).getfDList().get(1),new FD("100","1000"));
+		assertEquals(returnList.get(1).joinList.size(),0);
+		assertEquals(returnList.get(1).getFDSize(),1);
+		assertEquals(returnList.get(2).joinList.size(),0);
+		assertEquals(returnList.get(2).getFDSize(),1);
+		
 	}
 }

@@ -264,11 +264,47 @@ public class Bernstein{
 	}
 	
 	//construct Relation using Partition
-	/*public static ArrayList<Relation> constructRelations(ArrayList<Partition> partitionArray){
+	public static ArrayList<Relation> constructRelations(ArrayList<Partition> partitionArray){
 		ArrayList<Relation> relArray = new ArrayList<Relation>();
-		//No way to set keys yet
-		//Attribute is not a singleton, unable to get the attribute name
+		
+		for(int i=0;i<partitionArray.size();i++){
+			ArrayList<String> attrList = new ArrayList<String>();
+			ArrayList<Integer> priKeyIndex = new ArrayList<Integer>();
+			
+			//Add attributes from join
+			for(int j=0;j<partitionArray.get(j).joinList.size();j++){
+				String attribute = Attribute.getInstance().getAttrString(partitionArray.get(j).joinList.get(j).LHS);
+				if(!attrList.contains(attribute)){
+					attrList.add(attribute);
+					priKeyIndex.add(attrList.size()-1);
+				}
+				attribute = Attribute.getInstance().getAttrString(partitionArray.get(j).joinList.get(j).RHS);
+				if(!attrList.contains(attribute)){
+					attrList.add(attribute);
+					priKeyIndex.add(attrList.size()-1);
+				}
+			}
+			
+			//Add attributes from FDs
+			ArrayList<FD> fDList = partitionArray.get(i).getfDList();
+			for(int j=0;j<fDList.size();j++){
+				String attribute = Attribute.getInstance().getAttrString(fDList.get(j).LHS);
+				if(!attrList.contains(attribute)){
+					attrList.add(attribute);
+					priKeyIndex.add(attrList.size()-1);
+				}
+				attribute = Attribute.getInstance().getAttrString(fDList.get(j).RHS);
+				if(!attrList.contains(attribute)){
+					attrList.add(attribute);
+				}
+			}
+			
+			Relation tempRelation = new Relation("R"+(i+1),attrList);
+			tempRelation.fDList = fDList;
+			tempRelation.priKeyIndex = priKeyIndex;
+			relArray.add(tempRelation);
+		}
 		
 		return relArray;
-	}*/
+	}
 }

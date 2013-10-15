@@ -5,17 +5,19 @@ import java.util.*;
 public class Relation {
 	ArrayList<String> attrList; //stores Alphabets only
 	public ArrayList<FD> fDList;
+	public ArrayList<Integer> priKeyIndex; //stores the index which will point to attrList
 	String relName;
 	
 	public Relation(){
 		attrList = new ArrayList<String>();
 		fDList = new ArrayList<FD>();
+		priKeyIndex = new ArrayList<Integer>();
 		relName = "";
 	}
 	
 	public Relation(String relName,ArrayList<String> attrList){
+		this();
 		this.relName=relName;
-		this.fDList = new ArrayList<FD>();
 		this.attrList=attrList;
 		for(int i=0;i<attrList.size();i++){
 			Attribute.getInstance().addAttribute(attrList.get(i));
