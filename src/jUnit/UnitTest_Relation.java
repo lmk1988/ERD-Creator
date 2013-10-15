@@ -71,5 +71,9 @@ public class UnitTest_Relation {
 		assertEquals(tempRel.getCandidateKeys().get(0),"CDE");
 		assertEquals(tempRel.getCandidateKeys().get(1),"BDE");
 		assertEquals(tempRel.getCandidateKeys().get(2),"ADE");
+		
+		
+		//Need clean up
+		Attribute.getInstance().clear();
 	}
 }
