@@ -5,13 +5,13 @@ import java.util.*;
 public class Relation {
 	ArrayList<String> attrList; //stores Alphabets only
 	public ArrayList<FD> fDList;
-	public ArrayList<Integer> priKeyIndex; //stores the index which will point to attrList
+	public String priKey; 
 	String relName;
 	
 	public Relation(){
 		attrList = new ArrayList<String>();
 		fDList = new ArrayList<FD>();
-		priKeyIndex = new ArrayList<Integer>();
+		priKey = "";
 		relName = "";
 	}
 	
@@ -42,6 +42,18 @@ public class Relation {
 		return new Relation(rel1.relName+" U "+rel2.relName,tempAttrList);
 	}
 
+	public static Relation UNION(ArrayList<Relation> relList){
+		if(relList.isEmpty()){
+			return new Relation();
+		}
+		
+		Relation finalRel = relList.get(0);
+		for(int i=1;i<relList.size();i++){
+			finalRel = UNION(finalRel,relList.get(i));
+		}
+		return finalRel;
+	}
+	
 	public static Relation INTERSECT(Relation rel1,Relation rel2){
 		//GetAttrList will return a clone of that list
 		ArrayList<String> tempAttrList1 = rel1.GetAttrList(); 
@@ -63,6 +75,17 @@ public class Relation {
 		return new Relation(rel1.relName+" Intersect "+rel2.relName,finalAttrList);
 	}
 	
+	public static Relation INTERSECT(ArrayList<Relation> relList){
+		if(relList.isEmpty()){
+			return new Relation();
+		}
+		
+		Relation finalRel = relList.get(0);
+		for(int i=1;i<relList.size();i++){
+			finalRel = INTERSECT(finalRel,relList.get(i));
+		}
+		return finalRel;
+	}
 	
 	public ArrayList<String> GetAttrList(){
 		return new ArrayList<String>(attrList);
