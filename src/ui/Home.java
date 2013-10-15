@@ -156,20 +156,12 @@ public class Home {
 				}
 				r = new Relation(text_rName.getText(), aList);
 				ArrayList<String> attrList = r.GetAttrList();
-				st = new StringTokenizer(pk_txt.getText(), ",");
-				String pk;
-				while(st.hasMoreTokens()) {
-					pk = st.nextToken();
-					for(int i = 0; i < attrList.size(); i++) {
-						if(attrList.get(i).equals(pk)) {
-							r.priKeyIndex.add(i);
-						}
-					}
-				}
+				String pk = pk_txt.getText();
+				r.priKey = pk;
 				result = text_rName.getText() + "(";
 
 				for(int i = 0; i < attrList.size(); i++) {
-					if(i == r.priKeyIndex.indexOf(i)) {
+					if(attrList.get(i).equals(r.priKey)) {
 						result += "<u>" + attrList.get(i) + "</u>";
 					}else {
 						result += attrList.get(i);
@@ -232,6 +224,7 @@ public class Home {
 						result += ", ";
 					}
 				}
+
 				ArrayList<String> candid = new ArrayList<String>();
 				result += "<br/>The candidate keys are: ";
 				for(int i = 0; i < candid.size(); i++) {
