@@ -228,7 +228,7 @@ public class Home {
 		JButton btnCreate = new JButton("Create");
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Relation r = new Relation();
+				Relation r;
 				ArrayList<String> aList = new ArrayList<String>();
 				for(int i = 0; i < aNametxtList.length; i++) {
 					
@@ -237,27 +237,27 @@ public class Home {
 						aList.add(aNametxtList[i].getText());
 					}
 				}
-				r.SetRels(text_rName.getText(), aList);
-				ArrayList<String> attrList = r.GetAttrList(text_rName.getText());
+				r = new Relation(text_rName.getText(), aList);
+				ArrayList<String> attrList = r.GetAttrList();
 				String result = rlbl.getText();
 				result += text_rName.getText() + "(";
-				System.out.print(text_rName.getText() + "(");
+
 				for(int i = 0; i < attrList.size(); i++) {
 						result += attrList.get(i);
-						if(i > 0 && i < attrList.size()) {
+						if(i > -1 && i < attrList.size()-1) {
 							
 							result += ",";
 						}
 				}
 				result += ")";
-				rlbl.setText(result);
+				rlbl.setText("The new relation created are: " + "\n" + result);
 			}
 		});
 		btnCreate.setBounds(10, 396, 89, 23);
 		frmNfDetector.getContentPane().add(btnCreate);
 		
-		rlbl = new JLabel("The new relation created:");
-		rlbl.setBounds(403, 22, 175, 67);
+		rlbl = new JLabel();
+		rlbl.setBounds(380, 8, 267, 147);
 		frmNfDetector.getContentPane().add(rlbl);
 		
 		aNamelblList = new JLabel[]{aNamelbl1, aNamelbl2, aNamelbl3, aNamelbl4, aNamelbl5, aNamelbl6, aNamelbl7, aNamelbl8};
