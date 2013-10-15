@@ -26,6 +26,7 @@ import javax.swing.DefaultComboBoxModel;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import javax.swing.JPanel;
 import javax.swing.SpringLayout;
@@ -35,32 +36,34 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 
+import javax.swing.border.BevelBorder;
+import javax.swing.border.LineBorder;
+
+import java.awt.Color;
+
+import javax.swing.border.TitledBorder;
+import javax.swing.UIManager;
+import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
+import java.awt.FlowLayout;
+import javax.swing.BoxLayout;
+import java.awt.Component;
+import javax.swing.SwingConstants;
+
 public class Home {
 
 	private JFrame frmNfDetector;
 	private final Action action = new SwingAction();
 	private JTextField text_rName;
-	private JComboBox comboBox;
-	private JPanel aTxtPanel;
-	private JLabel aNamelbl1;
-	private JTextField aNametxt1;
-	private JLabel aNamelbl2;
-	private JTextField aNametxt2;
-	private JLabel aNamelbl3;
-	private JTextField aNametxt3;
-	private JLabel aNamelbl4;
-	private JTextField aNametxt4;
-	private JLabel aNamelbl5;
-	private JTextField aNametxt5;
-	private JLabel aNamelbl6;
-	private JTextField aNametxt6;
-	private JLabel aNamelbl7;
-	private JTextField aNametxt7;
-	private JLabel aNamelbl8;
-	private JTextField aNametxt8;
+	private JTextField attrTxt;
 	private JLabel[] aNamelblList;
 	private JTextField[] aNametxtList;
-	private JLabel rlbl;
+	private JTextPane rTxtPane;
+	private JTextPane aList1, aList2;
+	private StringTokenizer st;
+	private Relation r;
+	private JTextField pk_txt;
+	private String result = "<html>";
 
 	/**
 	 * Launch the application.
@@ -95,55 +98,18 @@ public class Home {
 		frmNfDetector.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmNfDetector.getContentPane().setLayout(null);
 		
-		JLabel lblRelationName = new JLabel("Relation Name:");
-		lblRelationName.setBounds(10, 22, 127, 14);
-		frmNfDetector.getContentPane().add(lblRelationName);
-		
-		text_rName = new JTextField();
-		text_rName.setBounds(147, 16, 197, 20);
-		frmNfDetector.getContentPane().add(text_rName);
-		text_rName.setColumns(10);
-		
-		JLabel lblAttributes = new JLabel("No of Attributes:");
-		lblAttributes.setBounds(10, 61, 127, 14);
-		frmNfDetector.getContentPane().add(lblAttributes);
-		
-		comboBox = new JComboBox();
-		comboBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent arg0) {
-				int state = arg0.getStateChange();
-				if(state == ItemEvent.SELECTED) {
-					int textNo = Integer.parseInt(arg0.getItem().toString());
-					for(int i = 0; i < textNo; i++) {
-						
-						aNamelblList[i].setVisible(true);
-						aNametxtList[i].setVisible(true);
-					}
-				}
-			}
-		});
-		comboBox.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8"}));
-		comboBox.setBounds(147, 55, 59, 20);
-		frmNfDetector.getContentPane().add(comboBox);
-		
-		aTxtPanel = new JPanel();
-		aTxtPanel.setBounds(10, 102, 354, 283);
-		aTxtPanel.setVisible(true);
-		frmNfDetector.getContentPane().add(aTxtPanel);
-		aTxtPanel.setLayout(new FormLayout(new ColumnSpec[] {
+		JPanel rpanel = new JPanel();
+		rpanel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Step 1: Create Relation", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		rpanel.setBounds(10, 23, 271, 129);
+		frmNfDetector.getContentPane().add(rpanel);
+		rpanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				FormFactory.DEFAULT_COLSPEC,
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("default:grow"),},
+				ColumnSpec.decode("default:grow"),
+				FormFactory.RELATED_GAP_COLSPEC,
+				FormFactory.DEFAULT_COLSPEC,},
 			new RowSpec[] {
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -153,115 +119,130 @@ public class Home {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,}));
 		
-		aNamelbl1 = new JLabel("Name of Attribute 1:");
-		aTxtPanel.add(aNamelbl1, "2, 2, right, default");
-		aNamelbl1.setVisible(true);
+		JLabel lblRelationName = new JLabel("Relation Name:");
+		rpanel.add(lblRelationName, "2, 2");
 		
-		aNametxt1 = new JTextField();
-		aTxtPanel.add(aNametxt1, "4, 2, fill, default");
-		aNametxt1.setColumns(10);
-		aNametxt1.setVisible(true);
+		text_rName = new JTextField();
+		rpanel.add(text_rName, "4, 2");
+		text_rName.setColumns(10);
 		
-		aNamelbl2 = new JLabel("Name of Attribute 2:");
-		aTxtPanel.add(aNamelbl2, "2, 4, right, default");
-		aNamelbl2.setVisible(false);
+		JLabel lblAttributes = new JLabel("Attributes:");
+		lblAttributes.setHorizontalAlignment(SwingConstants.TRAILING);
+		rpanel.add(lblAttributes, "2, 4");
 		
-		aNametxt2 = new JTextField();
-		aNametxt2.setColumns(10);
-		aTxtPanel.add(aNametxt2, "4, 4, fill, default");
-		aNametxt2.setVisible(false);
+		attrTxt = new JTextField();
+		rpanel.add(attrTxt, "4, 4");
+		attrTxt.setColumns(10);
 		
-		aNamelbl3 = new JLabel("Name of Attribute 3:");
-		aTxtPanel.add(aNamelbl3, "2, 6, right, default");
-		aNamelbl3.setVisible(false);
+		JLabel lblPk = new JLabel("Primary Keys:");
+		lblPk.setHorizontalAlignment(SwingConstants.TRAILING);
+		rpanel.add(lblPk, "2, 6, right, default");
 		
-		aNametxt3 = new JTextField();
-		aNametxt3.setColumns(10);
-		aTxtPanel.add(aNametxt3, "4, 6, fill, default");
-		aNametxt3.setVisible(false);
+		pk_txt = new JTextField();
+		pk_txt.setColumns(10);
+		rpanel.add(pk_txt, "4, 6, fill, default");
 		
-		aNamelbl4 = new JLabel("Name of Attribute 4:");
-		aTxtPanel.add(aNamelbl4, "2, 8, right, default");
-		aNamelbl4.setVisible(false);
-		
-		aNametxt4 = new JTextField();
-		aNametxt4.setColumns(10);
-		aTxtPanel.add(aNametxt4, "4, 8, fill, default");
-		aNametxt4.setVisible(false);
-		
-		aNamelbl5 = new JLabel("Name of Attribute 5:");
-		aTxtPanel.add(aNamelbl5, "2, 10, right, default");
-		aNamelbl5.setVisible(false);
-		
-		aNametxt5 = new JTextField();
-		aNametxt5.setColumns(10);
-		aTxtPanel.add(aNametxt5, "4, 10, fill, default");
-		aNametxt5.setVisible(false);
-		
-		aNamelbl6 = new JLabel("Name of Attribute 6:");
-		aTxtPanel.add(aNamelbl6, "2, 12, right, default");
-		aNamelbl6.setVisible(false);
-		
-		aNametxt6 = new JTextField();
-		aNametxt6.setColumns(10);
-		aTxtPanel.add(aNametxt6, "4, 12, fill, default");
-		aNametxt6.setVisible(false);
-		
-		aNamelbl7 = new JLabel("Name of Attribute 7:");
-		aTxtPanel.add(aNamelbl7, "2, 14, right, default");
-		aNamelbl7.setVisible(false);
-		
-		aNametxt7 = new JTextField();
-		aNametxt7.setColumns(10);
-		aTxtPanel.add(aNametxt7, "4, 14, fill, default");
-		aNametxt7.setVisible(false);
-		
-		aNamelbl8 = new JLabel("Name of Attribute 8:");
-		aTxtPanel.add(aNamelbl8, "2, 16, right, default");
-		aNamelbl8.setVisible(false);
-		
-		aNametxt8 = new JTextField();
-		aNametxt8.setColumns(10);
-		aTxtPanel.add(aNametxt8, "4, 16, fill, default");
-		aNametxt8.setVisible(false);
-		
-		JButton btnCreate = new JButton("Create");
+		JButton btnCreate = new JButton("Save");
+		rpanel.add(btnCreate, "4, 8");
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Relation r;
 				ArrayList<String> aList = new ArrayList<String>();
-				for(int i = 0; i < aNametxtList.length; i++) {
-					
-					if(!aNametxtList[i].getText().equals("")) {
-						
-						aList.add(aNametxtList[i].getText());
-					}
+				String attrs = attrTxt.getText();
+				String attr = "";
+				st = new StringTokenizer(attrs, ",");
+				
+				while(st.hasMoreTokens()) {
+						aList.add(st.nextToken());
 				}
 				r = new Relation(text_rName.getText(), aList);
 				ArrayList<String> attrList = r.GetAttrList();
-				String result = rlbl.getText();
-				result += text_rName.getText() + "(";
+				st = new StringTokenizer(pk_txt.getText(), ",");
+				String pk;
+				while(st.hasMoreTokens()) {
+					pk = st.nextToken();
+					for(int i = 0; i < attrList.size(); i++) {
+						if(attrList.get(i).equals(pk)) {
+							r.priKeyIndex.add(i);
+						}
+					}
+				}
+				result = text_rName.getText() + "(";
 
 				for(int i = 0; i < attrList.size(); i++) {
+					if(i == r.priKeyIndex.indexOf(i)) {
+						result += "<u>" + attrList.get(i) + "</u>";
+					}else {
 						result += attrList.get(i);
+					}
 						if(i > -1 && i < attrList.size()-1) {
 							
 							result += ",";
 						}
 				}
 				result += ")";
-				rlbl.setText("The new relation created are: " + "\n" + result);
+				rTxtPane.setText(result);
+				
 			}
 		});
-		btnCreate.setBounds(10, 396, 89, 23);
-		frmNfDetector.getContentPane().add(btnCreate);
 		
-		rlbl = new JLabel();
-		rlbl.setBounds(380, 8, 267, 147);
-		frmNfDetector.getContentPane().add(rlbl);
+		JPanel log_panel = new JPanel();
+		log_panel.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Logs", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		log_panel.setBounds(291, 23, 328, 421);
+		frmNfDetector.getContentPane().add(log_panel);
+		log_panel.setLayout(null);
 		
-		aNamelblList = new JLabel[]{aNamelbl1, aNamelbl2, aNamelbl3, aNamelbl4, aNamelbl5, aNamelbl6, aNamelbl7, aNamelbl8};
-		aNametxtList = new JTextField[]{aNametxt1, aNametxt2, aNametxt3, aNametxt4, aNametxt5, aNametxt6, aNametxt7, aNametxt8};
+		rTxtPane = new JTextPane();
+		rTxtPane.setEditable(false);
+		rTxtPane.setContentType("text/html");
+		rTxtPane.setBounds(10, 23, 308, 387);
+		log_panel.add(rTxtPane);
+		
+		JPanel panel = new JPanel();
+		panel.setBorder(new TitledBorder(null, "Step 2: Add Functional Dependencies", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panel.setBounds(10, 174, 271, 145);
+		frmNfDetector.getContentPane().add(panel);
+		panel.setLayout(null);
+		
+		aList1 = new JTextPane();
+		aList1.setBounds(10, 16, 81, 118);
+		panel.add(aList1);
+		
+		aList2 = new JTextPane();
+		aList2.setBounds(178, 16, 83, 118);
+		panel.add(aList2);
+		
+		JButton button = new JButton("> >");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				st = new StringTokenizer(aList1.getText(), "\n");
+				StringTokenizer st1 = new StringTokenizer(aList2.getText(), "\n");
+				String lhs, rhs;
+				while(st.hasMoreTokens()) {
+					lhs = st.nextToken().trim();
+					rhs = st1.nextToken().trim();
+					r.fDList.add(new FD(lhs, rhs));
+				}
+				ArrayList<FD> fdList = r.fDList;
+				FD fd;
+				result += "<br/>";
+				for(int i = 0; i < fdList.size(); i++){
+					fd = fdList.get(i);
+					result += fd.LHS + "->" + fd.RHS;
+					if(i > -1 && i < fdList.size()-1 ) {
+						result += ", ";
+					}
+				}
+				ArrayList<String> candid = new ArrayList<String>();
+				result += "<br/>The candidate keys are: ";
+				for(int i = 0; i < candid.size(); i++) {
+					
+					result += candid.get(i);
+				}
+				rTxtPane.setText(result);
+			}
+		});
+		button.setBounds(90, 16, 89, 118);
+		panel.add(button);
 		
 	}
 	private class SwingAction extends AbstractAction {
