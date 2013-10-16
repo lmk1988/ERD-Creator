@@ -219,8 +219,7 @@ public class Bernstein{
 		
 		return partArray;
 	}
-		
-	
+
 	//transitive dependency
 	public static ArrayList<Partition> eliminateTransitiveDependency(ArrayList<Partition> partitionArray){
 		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);

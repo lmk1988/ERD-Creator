@@ -56,7 +56,6 @@ public class Attribute{
 		int nextIndex = bitString.indexOf("1");
 		String tempAttr = "";
 		while(nextIndex>=0){
-			
 			int attrIndex = currentLength-1-nextIndex;
 			tempAttr = attrList.get(attrIndex)+tempAttr;
 			nextIndex = bitString.indexOf("1", nextIndex+1);
