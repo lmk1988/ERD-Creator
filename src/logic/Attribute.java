@@ -45,6 +45,10 @@ public class Attribute{
 	
 	public String getAttrString(String bitString){
 		int currentLength = numOfAttributes();
+		if(currentLength==0){
+			return "";
+		}
+		
 		while(bitString.length()<currentLength){
 			bitString = "0"+bitString;
 		}

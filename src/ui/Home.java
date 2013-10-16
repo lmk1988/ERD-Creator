@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JTextArea;
 
+import logic.Attribute;
 import logic.FD;
 import logic.Relation;
 
@@ -146,15 +147,18 @@ public class Home{
 		rpanel.add(btnCreate, "4, 8");
 		btnCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				//Must clear everytime you start
+				Attribute.getInstance().clear();
+				
 				ArrayList<String> aList = new ArrayList<String>();
 				String attrs = attrTxt.getText();
 				String attr = "";
 				st = new StringTokenizer(attrs, ",");
 				
 				while(st.hasMoreTokens()) {
-						aList.add(st.nextToken());
+						aList.add(st.nextToken().trim());
 				}
-				r = new Relation(text_rName.getText(), aList);
+				r = new Relation(text_rName.getText().trim(), aList);
 				ArrayList<String> attrList = r.GetAttrList();
 				String pk = pk_txt.getText();
 				r.priKey = pk;
@@ -166,9 +170,9 @@ public class Home{
 					}else {
 						result += attrList.get(i);
 					}
-						if(i > -1 && i < attrList.size()-1) {
+						if(i < attrList.size()-1) {
 							
-							result += ",";
+							result += ", ";
 						}
 				}
 				result += ")";
@@ -207,26 +211,37 @@ public class Home{
 		JButton button = new JButton("> >");
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				if(Attribute.getInstance().numOfAttributes()==0){
+					return;
+				}
+				
 				st = new StringTokenizer(aList1.getText(), "\n");
 				StringTokenizer st1 = new StringTokenizer(aList2.getText(), "\n");
 				String lhs, rhs;
 				while(st.hasMoreTokens()) {
 					lhs = st.nextToken().trim();
 					rhs = st1.nextToken().trim();
-					r.fDList.add(new FD(lhs, rhs));
+					
+					String bitLHS = Attribute.getInstance().getBitString(lhs);
+					String bitRHS = Attribute.getInstance().getBitString(rhs);
+					
+					if(bitLHS.length()==0 || bitRHS.length()==0){
+						return;
+					}
+					r.fDList.add(new FD(bitLHS, bitRHS));
 				}
 				ArrayList<FD> fdList = r.fDList;
 				FD fd;
 				result += "<br/>";
 				for(int i = 0; i < fdList.size(); i++){
 					fd = fdList.get(i);
-					result += fd.LHS + "->" + fd.RHS;
+					result += fd;
 					if(i > -1 && i < fdList.size()-1 ) {
 						result += ", ";
 					}
 				}
 
-				ArrayList<String> candid = new ArrayList<String>();
+				ArrayList<String> candid = r.getCandidateKeys();
 				result += "<br/>The candidate keys are: ";
 				for(int i = 0; i < candid.size(); i++) {
 					

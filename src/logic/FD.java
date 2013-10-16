@@ -48,6 +48,13 @@ public class FD implements Comparable<FD>{
 	
 	@Override 
 	public String toString(){
-		return LHS+"->"+RHS;
+		String attrLHS = Attribute.getInstance().getAttrString(LHS);
+		String attrRHS = Attribute.getInstance().getAttrString(RHS);
+
+		if(attrLHS.length()==0 || attrRHS.length()==0){
+			return LHS+"->"+RHS;
+		}else{
+			return attrLHS+"->"+attrRHS;
+		}
 	}
 }

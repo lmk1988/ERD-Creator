@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.*;
+import ui.Log;
 
 public class Bernstein{
 	
@@ -8,7 +9,8 @@ public class Bernstein{
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		for(int i=0;i<tempArray.size();i++){
 			FD currentFD = tempArray.get(i);
-			if(currentFD.LHS.compareTo(currentFD.RHS)==0){
+			if(Attribute.IS_BIT_EQUAL(currentFD.LHS, currentFD.RHS)){
+				Log.getInstance().printLog("Trivial "+currentFD+" is removed");
 				//LHS and RHS is the same
 				tempArray.remove(i);
 				i--;
@@ -20,6 +22,7 @@ public class Bernstein{
 				//RHS contains some or all of LHS
 				int tempInt =  Integer.parseInt(currentFD.RHS,2)-Integer.parseInt(compare,2);
 				if(tempInt==0){
+					Log.getInstance().printLog("Trivial "+tempArray.get(i)+" is removed");
 					tempArray.remove(i);
 					i--;
 					continue;
@@ -28,7 +31,11 @@ public class Bernstein{
 				while(tempStr.length()<currentFD.LHS.length()){
 					tempStr = "0"+tempStr;
 				}
+				
+				String strLog = "Trivial "+currentFD+"is converted to ";
 				currentFD.RHS = tempStr;
+				strLog+=currentFD;
+				Log.getInstance().printLog(strLog);
 			}
 		}
 		return tempArray;
@@ -82,6 +89,7 @@ public class Bernstein{
 	//F+
 	//For each FD, try to see if it can be expanded further
 	public static ArrayList<FD> getFPlus(ArrayList<FD> fDArray){
+		Log.getInstance().setLogging(false);
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		tempArray = removeTrivial(tempArray);
 		tempArray = splitRHS(tempArray);
@@ -106,6 +114,7 @@ public class Bernstein{
 		}
 		//Remove trivial again just in case
 		tempArray = removeTrivial(tempArray);
+		Log.getInstance().setLogging(true);
 		return tempArray;
 	}
 	
