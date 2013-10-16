@@ -50,7 +50,7 @@ import javax.swing.BoxLayout;
 import java.awt.Component;
 import javax.swing.SwingConstants;
 
-public class Home {
+public class Home{
 
 	private JFrame frmNfDetector;
 	private final Action action = new SwingAction();
@@ -188,6 +188,7 @@ public class Home {
 		rTxtPane.setContentType("text/html");
 		rTxtPane.setBounds(10, 23, 308, 387);
 		log_panel.add(rTxtPane);
+		Log.getInstance().setLogView(rTxtPane);
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new TitledBorder(null, "Step 2: Add Functional Dependencies", TitledBorder.LEADING, TitledBorder.TOP, null, null));
