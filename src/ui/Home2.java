@@ -28,7 +28,13 @@ import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
+import javax.swing.JTextPane;
 
+import logic.Attribute;
+import logic.Relation;
+import logic.Bernstein;
+import logic.FD;
+import logic.Partition;
 
 public class Home2 {
 
@@ -40,16 +46,15 @@ public class Home2 {
 	private JTextField textField_Name;
 	private JTextField textField_PriKeys;
 
-	private DefaultListModel<String> model_Rel;
-	private ArrayList<DefaultListModel<String>> model_Attr;
-	private ArrayList<DefaultListModel<String>> model_PriKey;
-	private ArrayList<DefaultListModel<String>> model_FD;
+	private DefaultListModel<String> data_Rel;
+	private ArrayList<DefaultListModel<String>> datalist_Attr;
+	private ArrayList<DefaultListModel<String>> datalist_PriKey;
+	private ArrayList<DefaultListModel<String>> datalist_FD;
 
 	private JButton btn_AddAttr;
 	private JButton btn_NewRelation;
 	private JButton btn_PriKeys;
 	private JButton btn_addFD;
-
 
 	private JList<String> list_Attr;
 	private JList<String> list_PriKeys;
@@ -61,6 +66,11 @@ public class Home2 {
 	private JPanel panel_Name;
 	private JPanel panel_Relations;
 	private JPanel panel_PriKeys;
+	private JTextPane textPane_Detect;
+	
+	
+	private ArrayList<Relation> arrayRel;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -82,12 +92,13 @@ public class Home2 {
 	 */
 	public Home2() {
 		initialize();
-		setActions();
+		setTabChangeListener();
+		setCreateTabActions();
 		disablePanels();
 	}
 
 	/**
-	 * Initialize the contents of the frame.
+	 * Initialize the contents of the frame. (UI stuffs only)
 	 */
 	private void initialize() {
 		frmNfdetector = new JFrame();
@@ -201,40 +212,24 @@ public class Home2 {
 
 		JPanel panel_Detect = new JPanel();
 		tabbedPane.addTab("Detect", null, panel_Detect, null);
+		panel_Detect.setLayout(null);
+		
+		textPane_Detect = new JTextPane();
+		textPane_Detect.setEditable(false);
+		textPane_Detect.setBounds(10, 11, 559, 328);
+		panel_Detect.add(textPane_Detect);
 
 		JPanel panel_Suggest = new JPanel();
 		tabbedPane.addTab("Suggest", null, panel_Suggest, null);
 	}
 
-	private void setActions(){
-		model_Rel = new DefaultListModel<String>();
-		model_Attr = new ArrayList<DefaultListModel<String>>();
-		model_PriKey = new ArrayList<DefaultListModel<String>>();
-		model_FD = new ArrayList<DefaultListModel<String>>();
+	private void setCreateTabActions(){
+		data_Rel = new DefaultListModel<String>();
+		datalist_Attr = new ArrayList<DefaultListModel<String>>();
+		datalist_PriKey = new ArrayList<DefaultListModel<String>>();
+		datalist_FD = new ArrayList<DefaultListModel<String>>();
 		
-		list_Rel.setModel(model_Rel);
-
-		tabbedPane.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				switch(tabbedPane.getSelectedIndex()){
-				case 0:
-					//Create
-					//TODO
-					break;
-				case 1:
-					//Detect
-					//TODO
-					break;
-				case 2:
-					//Suggest
-					//TODO
-					break;
-				default:
-					System.out.println("Error: unknown tab selected");
-					break;
-				}
-			}
-		});
+		list_Rel.setModel(data_Rel);
 
 		list_Rel.addMouseListener(new MouseAdapter()
 		{
@@ -245,14 +240,14 @@ public class Home2 {
 				if(index>=0){
 					if(evt.getClickCount()==2){
 						//Double click
-						model_Rel.remove(index);
-						model_Attr.remove(index);
-						model_PriKey.remove(index);
-						model_FD.remove(index);
+						data_Rel.remove(index);
+						datalist_Attr.remove(index);
+						datalist_PriKey.remove(index);
+						datalist_FD.remove(index);
 						if(index!=0){
 							list_Rel.setSelectedIndex(index-1);
 							refreshDisplay(index-1);
-						}else if(model_Rel.size()>0){
+						}else if(data_Rel.size()>0){
 							list_Rel.setSelectedIndex(0);
 							refreshDisplay(0);
 						}else{
@@ -275,7 +270,7 @@ public class Home2 {
 				if(index>=0){
 					if(evt.getClickCount()==2){
 						//Double click
-						model_PriKey.remove(index);
+						datalist_PriKey.remove(index);
 					}
 					list_PriKeys.clearSelection();
 				}
@@ -291,7 +286,7 @@ public class Home2 {
 				if(index>=0){
 					if(evt.getClickCount()==2){
 						//Double click
-						model_FD.remove(index);
+						datalist_FD.remove(index);
 					}
 					list_FD.clearSelection();
 				}
@@ -308,19 +303,19 @@ public class Home2 {
 					if(evt.getClickCount()==2){
 						//Double click
 						//Remove everything related to this attribute
-						for(int i=0;i<model_PriKey.get(list_Rel.getSelectedIndex()).size();i++){
-							String[] keySplit = model_PriKey.get(list_Rel.getSelectedIndex()).get(i).split(",");
+						for(int i=0;i<datalist_PriKey.get(list_Rel.getSelectedIndex()).size();i++){
+							String[] keySplit = datalist_PriKey.get(list_Rel.getSelectedIndex()).get(i).split(",");
 							for(int j=0;j<keySplit.length;j++){
-								if(keySplit[j].compareTo(model_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
-									model_PriKey.remove(i);
+								if(keySplit[j].compareTo(datalist_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
+									datalist_PriKey.remove(i);
 									i--;
 									break;
 								}
 							}		
 						}
 						
-						for(int i=0;i<model_FD.size();i++){
-							String[] keySplit = model_FD.get(list_Rel.getSelectedIndex()).get(i).split("->");
+						for(int i=0;i<datalist_FD.size();i++){
+							String[] keySplit = datalist_FD.get(list_Rel.getSelectedIndex()).get(i).split("->");
 							if(keySplit.length!=2){
 								System.out.println("Error, FD unable to parse properly");
 								return;
@@ -329,16 +324,16 @@ public class Home2 {
 							String[] RHSSplit = keySplit[1].split(",");
 							boolean bol_found = false;
 							for(int j=0;j<LHSSplit.length && !bol_found;j++){
-								if(LHSSplit[j].compareTo(model_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
-									model_FD.remove(i);
+								if(LHSSplit[j].compareTo(datalist_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
+									datalist_FD.remove(i);
 									i--;
 									bol_found=true;
 									break;
 								}
 							}
 							for(int j=0;j<RHSSplit.length && !bol_found;j++){
-								if(RHSSplit[j].compareTo(model_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
-									model_FD.remove(i);
+								if(RHSSplit[j].compareTo(datalist_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
+									datalist_FD.remove(i);
 									i--;
 									bol_found=true;
 									break;
@@ -346,7 +341,7 @@ public class Home2 {
 							}
 						}
 						
-						model_Attr.get(list_Rel.getSelectedIndex()).remove(index);
+						datalist_Attr.get(list_Rel.getSelectedIndex()).remove(index);
 					}
 					list_Attr.clearSelection();
 				}
@@ -355,12 +350,12 @@ public class Home2 {
 		
 		btn_NewRelation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				model_Rel.addElement("Relation "+(model_Rel.size()+1));
-				model_Attr.add(new DefaultListModel<String>());
-				model_PriKey.add(new DefaultListModel<String>());
-				model_FD.add(new DefaultListModel<String>());
-				list_Rel.setSelectedIndex(model_Rel.size()-1);
-				refreshDisplay(model_Rel.size()-1);
+				data_Rel.addElement("Relation "+(data_Rel.size()+1));
+				datalist_Attr.add(new DefaultListModel<String>());
+				datalist_PriKey.add(new DefaultListModel<String>());
+				datalist_FD.add(new DefaultListModel<String>());
+				list_Rel.setSelectedIndex(data_Rel.size()-1);
+				refreshDisplay(data_Rel.size()-1);
 			}
 		});
 
@@ -368,8 +363,8 @@ public class Home2 {
 			public void actionPerformed(ActionEvent evt) {
 				textField_Attr.setText(textField_Attr.getText().replaceAll(",", "").replaceAll("->","").trim());
 				if(textField_Attr.getText().length()!=0 && list_Rel.getSelectedIndex()>=0){
-					if(!model_Attr.get(list_Rel.getSelectedIndex()).contains(textField_Attr.getText())){
-						model_Attr.get(list_Rel.getSelectedIndex()).addElement(textField_Attr.getText());
+					if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(textField_Attr.getText())){
+						datalist_Attr.get(list_Rel.getSelectedIndex()).addElement(textField_Attr.getText());
 						textField_Attr.setText("");
 					}
 				}
@@ -384,7 +379,7 @@ public class Home2 {
 					//check if pri key exist in attributes
 					String[] split=textField_PriKeys.getText().split(",");
 					for(int i=0;i<split.length;i++){
-						if(!model_Attr.get(list_Rel.getSelectedIndex()).contains(split[i].trim())){
+						if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(split[i].trim())){
 							return;
 						}else{
 							if(i!=0){
@@ -395,8 +390,8 @@ public class Home2 {
 					}
 
 					//check if there is existing pri key
-					if(!model_PriKey.get(list_Rel.getSelectedIndex()).contains(properTemp)){
-						model_PriKey.get(list_Rel.getSelectedIndex()).addElement(properTemp);
+					if(!datalist_PriKey.get(list_Rel.getSelectedIndex()).contains(properTemp)){
+						datalist_PriKey.get(list_Rel.getSelectedIndex()).addElement(properTemp);
 						textField_PriKeys.setText("");
 					}
 				}
@@ -415,7 +410,7 @@ public class Home2 {
 					//Check if they are made from attributes
 					String[] LHSsplit=textField_LHS.getText().split(",");
 					for(int i=0;i<LHSsplit.length;i++){
-						if(!model_Attr.get(list_Rel.getSelectedIndex()).contains(LHSsplit[i].trim())){
+						if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(LHSsplit[i].trim())){
 							return;
 						}else{
 							if(i!=0){
@@ -426,7 +421,7 @@ public class Home2 {
 					}
 					String[] RHSsplit=textField_RHS.getText().split(",");
 					for(int i=0;i<RHSsplit.length;i++){
-						if(!model_Attr.get(list_Rel.getSelectedIndex()).contains(RHSsplit[i].trim())){
+						if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(RHSsplit[i].trim())){
 							return;
 						}else{
 							if(i!=0){
@@ -437,8 +432,8 @@ public class Home2 {
 					}
 
 					//check if there exist the same combination in FD
-					if(!model_FD.get(list_Rel.getSelectedIndex()).contains(properLHS+"->"+properRHS)){
-						model_FD.get(list_Rel.getSelectedIndex()).addElement(properLHS+"->"+properRHS);
+					if(!datalist_FD.get(list_Rel.getSelectedIndex()).contains(properLHS+"->"+properRHS)){
+						datalist_FD.get(list_Rel.getSelectedIndex()).addElement(properLHS+"->"+properRHS);
 						textField_LHS.setText("");
 						textField_RHS.setText("");
 					}
@@ -463,25 +458,54 @@ public class Home2 {
 			}
 			
 			private void resetName(){
-				if(!model_Rel.isEmpty()){
-					model_Rel.setElementAt(textField_Name.getText(), list_Rel.getSelectedIndex());
+				if(!data_Rel.isEmpty()){
+					data_Rel.setElementAt(textField_Name.getText(), list_Rel.getSelectedIndex());
 				}
 			}
 		});
 	}
 
+	private void setTabChangeListener(){
+		tabbedPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				switch(tabbedPane.getSelectedIndex()){
+				case 0:
+					//Create
+					//TODO
+					break;
+				case 1:
+					//Detect
+					createModelsFromInput();
+					Log.getInstance().setLogView(textPane_Detect);
+					//TODO perform detection task below
+					break;
+				case 2:
+					//Suggest
+					createModelsFromInput();
+					//TODO log and perform bernstein
+					break;
+				default:
+					System.out.println("Error: unknown tab selected");
+					break;
+				}
+			}
+		});
+	}
+	
+	//Refresh the panels in create when user choose a new relation
 	private void refreshDisplay(int index){
 		if(index<0){
 			disablePanels();
 		}else{
 			enablePanels();
-			textField_Name.setText(model_Rel.get(index));
-			list_FD.setModel(model_FD.get(index));
-			list_Attr.setModel(model_Attr.get(index));
-			list_PriKeys.setModel(model_PriKey.get(index));
+			textField_Name.setText(data_Rel.get(index));
+			list_FD.setModel(datalist_FD.get(index));
+			list_Attr.setModel(datalist_Attr.get(index));
+			list_PriKeys.setModel(datalist_PriKey.get(index));
 		}
 	}
 
+	//Enable input panels in create tab
 	private void enablePanels(){
 		boolean bol = true;
 		panel_Attributes.setEnabled(bol);
@@ -498,11 +522,12 @@ public class Home2 {
 		btn_PriKeys.setEnabled(bol);
 	}
 
+	//Disable input panels in create tab
 	private void disablePanels(){
 		boolean bol = false;
-		model_Attr.clear();
-		model_PriKey.clear();
-		model_FD.clear();
+		datalist_Attr.clear();
+		datalist_PriKey.clear();
+		datalist_FD.clear();
 		textField_Attr.setText("");
 		textField_LHS.setText("");
 		textField_Name.setText("");
@@ -520,5 +545,25 @@ public class Home2 {
 		btn_AddAttr.setEnabled(bol);
 		btn_addFD.setEnabled(bol);
 		btn_PriKeys.setEnabled(bol);
+	}
+
+	private void createModelsFromInput(){
+		arrayRel = new ArrayList<Relation>();
+		Attribute.getInstance().clear();
+		for(int i=0;i<data_Rel.size();i++){
+			
+			String strName = data_Rel.get(i);
+			ArrayList<String> tempAttrArray = new ArrayList<String>();
+			for(int j=0;j<datalist_Attr.get(i).size();j++){
+				tempAttrArray.add(datalist_Attr.get(i).get(j));
+			}
+			Relation tempRel = new Relation(strName,tempAttrArray);
+			arrayRel.add(tempRel);
+			
+			//TODO add Pri Key
+			
+			//TODO add FD
+			
+		}
 	}
 }

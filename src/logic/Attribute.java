@@ -34,6 +34,7 @@ public class Attribute{
 		return getBitString(variable);
 	}
 	
+	//Returns the bitString representing the variable
 	public String getBitString(String variable){
 		int index =attrList.indexOf(variable);
 		if(index<0){
@@ -43,6 +44,7 @@ public class Attribute{
 		}
 	}
 	
+	//returns the attribute represented by the bitString
 	public String getAttrString(String bitString){
 		int currentLength = numOfAttributes();
 		if(currentLength==0){

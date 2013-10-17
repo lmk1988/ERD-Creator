@@ -281,37 +281,49 @@ public class Bernstein{
 		
 		for(int i=0;i<partitionArray.size();i++){
 			ArrayList<String> attrList = new ArrayList<String>();
-			String priKeyBit = "";
+			ArrayList<String> priKeyList = new ArrayList<String>();
 			
 			//Add attributes from join
 			for(int j=0;j<partitionArray.get(j).joinList.size();j++){
 				int index = partitionArray.get(j).joinList.get(j).LHS.indexOf("1");
+				String LHSpriKeyBit = "";
 				while(index>=0){
 					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						priKeyBit = Attribute.OR(priKeyBit, bitString);
+						LHSpriKeyBit = Attribute.OR(LHSpriKeyBit, bitString);
 					}
 					index = partitionArray.get(j).joinList.get(j).LHS.indexOf("1",index+1);
 				}
 				
+				String LHS = Attribute.getInstance().getAttrString(LHSpriKeyBit);
+				if(!priKeyList.contains(LHS)){
+					priKeyList.add(LHS);
+				}
+				
 				index = partitionArray.get(j).joinList.get(j).RHS.indexOf("1");
+				String RHSpriKeyBit = "";
 				while(index>=0){
 					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						priKeyBit = Attribute.OR(priKeyBit, bitString);
+						RHSpriKeyBit = Attribute.OR(RHSpriKeyBit, bitString);
 					}
 					index = partitionArray.get(j).joinList.get(j).RHS.indexOf("1",index+1);
+				}
+				
+				String RHS = Attribute.getInstance().getAttrString(RHSpriKeyBit);
+				if(!priKeyList.contains(RHS)){
+					priKeyList.add(RHS);
 				}
 			}
 			
 			//Add attributes from FDs
 			ArrayList<FD> fDList = partitionArray.get(i).getfDList();
 			for(int j=0;j<fDList.size();j++){
-				
+				String priKeyBit = "";
 				int index = fDList.get(j).LHS.indexOf("1");
 				while(index>=0){
 					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
@@ -323,13 +335,18 @@ public class Bernstein{
 					index = fDList.get(j).LHS.indexOf("1",index+1);
 				}
 				
+				String LHS = Attribute.getInstance().getAttrString(priKeyBit);
+				if(!priKeyList.contains(LHS)){
+					priKeyList.add(LHS);
+				}
+				
 				index = fDList.get(j).RHS.indexOf("1");
 				while(index>=0){
 					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						//Do not add primary key here
+						//Do not add primary key for RHS
 					}
 					index = fDList.get(j).RHS.indexOf("1",index+1);
 				}
@@ -337,7 +354,7 @@ public class Bernstein{
 			
 			Relation tempRelation = new Relation("R"+(i+1),attrList);
 			tempRelation.fDList = fDList;
-			tempRelation.priKey = Attribute.getInstance().getAttrString(priKeyBit);
+			tempRelation.priKeyList = priKeyList;
 			relArray.add(tempRelation);
 		}
 		

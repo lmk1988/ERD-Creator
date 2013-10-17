@@ -161,7 +161,7 @@ public class Home{
 				r = new Relation(text_rName.getText().trim(), aList);
 				ArrayList<String> attrList = r.GetAttrList();
 				String pk = pk_txt.getText();
-				r.priKey = pk;
+				/*r.priKey = pk;
 				result = text_rName.getText() + "(";
 
 				for(int i = 0; i < attrList.size(); i++) {
@@ -174,7 +174,7 @@ public class Home{
 							
 							result += ", ";
 						}
-				}
+				}*/
 				result += ")";
 				rTxtPane.setText(result);
 				

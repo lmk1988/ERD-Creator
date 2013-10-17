@@ -417,11 +417,13 @@ public class UnitTest_Bernstein {
 		assertEquals(returnList.get(2).GetAttrList().get(0),"C");
 		assertEquals(returnList.get(2).GetAttrList().get(1),"B");
 		assertEquals(returnList.get(2).GetAttrList().get(2),"A");
-		assertEquals(returnList.get(0).priKey,"AE");
-		assertEquals(returnList.get(1).priKey,"D");
-		assertEquals(returnList.get(2).priKey,"BC");
+		assertEquals(returnList.get(0).priKeyList.size(),1);
+		assertEquals(returnList.get(0).priKeyList.get(0),"AE");
+		assertEquals(returnList.get(1).priKeyList.size(),1);
+		assertEquals(returnList.get(1).priKeyList.get(0),"D");
+		assertEquals(returnList.get(2).priKeyList.size(),1);
+		assertEquals(returnList.get(2).priKeyList.get(0),"BC");
 		
 		Attribute.getInstance().clear();
-
 	}
 }

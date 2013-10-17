@@ -5,13 +5,13 @@ import java.util.*;
 public class Relation {
 	ArrayList<String> attrList; //stores Alphabets only
 	public ArrayList<FD> fDList;
-	public String priKey; 
+	public ArrayList<String> priKeyList; 
 	String relName;
 	
 	public Relation(){
 		attrList = new ArrayList<String>();
 		fDList = new ArrayList<FD>();
-		priKey = "";
+		priKeyList = new ArrayList<String>();
 		relName = "";
 	}
 	
