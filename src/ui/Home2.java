@@ -27,6 +27,7 @@ import javax.swing.JList;
 import javax.swing.UIManager;
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
 
 
 public class Home2 {
@@ -40,9 +41,9 @@ public class Home2 {
 	private JTextField textField_PriKeys;
 
 	private DefaultListModel<String> model_Rel;
-	private DefaultListModel<String> model_Attr;
-	private DefaultListModel<String> model_PriKey;
-	private DefaultListModel<String> model_FD;
+	private ArrayList<DefaultListModel<String>> model_Attr;
+	private ArrayList<DefaultListModel<String>> model_PriKey;
+	private ArrayList<DefaultListModel<String>> model_FD;
 
 	private JButton btn_AddAttr;
 	private JButton btn_NewRelation;
@@ -207,13 +208,11 @@ public class Home2 {
 
 	private void setActions(){
 		model_Rel = new DefaultListModel<String>();
+		model_Attr = new ArrayList<DefaultListModel<String>>();
+		model_PriKey = new ArrayList<DefaultListModel<String>>();
+		model_FD = new ArrayList<DefaultListModel<String>>();
+		
 		list_Rel.setModel(model_Rel);
-		model_Attr = new DefaultListModel<String>();
-		list_Attr.setModel(model_Attr);
-		model_PriKey = new DefaultListModel<String>();
-		list_PriKeys.setModel(model_PriKey);
-		model_FD = new DefaultListModel<String>();
-		list_FD.setModel(model_FD);
 
 		tabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -247,6 +246,9 @@ public class Home2 {
 					if(evt.getClickCount()==2){
 						//Double click
 						model_Rel.remove(index);
+						model_Attr.remove(index);
+						model_PriKey.remove(index);
+						model_FD.remove(index);
 						if(index!=0){
 							list_Rel.setSelectedIndex(index-1);
 							refreshDisplay(index-1);
@@ -302,14 +304,14 @@ public class Home2 {
 			{
 				java.awt.Point point = evt.getPoint();
 				int index = list_Attr.locationToIndex(point);
-				if(index>=0){
+				if(index>=0 && list_Rel.getSelectedIndex()>=0){
 					if(evt.getClickCount()==2){
 						//Double click
 						//Remove everything related to this attribute
-						for(int i=0;i<model_PriKey.size();i++){
-							String[] keySplit = model_PriKey.get(i).split(",");
+						for(int i=0;i<model_PriKey.get(list_Rel.getSelectedIndex()).size();i++){
+							String[] keySplit = model_PriKey.get(list_Rel.getSelectedIndex()).get(i).split(",");
 							for(int j=0;j<keySplit.length;j++){
-								if(keySplit[j].compareTo(model_Attr.get(index))==0){
+								if(keySplit[j].compareTo(model_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
 									model_PriKey.remove(i);
 									i--;
 									break;
@@ -318,7 +320,7 @@ public class Home2 {
 						}
 						
 						for(int i=0;i<model_FD.size();i++){
-							String[] keySplit = model_FD.get(i).split("->");
+							String[] keySplit = model_FD.get(list_Rel.getSelectedIndex()).get(i).split("->");
 							if(keySplit.length!=2){
 								System.out.println("Error, FD unable to parse properly");
 								return;
@@ -327,7 +329,7 @@ public class Home2 {
 							String[] RHSSplit = keySplit[1].split(",");
 							boolean bol_found = false;
 							for(int j=0;j<LHSSplit.length && !bol_found;j++){
-								if(LHSSplit[j].compareTo(model_Attr.get(index))==0){
+								if(LHSSplit[j].compareTo(model_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
 									model_FD.remove(i);
 									i--;
 									bol_found=true;
@@ -335,7 +337,7 @@ public class Home2 {
 								}
 							}
 							for(int j=0;j<RHSSplit.length && !bol_found;j++){
-								if(RHSSplit[j].compareTo(model_Attr.get(index))==0){
+								if(RHSSplit[j].compareTo(model_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
 									model_FD.remove(i);
 									i--;
 									bol_found=true;
@@ -344,7 +346,7 @@ public class Home2 {
 							}
 						}
 						
-						model_Attr.remove(index);
+						model_Attr.get(list_Rel.getSelectedIndex()).remove(index);
 					}
 					list_Attr.clearSelection();
 				}
@@ -354,6 +356,9 @@ public class Home2 {
 		btn_NewRelation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				model_Rel.addElement("Relation "+(model_Rel.size()+1));
+				model_Attr.add(new DefaultListModel<String>());
+				model_PriKey.add(new DefaultListModel<String>());
+				model_FD.add(new DefaultListModel<String>());
 				list_Rel.setSelectedIndex(model_Rel.size()-1);
 				refreshDisplay(model_Rel.size()-1);
 			}
@@ -362,9 +367,9 @@ public class Home2 {
 		btn_AddAttr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				textField_Attr.setText(textField_Attr.getText().replaceAll(",", "").replaceAll("->","").trim());
-				if(textField_Attr.getText().length()!=0){
-					if(!model_Attr.contains(textField_Attr.getText())){
-						model_Attr.addElement(textField_Attr.getText());
+				if(textField_Attr.getText().length()!=0 && list_Rel.getSelectedIndex()>=0){
+					if(!model_Attr.get(list_Rel.getSelectedIndex()).contains(textField_Attr.getText())){
+						model_Attr.get(list_Rel.getSelectedIndex()).addElement(textField_Attr.getText());
 						textField_Attr.setText("");
 					}
 				}
@@ -374,12 +379,12 @@ public class Home2 {
 		btn_PriKeys.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				textField_PriKeys.setText(textField_PriKeys.getText().replaceAll("->","").trim());
-				if(textField_PriKeys.getText().length()!=0){
+				if(textField_PriKeys.getText().length()!=0 && list_Rel.getSelectedIndex()>=0){
 					String properTemp="";
 					//check if pri key exist in attributes
 					String[] split=textField_PriKeys.getText().split(",");
 					for(int i=0;i<split.length;i++){
-						if(!model_Attr.contains(split[i].trim())){
+						if(!model_Attr.get(list_Rel.getSelectedIndex()).contains(split[i].trim())){
 							return;
 						}else{
 							if(i!=0){
@@ -390,8 +395,8 @@ public class Home2 {
 					}
 
 					//check if there is existing pri key
-					if(!model_PriKey.contains(properTemp)){
-						model_PriKey.addElement(properTemp);
+					if(!model_PriKey.get(list_Rel.getSelectedIndex()).contains(properTemp)){
+						model_PriKey.get(list_Rel.getSelectedIndex()).addElement(properTemp);
 						textField_PriKeys.setText("");
 					}
 				}
@@ -404,13 +409,13 @@ public class Home2 {
 				textField_LHS.setText(textField_LHS.getText().replaceAll("->","").trim());
 				textField_RHS.setText(textField_RHS.getText().replaceAll("->","").trim());
 
-				if(textField_LHS.getText().length()!=0 && textField_RHS.getText().length()!=0){
+				if(list_Rel.getSelectedIndex()>=0 && textField_LHS.getText().length()!=0 && textField_RHS.getText().length()!=0){
 					String properLHS="";
 					String properRHS="";
 					//Check if they are made from attributes
 					String[] LHSsplit=textField_LHS.getText().split(",");
 					for(int i=0;i<LHSsplit.length;i++){
-						if(!model_Attr.contains(LHSsplit[i].trim())){
+						if(!model_Attr.get(list_Rel.getSelectedIndex()).contains(LHSsplit[i].trim())){
 							return;
 						}else{
 							if(i!=0){
@@ -421,7 +426,7 @@ public class Home2 {
 					}
 					String[] RHSsplit=textField_RHS.getText().split(",");
 					for(int i=0;i<RHSsplit.length;i++){
-						if(!model_Attr.contains(RHSsplit[i].trim())){
+						if(!model_Attr.get(list_Rel.getSelectedIndex()).contains(RHSsplit[i].trim())){
 							return;
 						}else{
 							if(i!=0){
@@ -432,8 +437,8 @@ public class Home2 {
 					}
 
 					//check if there exist the same combination in FD
-					if(!model_FD.contains(properLHS+"->"+properRHS)){
-						model_FD.addElement(properLHS+"->"+properRHS);
+					if(!model_FD.get(list_Rel.getSelectedIndex()).contains(properLHS+"->"+properRHS)){
+						model_FD.get(list_Rel.getSelectedIndex()).addElement(properLHS+"->"+properRHS);
 						textField_LHS.setText("");
 						textField_RHS.setText("");
 					}
@@ -471,6 +476,9 @@ public class Home2 {
 		}else{
 			enablePanels();
 			textField_Name.setText(model_Rel.get(index));
+			list_FD.setModel(model_FD.get(index));
+			list_Attr.setModel(model_Attr.get(index));
+			list_PriKeys.setModel(model_PriKey.get(index));
 		}
 	}
 
