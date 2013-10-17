@@ -12,6 +12,11 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,15 +32,34 @@ import java.awt.Font;
 public class Home2 {
 
 	private JFrame frmNfdetector;
+	private JTabbedPane tabbedPane;
 	private JTextField textField_Attr;
 	private JTextField textField_LHS;
 	private JTextField textField_RHS;
 	private JTextField textField_Name;
-	private JButton btn_NewRelation;
-	private JList<String> list_Rel;
-	private DefaultListModel<String> model_Rel;
 	private JTextField textField_PriKeys;
-
+	
+	private DefaultListModel<String> model_Rel;
+	private DefaultListModel<String> model_Attr;
+	private DefaultListModel<String> model_PriKey;
+	private DefaultListModel<String> model_FD;
+	
+	private JButton btn_AddAttr;
+	private JButton btn_NewRelation;
+	private JButton btn_PriKeys;
+	private JButton btn_addFD;
+	
+	
+	private JList<String> list_Attr;
+	private JList<String> list_PriKeys;
+	private JList<String> list_Rel;
+	private JList<String> list_FD;
+	
+	private JPanel panel_Attributes;
+	private JPanel panel_FD;
+	private JPanel panel_Name;
+	private JPanel panel_Relations;
+	private JPanel panel_PriKeys;
 	/**
 	 * Launch the application.
 	 */
@@ -58,6 +82,7 @@ public class Home2 {
 	public Home2() {
 		initialize();
 		setActions();
+		disablePanels();
 	}
 
 	/**
@@ -69,20 +94,20 @@ public class Home2 {
 		frmNfdetector.setBounds(100, 100, 600, 416);
 		frmNfdetector.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		frmNfdetector.getContentPane().add(tabbedPane, BorderLayout.CENTER);
 		
 		JPanel panel_Create = new JPanel();
 		tabbedPane.addTab("Create", null, panel_Create, null);
 		panel_Create.setLayout(null);
 		
-		JPanel panel_Attributes = new JPanel();
+		panel_Attributes = new JPanel();
 		panel_Attributes.setBorder(new TitledBorder(null, "Attributes", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_Attributes.setBounds(166, 64, 133, 130);
 		panel_Create.add(panel_Attributes);
 		panel_Attributes.setLayout(null);
 		
-		JButton btn_AddAttr = new JButton("+");
+		btn_AddAttr = new JButton("+");
 		btn_AddAttr.setBounds(82, 101, 41, 23);
 		panel_Attributes.add(btn_AddAttr);
 		
@@ -91,11 +116,11 @@ public class Home2 {
 		panel_Attributes.add(textField_Attr);
 		textField_Attr.setColumns(10);
 		
-		JList<String> list_Attr = new JList<String>();
+		list_Attr = new JList<String>();
 		list_Attr.setBounds(10, 15, 113, 76);
 		panel_Attributes.add(list_Attr);
 		
-		JPanel panel_FD = new JPanel();
+		panel_FD = new JPanel();
 		panel_FD.setBorder(new TitledBorder(null, "Functional Dependencies", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_FD.setBounds(310, 64, 259, 263);
 		panel_Create.add(panel_FD);
@@ -116,15 +141,15 @@ public class Home2 {
 		textField_RHS.setBounds(118, 230, 80, 20);
 		panel_FD.add(textField_RHS);
 		
-		JButton btn_addFD = new JButton("+");
+		btn_addFD = new JButton("+");
 		btn_addFD.setBounds(208, 229, 41, 23);
 		panel_FD.add(btn_addFD);
 		
-		JList<String> list_FD = new JList<String>();
+		list_FD = new JList<String>();
 		list_FD.setBounds(10, 20, 239, 199);
 		panel_FD.add(list_FD);
 		
-		JPanel panel_Name = new JPanel();
+		panel_Name = new JPanel();
 		panel_Name.setBorder(new TitledBorder(null, "Relation Name", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_Name.setBounds(166, 11, 403, 42);
 		panel_Create.add(panel_Name);
@@ -134,7 +159,7 @@ public class Home2 {
 		panel_Name.add(textField_Name);
 		textField_Name.setColumns(10);
 		
-		JPanel panel_Relations = new JPanel();
+		panel_Relations = new JPanel();
 		panel_Relations.setBorder(new TitledBorder(null, "Relations", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_Relations.setBounds(10, 11, 150, 316);
 		panel_Create.add(panel_Relations);
@@ -149,13 +174,13 @@ public class Home2 {
 		btn_NewRelation.setBounds(10, 282, 130, 23);
 		panel_Relations.add(btn_NewRelation);
 		
-		JPanel panel_PriKeys = new JPanel();
+		panel_PriKeys = new JPanel();
 		panel_PriKeys.setLayout(null);
 		panel_PriKeys.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "Primary Keys", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panel_PriKeys.setBounds(166, 197, 133, 130);
 		panel_Create.add(panel_PriKeys);
 		
-		JButton btn_PriKeys = new JButton("+");
+		btn_PriKeys = new JButton("+");
 		btn_PriKeys.setBounds(82, 101, 41, 23);
 		panel_PriKeys.add(btn_PriKeys);
 		
@@ -164,7 +189,7 @@ public class Home2 {
 		textField_PriKeys.setBounds(10, 102, 68, 20);
 		panel_PriKeys.add(textField_PriKeys);
 		
-		JList<String> list_PriKeys = new JList<String>();
+		list_PriKeys = new JList<String>();
 		list_PriKeys.setBounds(10, 15, 113, 76);
 		panel_PriKeys.add(list_PriKeys);
 		
@@ -182,6 +207,21 @@ public class Home2 {
 
 	private void setActions(){
 		model_Rel = new DefaultListModel<String>();
+		list_Rel.setModel(model_Rel);
+		model_Attr = new DefaultListModel<String>();
+		list_Attr.setModel(model_Attr);
+		model_PriKey = new DefaultListModel<String>();
+		list_PriKeys.setModel(model_PriKey);
+		model_FD = new DefaultListModel<String>();
+		list_FD.setModel(model_FD);
+		
+		tabbedPane.addChangeListener(new ChangeListener() {
+		      public void stateChanged(ChangeEvent e) {
+		    	  //tabbedPane.getSelectedIndex();
+		    	  //TODO
+		    	  System.out.println("Selected Tab index: "+tabbedPane.getSelectedIndex());
+		      }
+		});
 		
 		list_Rel.addMouseListener(new MouseAdapter()
 		{
@@ -193,20 +233,35 @@ public class Home2 {
 				   if(evt.getClickCount()==2){
 					   //Double click
 					   model_Rel.remove(index);
-					   list_Rel.setModel(model_Rel);
 					   if(index!=0){
 						   list_Rel.setSelectedIndex(index-1);
-						   refreshOthers(index-1);
+						   refreshDisplay(index-1);
 					   }else if(model_Rel.size()>0){
 						   list_Rel.setSelectedIndex(0);
-						   refreshOthers(0);
+						   refreshDisplay(0);
 					   }else{
-						   refreshOthers(-1);
+						   refreshDisplay(-1);
 					   }
 				   }else{
 					   //Single click
-					   refreshOthers(index);
+					   refreshDisplay(index);
 				   }
+			   }
+		   }
+		});
+		
+		list_PriKeys.addMouseListener(new MouseAdapter()
+		{
+		   public void mousePressed(MouseEvent evt)
+		   {
+			   java.awt.Point point = evt.getPoint();
+			   int index = list_PriKeys.locationToIndex(point);
+			   if(index>=0){
+				   if(evt.getClickCount()==2){
+					   //Double click
+					   model_PriKey.remove(index);
+				   }
+				   list_PriKeys.clearSelection();
 			   }
 		   }
 		});
@@ -214,18 +269,155 @@ public class Home2 {
 		btn_NewRelation.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				model_Rel.addElement("Relation "+(model_Rel.size()+1));
-				list_Rel.setModel(model_Rel);
 				list_Rel.setSelectedIndex(model_Rel.size()-1);
-				refreshOthers(model_Rel.size()-1);
+				refreshDisplay(model_Rel.size()-1);
+			}
+		});
+		
+		btn_AddAttr.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				textField_Attr.setText(textField_Attr.getText().trim());
+				if(textField_Attr.getText().length()!=0){
+					if(!model_Attr.contains(textField_Attr.getText())){
+						model_Attr.addElement(textField_Attr.getText());
+						textField_Attr.setText("");
+					}
+				}
+			}
+		});
+	
+		btn_PriKeys.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				textField_PriKeys.setText(textField_PriKeys.getText().trim());
+				if(textField_PriKeys.getText().length()!=0){
+					String properTemp="";
+					//check if pri key exist in attributes
+					String split[]=textField_PriKeys.getText().split(",");
+					for(int i=0;i<split.length;i++){
+						if(!model_Attr.contains(split[i].trim())){
+							return;
+						}else{
+							if(i!=0){
+								properTemp+=",";
+							}
+							properTemp+=split[i];
+						}
+					}
+					
+					//check if there is existing pri key
+					if(!model_PriKey.contains(properTemp)){
+						model_PriKey.addElement(properTemp);
+						textField_PriKeys.setText("");
+					}
+				}
+			}
+		});
+		
+		btn_addFD.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				
+				textField_LHS.setText(textField_LHS.getText().trim());
+				textField_RHS.setText(textField_RHS.getText().trim());
+				
+				if(textField_LHS.getText().length()!=0 && textField_RHS.getText().length()!=0){
+					String properLHS="";
+					String properRHS="";
+					//Check if they are made from attributes
+					String LHSsplit[]=textField_LHS.getText().split(",");
+					for(int i=0;i<LHSsplit.length;i++){
+						if(!model_Attr.contains(LHSsplit[i].trim())){
+							return;
+						}else{
+							if(i!=0){
+								properLHS+=",";
+							}
+							properLHS+=LHSsplit[i];
+						}
+					}
+					String RHSsplit[]=textField_RHS.getText().split(",");
+					for(int i=0;i<RHSsplit.length;i++){
+						if(!model_Attr.contains(RHSsplit[i].trim())){
+							return;
+						}else{
+							if(i!=0){
+								properRHS+=",";
+							}
+							properRHS+=RHSsplit[i];
+						}
+					}
+					
+					//check if there exist the same combination in FD
+					if(!model_FD.contains(properLHS+"->"+properRHS)){
+						model_FD.addElement(properLHS+"->"+properRHS);
+					}
+				}
+			}
+		});
+	
+		
+		//Auto update name of relation as user changes the name
+		textField_Name.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				model_Rel.setElementAt(textField_Name.getText(), list_Rel.getSelectedIndex());
+			}
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				model_Rel.setElementAt(textField_Name.getText(), list_Rel.getSelectedIndex());
+			}
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				model_Rel.setElementAt(textField_Name.getText(), list_Rel.getSelectedIndex());
 			}
 		});
 	}
 	
-	private void refreshOthers(int index){
+	private void refreshDisplay(int index){
 		if(index<0){
-			textField_Name.setText("");
+			disablePanels();
 		}else{
+			enablePanels();
 			textField_Name.setText(model_Rel.get(index));
 		}
+	}
+	
+	private void enablePanels(){
+		boolean bol = true;
+		panel_Attributes.setEnabled(bol);
+		panel_FD.setEnabled(bol);
+		panel_Name.setEnabled(bol);
+		panel_PriKeys.setEnabled(bol);
+		textField_Attr.setEnabled(bol);
+		textField_LHS.setEnabled(bol);
+		textField_Name.setEnabled(bol);
+		textField_PriKeys.setEnabled(bol);
+		textField_RHS.setEnabled(bol);
+		btn_AddAttr.setEnabled(bol);
+		btn_addFD.setEnabled(bol);
+		btn_PriKeys.setEnabled(bol);
+	}
+	
+	private void disablePanels(){
+		boolean bol = false;
+		model_Attr.clear();
+		model_PriKey.clear();
+		model_FD.clear();
+		textField_Attr.setText("");
+		textField_LHS.setText("");
+		textField_Name.setText("");
+		textField_PriKeys.setText("");
+		textField_RHS.setText("");
+		panel_Attributes.setEnabled(bol);
+		panel_FD.setEnabled(bol);
+		panel_Name.setEnabled(bol);
+		panel_PriKeys.setEnabled(bol);
+		textField_Attr.setEnabled(bol);
+		textField_LHS.setEnabled(bol);
+		textField_Name.setEnabled(bol);
+		textField_PriKeys.setEnabled(bol);
+		textField_RHS.setEnabled(bol);
+		btn_AddAttr.setEnabled(bol);
+		btn_addFD.setEnabled(bol);
+		btn_PriKeys.setEnabled(bol);
 	}
 }
