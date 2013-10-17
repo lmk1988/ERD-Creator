@@ -28,7 +28,7 @@ public class Attribute{
 	}
 	
 	public String addAttribute(String variable){
-		if(!attrList.contains(variable)){
+		if(!attrList.contains(variable) && numOfAttributes()<31){
 			attrList.add(variable);
 		}
 		return getBitString(variable);
