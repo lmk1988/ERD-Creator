@@ -6,10 +6,12 @@ public class Partition {
 	//Warning: developer might add a wrong FD with different LHS
 	private ArrayList<FD> fDList;
 	public ArrayList<FD> joinList;
+	public String partitionName;
 	
 	public Partition(){
 		fDList = new ArrayList<FD>();
 		joinList = new ArrayList<FD>();
+		partitionName = "";
 	}
 	
 	public Partition(FD fd){
@@ -57,5 +59,32 @@ public class Partition {
 		}else{
 			return "";
 		}
+	}
+	
+	@Override 
+	public String toString(){
+		String printString = "";
+		
+		for(int i=0;i<fDList.size();i++){
+			if(i!=0){
+				printString+="&emsp;";
+			}
+			printString+=fDList.get(i);
+		}
+		printString=partitionName+'{'+printString+'}';
+		
+		if(!joinList.isEmpty()){
+			String joinString = "";
+			for(int i=0;i<joinList.size();i++){
+				if(i!=0){
+					printString+="&emsp;";
+				}
+				joinString+=joinList.get(i);
+			}
+			joinString = "J{"+joinString+"}";
+			printString = joinString +"</br>"+ printString;
+		}
+		
+		return printString;
 	}
 }

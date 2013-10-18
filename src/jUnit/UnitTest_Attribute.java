@@ -64,7 +64,7 @@ public class UnitTest_Attribute {
 		assertEquals(Attribute.getInstance().getAttrString("1000000000000000000000"),"V");
 		assertEquals(Attribute.getInstance().getAttrString("100000000000000000000000000000"),"Durian");
 		assertEquals(Attribute.getInstance().getAttrString("1000000000000000000000000000000"),"Cherry");
-		assertEquals(Attribute.getInstance().getAttrString("1000000000000000000000000000010"),"BCherry");
+		assertEquals(Attribute.getInstance().getAttrString("1000000000000000000000000000010"),"B,Cherry");
 	}
 	
 	private void IS_BIT_EQUAL(){

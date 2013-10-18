@@ -45,6 +45,7 @@ public class Attribute{
 	}
 	
 	//returns the attribute represented by the bitString
+	//For display purpose, please put {} when showing on UI
 	public String getAttrString(String bitString){
 		int currentLength = numOfAttributes();
 		if(currentLength==0){
@@ -59,6 +60,9 @@ public class Attribute{
 		String tempAttr = "";
 		while(nextIndex>=0){
 			int attrIndex = currentLength-1-nextIndex;
+			if(tempAttr.length()!=0){
+				tempAttr = ","+tempAttr;
+			}
 			tempAttr = attrList.get(attrIndex)+tempAttr;
 			nextIndex = bitString.indexOf("1", nextIndex+1);
 		}

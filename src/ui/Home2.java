@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.border.TitledBorder;
@@ -67,6 +68,7 @@ public class Home2 {
 	private JPanel panel_Relations;
 	private JPanel panel_PriKeys;
 	private JTextPane textPane_Detect;
+	private JTextPane textPane_Suggest;
 	
 	
 	private ArrayList<Relation> arrayRel;
@@ -129,8 +131,9 @@ public class Home2 {
 		textField_Attr.setColumns(10);
 
 		list_Attr = new JList<String>();
-		list_Attr.setBounds(10, 15, 113, 76);
-		panel_Attributes.add(list_Attr);
+		JScrollPane scroll_Attr = new JScrollPane(list_Attr);
+		scroll_Attr.setBounds(10, 15, 113, 76);
+		panel_Attributes.add(scroll_Attr);
 
 		panel_FD = new JPanel();
 		panel_FD.setBorder(new TitledBorder(null, "Functional Dependencies", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -158,8 +161,9 @@ public class Home2 {
 		panel_FD.add(btn_addFD);
 
 		list_FD = new JList<String>();
-		list_FD.setBounds(10, 20, 239, 199);
-		panel_FD.add(list_FD);
+		JScrollPane scroll_FD = new JScrollPane(list_FD);
+		scroll_FD.setBounds(10, 20, 239, 199);
+		panel_FD.add(scroll_FD);
 
 		panel_Name = new JPanel();
 		panel_Name.setBorder(new TitledBorder(null, "Relation Name", TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -178,8 +182,9 @@ public class Home2 {
 		panel_Relations.setLayout(null);
 
 		list_Rel = new JList<String>();
-		list_Rel.setBounds(10, 17, 130, 254);
-		panel_Relations.add(list_Rel);
+		JScrollPane scroll_Rel = new JScrollPane(list_Rel);
+		scroll_Rel.setBounds(10, 17, 130, 254);
+		panel_Relations.add(scroll_Rel);
 
 		btn_NewRelation = new JButton("New Relation");
 		btn_NewRelation.setActionCommand("");
@@ -202,8 +207,9 @@ public class Home2 {
 		panel_PriKeys.add(textField_PriKeys);
 
 		list_PriKeys = new JList<String>();
-		list_PriKeys.setBounds(10, 15, 113, 76);
-		panel_PriKeys.add(list_PriKeys);
+		JScrollPane scroll_PriKeys = new JScrollPane(list_PriKeys);
+		scroll_PriKeys.setBounds(10, 15, 113, 76);
+		panel_PriKeys.add(scroll_PriKeys);
 
 		JLabel lblDoubleClickTo = new JLabel("Double Click to remove undesired row");
 		lblDoubleClickTo.setForeground(Color.GRAY);
@@ -216,11 +222,21 @@ public class Home2 {
 		
 		textPane_Detect = new JTextPane();
 		textPane_Detect.setEditable(false);
-		textPane_Detect.setBounds(10, 11, 559, 328);
-		panel_Detect.add(textPane_Detect);
+		textPane_Detect.setContentType("text/html");
+		JScrollPane scroll_Detect = new JScrollPane(textPane_Detect);
+		scroll_Detect.setBounds(10, 11, 559, 328);
+		panel_Detect.add(scroll_Detect);
 
 		JPanel panel_Suggest = new JPanel();
 		tabbedPane.addTab("Suggest", null, panel_Suggest, null);
+		panel_Suggest.setLayout(null);
+		
+		textPane_Suggest = new JTextPane();
+		textPane_Suggest.setEditable(false);
+		textPane_Suggest.setContentType("text/html");
+		JScrollPane scroll_Suggest = new JScrollPane(textPane_Suggest);
+		scroll_Suggest.setBounds(10, 11, 559, 328);
+		panel_Suggest.add(scroll_Suggest);
 	}
 
 	private void setCreateTabActions(){
@@ -270,7 +286,7 @@ public class Home2 {
 				if(index>=0){
 					if(evt.getClickCount()==2){
 						//Double click
-						datalist_PriKey.remove(index);
+						datalist_PriKey.get(list_Rel.getSelectedIndex()).remove(index);
 					}
 					list_PriKeys.clearSelection();
 				}
@@ -286,7 +302,7 @@ public class Home2 {
 				if(index>=0){
 					if(evt.getClickCount()==2){
 						//Double click
-						datalist_FD.remove(index);
+						datalist_FD.get(list_Rel.getSelectedIndex()).remove(index);
 					}
 					list_FD.clearSelection();
 				}
@@ -314,7 +330,7 @@ public class Home2 {
 							}		
 						}
 						
-						for(int i=0;i<datalist_FD.size();i++){
+						for(int i=0;i<datalist_FD.get(list_Rel.getSelectedIndex()).size();i++){
 							String[] keySplit = datalist_FD.get(list_Rel.getSelectedIndex()).get(i).split("->");
 							if(keySplit.length!=2){
 								System.out.println("Error, FD unable to parse properly");
@@ -325,7 +341,7 @@ public class Home2 {
 							boolean bol_found = false;
 							for(int j=0;j<LHSSplit.length && !bol_found;j++){
 								if(LHSSplit[j].compareTo(datalist_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
-									datalist_FD.remove(i);
+									datalist_FD.get(list_Rel.getSelectedIndex()).remove(i);
 									i--;
 									bol_found=true;
 									break;
@@ -333,7 +349,7 @@ public class Home2 {
 							}
 							for(int j=0;j<RHSSplit.length && !bol_found;j++){
 								if(RHSSplit[j].compareTo(datalist_Attr.get(list_Rel.getSelectedIndex()).get(index))==0){
-									datalist_FD.remove(i);
+									datalist_FD.get(list_Rel.getSelectedIndex()).remove(i);
 									i--;
 									bol_found=true;
 									break;
@@ -361,7 +377,7 @@ public class Home2 {
 
 		btn_AddAttr.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				textField_Attr.setText(textField_Attr.getText().replaceAll(",", "").replaceAll("->","").trim());
+				textField_Attr.setText(textField_Attr.getText().replaceAll(",", "").replaceAll("->","").replaceAll("\\{","").replaceAll("\\}","").trim());
 				if(textField_Attr.getText().length()!=0 && list_Rel.getSelectedIndex()>=0){
 					if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(textField_Attr.getText())){
 						datalist_Attr.get(list_Rel.getSelectedIndex()).addElement(textField_Attr.getText());
@@ -373,7 +389,7 @@ public class Home2 {
 
 		btn_PriKeys.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				textField_PriKeys.setText(textField_PriKeys.getText().replaceAll("->","").trim());
+				textField_PriKeys.setText(textField_PriKeys.getText().replaceAll("->","").replaceAll("\\{","").replaceAll("\\}","").trim());
 				if(textField_PriKeys.getText().length()!=0 && list_Rel.getSelectedIndex()>=0){
 					String properTemp="";
 					//check if pri key exist in attributes
@@ -401,8 +417,8 @@ public class Home2 {
 		btn_addFD.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 
-				textField_LHS.setText(textField_LHS.getText().replaceAll("->","").trim());
-				textField_RHS.setText(textField_RHS.getText().replaceAll("->","").trim());
+				textField_LHS.setText(textField_LHS.getText().replaceAll("->","").replaceAll("\\{","").replaceAll("\\}","").trim());
+				textField_RHS.setText(textField_RHS.getText().replaceAll("->","").replaceAll("\\{","").replaceAll("\\}","").trim());
 
 				if(list_Rel.getSelectedIndex()>=0 && textField_LHS.getText().length()!=0 && textField_RHS.getText().length()!=0){
 					String properLHS="";
@@ -463,6 +479,31 @@ public class Home2 {
 				}
 			}
 		});
+	
+		//Set enter key
+		textField_Attr.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+            	//auto triggered by enter key
+            	btn_AddAttr.doClick();
+        }});
+		
+		textField_PriKeys.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+            	//auto triggered by enter key
+            	btn_PriKeys.doClick();
+        }});
+		
+		textField_LHS.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+            	//auto triggered by enter key
+            	btn_addFD.doClick();
+        }});
+		
+		textField_RHS.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+            	//auto triggered by enter key
+            	btn_addFD.doClick();
+        }});
 	}
 
 	private void setTabChangeListener(){
@@ -471,18 +512,20 @@ public class Home2 {
 				switch(tabbedPane.getSelectedIndex()){
 				case 0:
 					//Create
-					//TODO
 					break;
 				case 1:
 					//Detect
 					createModelsFromInput();
 					Log.getInstance().setLogView(textPane_Detect);
-					//TODO perform detection task below
+					Log.getInstance().clearLog();
+					performDetection();
 					break;
 				case 2:
 					//Suggest
 					createModelsFromInput();
-					//TODO log and perform bernstein
+					Log.getInstance().setLogView(textPane_Suggest);
+					Log.getInstance().clearLog();
+					performSuggestion();
 					break;
 				default:
 					System.out.println("Error: unknown tab selected");
@@ -551,7 +594,7 @@ public class Home2 {
 		arrayRel = new ArrayList<Relation>();
 		Attribute.getInstance().clear();
 		for(int i=0;i<data_Rel.size();i++){
-			
+			//Add Attributes
 			String strName = data_Rel.get(i);
 			ArrayList<String> tempAttrArray = new ArrayList<String>();
 			for(int j=0;j<datalist_Attr.get(i).size();j++){
@@ -560,10 +603,143 @@ public class Home2 {
 			Relation tempRel = new Relation(strName,tempAttrArray);
 			arrayRel.add(tempRel);
 			
-			//TODO add Pri Key
+			//Add Primary Key
+			for(int j=0;j<datalist_PriKey.get(i).size();j++){
+				tempRel.priKeyList.add(datalist_PriKey.get(i).get(j));
+			}
 			
-			//TODO add FD
+			//Add FD
+			for(int j=0;j<datalist_FD.get(i).size();j++){
+				String[] stringFD = datalist_FD.get(i).get(j).split("->");
+				if(stringFD.length!=2){
+					System.out.println("Error in createModelsFromInput: stringFD not length 2");
+					return;
+				}
+				String[] LHS = stringFD[0].split(",");
+				String LHSBit = "";
+				for(int k=0;k<LHS.length;k++){
+					String tempattr = Attribute.getInstance().getBitString(LHS[k]);
+					if(tempattr.length()==0){
+						System.out.println("Error in createModelsFromInput: attr bitString not found");
+						return;
+					}
+					LHSBit = Attribute.OR(LHSBit, tempattr);
+				}
+				
+				String[] RHS = stringFD[1].split(",");
+				String RHSBit = "";
+				
+				for(int k=0;k<RHS.length;k++){
+					String tempattr = Attribute.getInstance().getBitString(RHS[k]);
+					if(tempattr.length()==0){
+						System.out.println("Error in createModelsFromInput: attr bitString not found");
+						return;
+					}
+					RHSBit = Attribute.OR(RHSBit, tempattr);
+				}
+				
+				FD tempFD = new FD(LHSBit,RHSBit);
+				if(!tempRel.fDList.contains(tempFD)){
+					tempRel.fDList.add(tempFD);
+				}
+			}
 			
 		}
+	}
+
+	private void performDetection(){
+		for(int i=0;i<arrayRel.size();i++){
+			//Show R(A,B,C) with underline of current primary keys			
+			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
+
+			//Show candidate keys
+			ArrayList<String> tempCandidate = arrayRel.get(i).getCandidateKeys();
+			String printString="";
+			for(int j=0;j<tempCandidate.size();j++){
+				if(j!=0){
+					printString+=", ";
+				}
+				printString+='{'+tempCandidate.get(j)+'}';
+			}
+			Log.getInstance().println("Possible candidate keys are: " +printString);
+			
+			//new line for next relation
+			Log.getInstance().newln();
+		}
+	}
+
+	private void performSuggestion(){
+		Log.getInstance().println("<b>No. of Relation:</b> "+arrayRel.size());
+		
+		//Do not continue if there are no relation
+		if(arrayRel.isEmpty()){
+			return;
+		}
+		
+		
+		Relation unionRelation = Relation.UNION(arrayRel);
+		if(arrayRel.size()>1){
+			Log.getInstance().println("<b>Combine:</b>");
+		}
+		
+		//Show R(A,B,C) with underline of current primary keys			
+		Log.getInstance().println(unionRelation.getRelationDisplay());
+		Log.getInstance().println(unionRelation.getFDDisplay());
+		
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Preprocessing: Split RHS of FD</b>");
+		Log.getInstance().println(unionRelation.getRelationDisplay());
+		unionRelation.fDList = Bernstein.splitRHS(unionRelation.fDList);
+		Log.getInstance().println(unionRelation.getFDDisplay());
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Preprocessing: Remove Trivial FD</b>");
+		Log.getInstance().println(unionRelation.getRelationDisplay());
+		unionRelation.fDList = Bernstein.removeTrivial(unionRelation.fDList);
+		Log.getInstance().println(unionRelation.getFDDisplay());
+
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Step 1: Eliminate Extraneous Attributes</b>");
+		Log.getInstance().println(unionRelation.getRelationDisplay());
+		unionRelation.fDList = Bernstein.removeExtraneousAttribute(unionRelation.fDList);
+		Log.getInstance().println(unionRelation.getFDDisplay());
+
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Step 2: Find Covering</b>");
+		Log.getInstance().println(unionRelation.getRelationDisplay());
+		unionRelation.fDList = Bernstein.removeFDUsingCovering(unionRelation.fDList);
+		Log.getInstance().println(unionRelation.getFDDisplay());
+
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Step 3: Partition</b>");
+		ArrayList<Partition> tempPartArray = Bernstein.partitionFromFD(unionRelation.fDList);
+		for(int i=0;i<tempPartArray.size();i++){
+			Log.getInstance().println(tempPartArray.get(i).toString());
+		}
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Step 4: Merge Groups</b>");
+		tempPartArray = Bernstein.MergeProperEquivalent(tempPartArray);
+		for(int i=0;i<tempPartArray.size();i++){
+			Log.getInstance().println(tempPartArray.get(i).toString());
+		}
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Step 5: Eliminate Transitive Dependencies</b>");
+		tempPartArray = Bernstein.eliminateTransitiveDependency(tempPartArray);
+		for(int i=0;i<tempPartArray.size();i++){
+			Log.getInstance().println(tempPartArray.get(i).toString());
+		}
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Step 6: Construct Relations</b>");
+		arrayRel = Bernstein.constructRelations(tempPartArray);
+		for(int i=0;i<arrayRel.size();i++){
+			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
+			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
+		}	
 	}
 }

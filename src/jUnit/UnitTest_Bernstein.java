@@ -372,6 +372,7 @@ public class UnitTest_Bernstein {
 	private void constructRelations(){
 		ArrayList<Partition> tempArray = new ArrayList<Partition>();
 		ArrayList<Relation> returnList;
+		Attribute.getInstance().clear();
 		
 		Partition part1 = new Partition();
 		Partition part2 = new Partition();
@@ -380,15 +381,16 @@ public class UnitTest_Bernstein {
 		tempArray.add(part2);
 		tempArray.add(part3);
 		
-		part1.addFD(new FD("10001","00010"));
-		part2.addFD(new FD("01000","00001"));
-		part3.addFD(new FD("00110","00001"));
-		
 		Attribute.getInstance().addAttribute("A");
 		Attribute.getInstance().addAttribute("B");
 		Attribute.getInstance().addAttribute("C");
 		Attribute.getInstance().addAttribute("D");
 		Attribute.getInstance().addAttribute("E");
+		
+		part1.addFD(new FD("10001","00010"));
+		part2.addFD(new FD("01000","00001"));
+		part3.addFD(new FD("00110","00001"));
+		
 		assertEquals(Attribute.getInstance().getBitString("A"),"1");
 		assertEquals(Attribute.getInstance().getBitString("B"),"10");
 		assertEquals(Attribute.getInstance().getBitString("C"),"100");
@@ -418,11 +420,11 @@ public class UnitTest_Bernstein {
 		assertEquals(returnList.get(2).GetAttrList().get(1),"B");
 		assertEquals(returnList.get(2).GetAttrList().get(2),"A");
 		assertEquals(returnList.get(0).priKeyList.size(),1);
-		assertEquals(returnList.get(0).priKeyList.get(0),"AE");
+		assertEquals(returnList.get(0).priKeyList.get(0),"A,E");
 		assertEquals(returnList.get(1).priKeyList.size(),1);
 		assertEquals(returnList.get(1).priKeyList.get(0),"D");
 		assertEquals(returnList.get(2).priKeyList.size(),1);
-		assertEquals(returnList.get(2).priKeyList.get(0),"BC");
+		assertEquals(returnList.get(2).priKeyList.get(0),"B,C");
 		
 		Attribute.getInstance().clear();
 	}
