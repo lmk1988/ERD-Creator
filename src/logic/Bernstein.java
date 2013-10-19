@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.*;
+import ui.Log;
 
 public class Bernstein{
 	
@@ -8,7 +9,8 @@ public class Bernstein{
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		for(int i=0;i<tempArray.size();i++){
 			FD currentFD = tempArray.get(i);
-			if(currentFD.LHS.compareTo(currentFD.RHS)==0){
+			if(Attribute.IS_BIT_EQUAL(currentFD.LHS, currentFD.RHS)){
+				Log.getInstance().println("Trivial "+currentFD+" is removed");
 				//LHS and RHS is the same
 				tempArray.remove(i);
 				i--;
@@ -20,6 +22,7 @@ public class Bernstein{
 				//RHS contains some or all of LHS
 				int tempInt =  Integer.parseInt(currentFD.RHS,2)-Integer.parseInt(compare,2);
 				if(tempInt==0){
+					Log.getInstance().println("Trivial "+tempArray.get(i)+" is removed");
 					tempArray.remove(i);
 					i--;
 					continue;
@@ -28,7 +31,11 @@ public class Bernstein{
 				while(tempStr.length()<currentFD.LHS.length()){
 					tempStr = "0"+tempStr;
 				}
+				
+				String strLog = "Trivial "+currentFD+"is converted to ";
 				currentFD.RHS = tempStr;
+				strLog+=currentFD;
+				Log.getInstance().println(strLog);
 			}
 		}
 		return tempArray;
@@ -37,7 +44,9 @@ public class Bernstein{
 	//Input an arrayList of FD
 	public static ArrayList<FD> removeExtraneousAttribute(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
+		Log.getInstance().setLogging(false);
 		tempArray = removeTrivial(tempArray);
+		Log.getInstance().setLogging(true);
 		//Require an array of FD
 		for(int i=0;i<tempArray.size();i++){
 			//For each LHS, check if it can be reduced smaller by determining if there is a smaller subset whose closure can reach this LHS
@@ -53,7 +62,9 @@ public class Bernstein{
 				String closure = Relation.computeClosure(tempProperSubset.get(j), exclusionArray);
 				//If it can reach LHS, it would be the minimum variables needed
 				if(Attribute.IS_BIT_EQUAL(Attribute.AND(closure, tempLHS), tempLHS)){
+					Log.getInstance().print(tempArray.get(i).toString()+" becomes ");
 					tempArray.get(i).LHS=tempProperSubset.get(j);
+					Log.getInstance().println(tempArray.get(i).toString());
 					break;
 				}
 			}
@@ -63,7 +74,9 @@ public class Bernstein{
 	
 	public static ArrayList<FD> removeFDUsingCovering(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
+		Log.getInstance().setLogging(false);
 		tempArray = removeTrivial(tempArray);
+		Log.getInstance().setLogging(true);
 		for(int i=0;i<tempArray.size();i++){
 			ArrayList<FD> exclusionArray = new ArrayList<FD>(tempArray);
 			//exclusionArray includes all FD except the current FD we are checking
@@ -72,6 +85,7 @@ public class Bernstein{
 			String closure = Relation.computeClosure(tempArray.get(i).LHS, exclusionArray);
 			//If RHS is inside the closure, it means that this FD can be remove due to covering
 			if(Attribute.IS_BIT_EQUAL(Attribute.AND(closure, tempArray.get(i).RHS),tempArray.get(i).RHS)){
+				Log.getInstance().println("Remove "+tempArray.get(i));
 				tempArray.remove(i);
 				i--;
 			}
@@ -82,6 +96,7 @@ public class Bernstein{
 	//F+
 	//For each FD, try to see if it can be expanded further
 	public static ArrayList<FD> getFPlus(ArrayList<FD> fDArray){
+		Log.getInstance().setLogging(false);
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		tempArray = removeTrivial(tempArray);
 		tempArray = splitRHS(tempArray);
@@ -106,6 +121,7 @@ public class Bernstein{
 		}
 		//Remove trivial again just in case
 		tempArray = removeTrivial(tempArray);
+		Log.getInstance().setLogging(true);
 		return tempArray;
 	}
 	
@@ -140,6 +156,7 @@ public class Bernstein{
 	public static ArrayList<Partition> partitionFromFD(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		ArrayList<Partition> partArray = new ArrayList<Partition>();
+		int partitionCount = 1;
 		
 		for(int i=0;i<tempArray.size();i++){
 			String LHS = tempArray.get(i).LHS;
@@ -154,7 +171,9 @@ public class Bernstein{
 			
 			//If no partition found, add a new partition
 			if(bol_found==false){
-				partArray.add(new Partition(tempArray.get(i)));
+				Partition newPart = new Partition(tempArray.get(i));
+				newPart.partitionName = "H"+partitionCount++;
+				partArray.add(newPart);
 			}
 		}
 		return partArray;
@@ -210,8 +229,7 @@ public class Bernstein{
 		
 		return partArray;
 	}
-		
-	
+
 	//transitive dependency
 	public static ArrayList<Partition> eliminateTransitiveDependency(ArrayList<Partition> partitionArray){
 		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
@@ -273,39 +291,60 @@ public class Bernstein{
 		
 		for(int i=0;i<partitionArray.size();i++){
 			ArrayList<String> attrList = new ArrayList<String>();
-			String priKeyBit = "";
+			ArrayList<String> priKeyList = new ArrayList<String>();
 			
 			//Add attributes from join
 			for(int j=0;j<partitionArray.get(j).joinList.size();j++){
-				int index = partitionArray.get(j).joinList.get(j).LHS.indexOf("1");
-				while(index>=0){
+				while(partitionArray.get(i).joinList.get(j).LHS.length()<Attribute.getInstance().numOfAttributes()){
+					partitionArray.get(i).joinList.get(j).LHS="0"+partitionArray.get(i).joinList.get(j).LHS;
+				}
+				int index = partitionArray.get(i).joinList.get(j).LHS.indexOf("1");
+				String LHSpriKeyBit = "";
+				while(index>=0 && index<partitionArray.get(i).joinList.get(j).LHS.length()){
 					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						priKeyBit = Attribute.OR(priKeyBit, bitString);
+						LHSpriKeyBit = Attribute.OR(LHSpriKeyBit, bitString);
 					}
-					index = partitionArray.get(j).joinList.get(j).LHS.indexOf("1",index+1);
+					index = partitionArray.get(i).joinList.get(j).LHS.indexOf("1",index+1);
 				}
 				
-				index = partitionArray.get(j).joinList.get(j).RHS.indexOf("1");
-				while(index>=0){
+				String LHS = Attribute.getInstance().getAttrString(LHSpriKeyBit);
+				if(!priKeyList.contains(LHS)){
+					priKeyList.add(LHS);
+				}
+				
+				while(partitionArray.get(i).joinList.get(j).RHS.length()<Attribute.getInstance().numOfAttributes()){
+					partitionArray.get(i).joinList.get(j).RHS="0"+partitionArray.get(i).joinList.get(j).RHS;
+				}
+				index = partitionArray.get(i).joinList.get(j).RHS.indexOf("1");
+				String RHSpriKeyBit = "";
+				while(index>=0 && index<partitionArray.get(i).joinList.get(j).RHS.length()){
 					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						priKeyBit = Attribute.OR(priKeyBit, bitString);
+						RHSpriKeyBit = Attribute.OR(RHSpriKeyBit, bitString);
 					}
-					index = partitionArray.get(j).joinList.get(j).RHS.indexOf("1",index+1);
+					index = partitionArray.get(i).joinList.get(j).RHS.indexOf("1",index+1);
+				}
+				
+				String RHS = Attribute.getInstance().getAttrString(RHSpriKeyBit);
+				if(!priKeyList.contains(RHS)){
+					priKeyList.add(RHS);
 				}
 			}
 			
 			//Add attributes from FDs
 			ArrayList<FD> fDList = partitionArray.get(i).getfDList();
 			for(int j=0;j<fDList.size();j++){
-				
+				String priKeyBit = "";
+				while(fDList.get(j).LHS.length()<Attribute.getInstance().numOfAttributes()){
+					fDList.get(j).LHS="0"+fDList.get(j).LHS;
+				}
 				int index = fDList.get(j).LHS.indexOf("1");
-				while(index>=0){
+				while(index>=0 && index<fDList.get(j).LHS.length()){
 					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
@@ -315,13 +354,21 @@ public class Bernstein{
 					index = fDList.get(j).LHS.indexOf("1",index+1);
 				}
 				
+				String LHS = Attribute.getInstance().getAttrString(priKeyBit);
+				if(LHS.length()>0 && !priKeyList.contains(LHS)){
+					priKeyList.add(LHS);
+				}
+				
+				while(fDList.get(j).RHS.length()<Attribute.getInstance().numOfAttributes()){
+					fDList.get(j).RHS="0"+fDList.get(j).RHS;
+				}
 				index = fDList.get(j).RHS.indexOf("1");
-				while(index>=0){
+				while(index>=0 && index<fDList.get(j).RHS.length()){
 					String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						//Do not add primary key here
+						//Do not add primary key for RHS
 					}
 					index = fDList.get(j).RHS.indexOf("1",index+1);
 				}
@@ -329,7 +376,7 @@ public class Bernstein{
 			
 			Relation tempRelation = new Relation("R"+(i+1),attrList);
 			tempRelation.fDList = fDList;
-			tempRelation.priKey = Attribute.getInstance().getAttrString(priKeyBit);
+			tempRelation.priKeyList = priKeyList;
 			relArray.add(tempRelation);
 		}
 		

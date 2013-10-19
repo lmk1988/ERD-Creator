@@ -5,13 +5,13 @@ import java.util.*;
 public class Relation {
 	ArrayList<String> attrList; //stores Alphabets only
 	public ArrayList<FD> fDList;
-	public String priKey; 
-	String relName;
+	public ArrayList<String> priKeyList; 
+	public String relName;
 	
 	public Relation(){
 		attrList = new ArrayList<String>();
 		fDList = new ArrayList<FD>();
-		priKey = "";
+		priKeyList = new ArrayList<String>();
 		relName = "";
 	}
 	
@@ -39,7 +39,24 @@ public class Relation {
 			}
 		}
 		
-		return new Relation(rel1.relName+" U "+rel2.relName,tempAttrList);
+		//Merge FD list as well
+		ArrayList<FD> tempFDList = new ArrayList<FD>();
+		for(int i=0;i<rel1.fDList.size();i++){
+			if(!tempFDList.contains(rel1.fDList.get(i))){
+				tempFDList.add(rel1.fDList.get(i));
+			}
+		}
+		
+		for(int i=0;i<rel2.fDList.size();i++){
+			if(!tempFDList.contains(rel2.fDList.get(i))){
+				tempFDList.add(rel2.fDList.get(i));
+			}
+		}
+		
+		Relation returnRelation = new Relation(rel1.relName+" U "+rel2.relName,tempAttrList);
+		returnRelation.fDList = tempFDList;
+		
+		return returnRelation;
 	}
 
 	public static Relation UNION(ArrayList<Relation> relList){
@@ -89,6 +106,10 @@ public class Relation {
 	
 	public ArrayList<String> GetAttrList(){
 		return new ArrayList<String>(attrList);
+	}
+	
+	public int numOfAttr(){
+		return attrList.size();
 	}
 	
 	public String computeClosure(String inputBit){
@@ -160,5 +181,47 @@ public class Relation {
 			tempAttrList.add(Attribute.getInstance().getAttrString(tempArrayList.get(i)));
 		}
 		return tempAttrList;
+	}
+	
+	public String getRelationDisplay(){
+		//Show R(A,B,C) with underline of current primary keys
+		String printString = "";
+		for(int j=0;j<priKeyList.size();j++){
+			if(j!=0){
+				printString+=", ";
+			}
+			printString+="<u>"+priKeyList.get(j)+"</u>";
+		}
+		for(int j=0;j<attrList.size();j++){
+			boolean bol_shouldPrint = true;
+			for(int k=0;k<priKeyList.size();k++){
+				if(priKeyList.get(k).indexOf(attrList.get(j))>=0){
+					bol_shouldPrint=false;
+					break;
+				}
+			}
+			if(bol_shouldPrint){
+				if(printString.length()!=0){
+					printString+=", ";
+				}
+				printString+=attrList.get(j);
+			}
+		}
+		
+		return relName+"("+printString+")";
+	}
+
+	public String getFDDisplay(){
+		String printString = "";
+		for(int i=0;i<fDList.size();i++){
+			if(i!=0){
+				printString+="&emsp;";
+			}
+			
+			String LHS = Attribute.getInstance().getAttrString(fDList.get(i).LHS);
+			String RHS = Attribute.getInstance().getAttrString(fDList.get(i).RHS);
+			printString+=LHS+"->"+RHS;
+		}
+		return printString;
 	}
 }

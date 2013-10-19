@@ -28,12 +28,13 @@ public class Attribute{
 	}
 	
 	public String addAttribute(String variable){
-		if(!attrList.contains(variable)){
+		if(!attrList.contains(variable) && numOfAttributes()<31){
 			attrList.add(variable);
 		}
 		return getBitString(variable);
 	}
 	
+	//Returns the bitString representing the variable
 	public String getBitString(String variable){
 		int index =attrList.indexOf(variable);
 		if(index<0){
@@ -43,8 +44,14 @@ public class Attribute{
 		}
 	}
 	
+	//returns the attribute represented by the bitString
+	//For display purpose, please put {} when showing on UI
 	public String getAttrString(String bitString){
 		int currentLength = numOfAttributes();
+		if(currentLength==0){
+			return "";
+		}
+		
 		while(bitString.length()<currentLength){
 			bitString = "0"+bitString;
 		}
@@ -52,8 +59,10 @@ public class Attribute{
 		int nextIndex = bitString.indexOf("1");
 		String tempAttr = "";
 		while(nextIndex>=0){
-			
 			int attrIndex = currentLength-1-nextIndex;
+			if(tempAttr.length()!=0){
+				tempAttr = ","+tempAttr;
+			}
 			tempAttr = attrList.get(attrIndex)+tempAttr;
 			nextIndex = bitString.indexOf("1", nextIndex+1);
 		}

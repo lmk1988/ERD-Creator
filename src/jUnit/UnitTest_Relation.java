@@ -56,21 +56,21 @@ public class UnitTest_Relation {
 		
 		Relation tempRel = new Relation("R",attributes);
 		assertEquals(tempRel.getCandidateKeys().size(),1);
-		assertEquals(tempRel.getCandidateKeys().get(0),"ABCDE");
+		assertEquals(tempRel.getCandidateKeys().get(0),"A,B,C,D,E");
 		tempRel.fDList.add(new FD(Attribute.getInstance().getBitString("A"),Attribute.getInstance().getBitString("B")));
 		assertEquals(tempRel.fDList.size(),1);
 		assertEquals(tempRel.getCandidateKeys().size(),1);
-		assertEquals(tempRel.getCandidateKeys().get(0),"ACDE");
+		assertEquals(tempRel.getCandidateKeys().get(0),"A,C,D,E");
 		tempRel.fDList.add(new FD(Attribute.getInstance().getBitString("B"),Attribute.getInstance().getBitString("C")));
 		assertEquals(tempRel.fDList.size(),2);
 		assertEquals(tempRel.getCandidateKeys().size(),1);
-		assertEquals(tempRel.getCandidateKeys().get(0),"ADE");
+		assertEquals(tempRel.getCandidateKeys().get(0),"A,D,E");
 		tempRel.fDList.add(new FD(Attribute.getInstance().getBitString("C"),Attribute.getInstance().getBitString("A")));
 		assertEquals(tempRel.fDList.size(),3);
 		assertEquals(tempRel.getCandidateKeys().size(),3);
-		assertEquals(tempRel.getCandidateKeys().get(0),"CDE");
-		assertEquals(tempRel.getCandidateKeys().get(1),"BDE");
-		assertEquals(tempRel.getCandidateKeys().get(2),"ADE");
+		assertEquals(tempRel.getCandidateKeys().get(0),"C,D,E");
+		assertEquals(tempRel.getCandidateKeys().get(1),"B,D,E");
+		assertEquals(tempRel.getCandidateKeys().get(2),"A,D,E");
 		
 		
 		//Need clean up
