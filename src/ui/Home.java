@@ -17,6 +17,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JTextArea;
 
+import logic.Attribute;
 import logic.FD;
 import logic.Relation;
 
@@ -172,8 +173,7 @@ public class Home {
 						}
 				}
 				result += ")";
-				rTxtPane.setText(result);
-				
+				rTxtPane.setText(result);				
 			}
 		});
 		
