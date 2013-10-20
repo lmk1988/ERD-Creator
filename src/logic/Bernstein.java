@@ -294,10 +294,11 @@ public class Bernstein{
 			ArrayList<String> priKeyList = new ArrayList<String>();
 			
 			//Add attributes from join
-			for(int j=0;j<partitionArray.get(j).joinList.size();j++){
+			for(int j=0;j<partitionArray.get(i).joinList.size();j++){
 				while(partitionArray.get(i).joinList.get(j).LHS.length()<Attribute.getInstance().numOfAttributes()){
 					partitionArray.get(i).joinList.get(j).LHS="0"+partitionArray.get(i).joinList.get(j).LHS;
 				}
+				
 				int index = partitionArray.get(i).joinList.get(j).LHS.indexOf("1");
 				String LHSpriKeyBit = "";
 				while(index>=0 && index<partitionArray.get(i).joinList.get(j).LHS.length()){
@@ -311,7 +312,7 @@ public class Bernstein{
 				}
 				
 				String LHS = Attribute.getInstance().getAttrString(LHSpriKeyBit);
-				if(!priKeyList.contains(LHS)){
+				if(LHS.length()>0 && !priKeyList.contains(LHS)){
 					priKeyList.add(LHS);
 				}
 				
@@ -331,7 +332,7 @@ public class Bernstein{
 				}
 				
 				String RHS = Attribute.getInstance().getAttrString(RHSpriKeyBit);
-				if(!priKeyList.contains(RHS)){
+				if(RHS.length()>0 && !priKeyList.contains(RHS)){
 					priKeyList.add(RHS);
 				}
 			}

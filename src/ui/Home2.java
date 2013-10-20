@@ -452,6 +452,7 @@ public class Home2 {
 						datalist_FD.get(list_Rel.getSelectedIndex()).addElement(properLHS+"->"+properRHS);
 						textField_LHS.setText("");
 						textField_RHS.setText("");
+						textField_LHS.grabFocus();
 					}
 				}
 			}
