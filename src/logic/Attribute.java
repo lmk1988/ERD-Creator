@@ -38,6 +38,16 @@ public class Attribute{
 	public String getBitString(String variable){
 		int index =attrList.indexOf(variable);
 		if(index<0){
+			//check if it is multiple of variables
+			if(variable.indexOf(",")>=0){
+				// comma will mean it has many variables in it
+				String strFinal = "";
+				String[] strSplit = variable.split(",");
+				for(int i=0;i<strSplit.length;i++){
+					strFinal = OR(strFinal,getBitString(strSplit[i].trim()));
+				}
+				return strFinal;
+			}
 			return "";
 		}else{
 			return  Integer.toBinaryString((int)Math.pow(2,index));

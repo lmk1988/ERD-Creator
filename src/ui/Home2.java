@@ -540,6 +540,9 @@ public class Home2 {
 	private void refreshDisplay(int index){
 		if(index<0){
 			disablePanels();
+			((DefaultListModel<String>)list_FD.getModel()).removeAllElements();
+			((DefaultListModel<String>)list_Attr.getModel()).removeAllElements();
+			((DefaultListModel<String>)list_PriKeys.getModel()).removeAllElements();
 		}else{
 			enablePanels();
 			textField_Name.setText(data_Rel.get(index));
@@ -741,6 +744,14 @@ public class Home2 {
 		for(int i=0;i<arrayRel.size();i++){
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
 			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
+		}	
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Alternative Decomposition</b>");
+		ArrayList<Relation> BCNFArray = Bernstein.convertBCNF(arrayRel);
+		for(int i=0;i<BCNFArray.size();i++){
+			Log.getInstance().println(BCNFArray.get(i).getRelationDisplay());
+			Log.getInstance().println(BCNFArray.get(i).getFDDisplay());
 		}	
 	}
 }

@@ -227,6 +227,18 @@ public class Bernstein{
 			}
 		}
 		
+		//Remove FD that are closure of the join
+		for(int i=0;i<partArray.size();i++){
+			for(int j=0;j<partArray.get(i).getFDSize();j++){
+				String closure = Relation.computeClosure(partArray.get(i).getfDList().get(j).LHS,partArray.get(i).joinList);
+				if(Attribute.IS_BIT_EQUAL(Attribute.AND(closure, partArray.get(i).getfDList().get(j).RHS),partArray.get(i).getfDList().get(j).RHS)){
+					partArray.get(i).removeFD(partArray.get(i).getfDList().get(j));
+					j--;
+				}
+			}
+			
+		}
+		
 		return partArray;
 	}
 
@@ -283,6 +295,93 @@ public class Bernstein{
 			}
 		}
 		return partArray;
+	}
+	
+	public static ArrayList<Relation> convertBCNF(ArrayList<Relation> relationArray){
+		ArrayList<Relation> relArray = new ArrayList<Relation>(relationArray);
+		
+		for(int i=0;i<relArray.size();i++){
+			//For each relation, check for FDs that violates BCNF
+			for(int j=0;j<relArray.get(i).fDList.size();j++){
+				boolean bol_isSuperKey = false;
+				
+				//Run through all candidate keys to check if it is a super key
+				ArrayList<String> candidateKeyBits = relArray.get(i).getCandidateBitStrings();
+				for(int p=0;p<candidateKeyBits.size() && bol_isSuperKey==false;p++){
+					if(Attribute.IS_SUPERKEY(candidateKeyBits.get(p), relArray.get(i).fDList.get(j).LHS)){
+						bol_isSuperKey=true;
+					}
+				}
+				
+				//Found FD with LHS not a super key
+				if(bol_isSuperKey==false){
+					//The FD violates BCNF, decompose
+					Relation tempRel = new Relation();
+					tempRel.relName = relArray.get(i).relName+"2";
+					relArray.get(i).relName+="1";
+					tempRel.fDList.add(relArray.get(i).fDList.get(j));
+					relArray.get(i).fDList.remove(j);
+					j--;
+					relArray.add(tempRel);
+					
+					//Find the attributes to remove/add
+					String strLHS = Attribute.getInstance().getAttrString(tempRel.fDList.get(0).LHS);
+					String strRHS = Attribute.getInstance().getAttrString(tempRel.fDList.get(0).RHS);
+					String[] splitLHS = strLHS.split(",");
+					String[] splitRHS = strRHS.split(",");
+					
+					//add all attributes to new relation
+					for(int k=0;k<splitLHS.length;k++){
+						if(!tempRel.attrList.contains(splitLHS[k])){
+							tempRel.attrList.add(splitLHS[k]);
+						}
+					}
+					for(int k=0;k<splitRHS.length;k++){
+						if(!tempRel.attrList.contains(splitRHS[k])){
+							tempRel.attrList.add(splitRHS[k]);
+						}
+					}
+					
+					//Set pri key of new relation as LHS
+					tempRel.priKeyList.add(strLHS);
+					
+					//Remove RHS attribute from the original
+					for(int k=0;k<splitRHS.length;k++){
+						relArray.get(i).attrList.remove(splitRHS[k]);
+					}
+					//Remove from primary Keys if neccesary
+					for(int k=0;k<relArray.get(i).priKeyList.size();k++){
+						String[] splitPri = relArray.get(i).priKeyList.get(k).split(",");
+						String finalPri = "";
+						for(int q=0;q<splitPri.length;q++){
+							boolean bol_found = false;
+							for(int w=0;w<splitRHS.length && bol_found==false;w++){
+								if(splitRHS[w].trim().compareTo(splitPri[q].trim())==0){
+									bol_found = true;
+									break;
+								}
+							}
+							if(bol_found==false){
+								if(finalPri.length()!=0){
+									finalPri+=",";
+								}
+								finalPri+=splitPri[q];
+							}
+						}
+						relArray.get(i).priKeyList.set(k, finalPri);
+					}
+					
+					//Remove RHS from all the FDs in it as well
+					String bitInverse = Attribute.INVERSE(tempRel.fDList.get(0).RHS);
+					for(int k=0;k<relArray.get(i).fDList.size();k++){
+						relArray.get(i).fDList.get(k).LHS = Attribute.AND(relArray.get(i).fDList.get(k).LHS, bitInverse);
+						relArray.get(i).fDList.get(k).RHS = Attribute.AND(relArray.get(i).fDList.get(k).RHS, bitInverse);
+					}
+				}
+			}
+		}
+		
+		return relArray;
 	}
 	
 	//construct Relation using Partition
