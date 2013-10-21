@@ -655,10 +655,20 @@ public class Home2 {
 		for(int i=0;i<arrayRel.size();i++){
 			//Show R(A,B,C) with underline of current primary keys			
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
-
+			String printString="Testing closure of LHS";
+			Log.getInstance().println(printString);
+			ArrayList<FD> fd = arrayRel.get(i).fDList;
+			for(int x = 0; x < fd.size(); x++) {
+					printString = "";
+					String closure = arrayRel.get(i).computeClosure(fd.get(x).LHS);
+					printString += "{" + Attribute.getInstance().getAttrString(fd.get(x).LHS) + "} =";
+					printString += "{" + Attribute.getInstance().getAttrString(closure) + "}";
+					Log.getInstance().println(printString);
+			}
+			//Log.getInstance().println(printString);
 			//Show candidate keys
 			ArrayList<String> tempCandidate = arrayRel.get(i).getCandidateKeys();
-			String printString="";
+			printString = "";
 			for(int j=0;j<tempCandidate.size();j++){
 				if(j!=0){
 					printString+=", ";
