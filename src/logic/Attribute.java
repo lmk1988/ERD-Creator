@@ -245,19 +245,13 @@ public class Attribute{
 						attrSlot[tempIndex]=true;	
 					}
 				}
-				for(int b=0;b<tAttrSlot.length;b++){	//counter to check for lossless relations
-					if(attrSlot[b]==false){
-						result=false;
-						checkCount=0;
-						break;
-					}else{
-						checkCount++;
-					}
-				}
-				if(checkCount==tAttrSlot.length){
-					checkCount=0;
-					break;
-				}
+
+		}
+		for(int b=0;b<tAttrSlot.length;b++){	//counter to check for lossless relations
+			if(attrSlot[b]==false){
+				result=false;
+				break;
+			}
 		}
 		return result;
 	}

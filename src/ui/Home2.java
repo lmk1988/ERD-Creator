@@ -746,9 +746,7 @@ public class Home2 {
 			for(int f=0;f<fd.size();f++){
 				Log.getInstance().println("FD: "+fd.get(f)+" preserved?: "+((FD)fd.get(f)).checkPerserve(arrayRel));
 			}
-			for(int g=0;g<arrayRel.size();g++){
-				Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(fd, arrayRel.get(g)));
-			}
+				Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(fd, arrayRel.get(i)));
 			//new line for next relation
 			Log.getInstance().newln();
 		}
