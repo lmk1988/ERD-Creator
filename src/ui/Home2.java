@@ -409,6 +409,14 @@ public class Home2 {
 								properTemp+=",";
 							}
 							properTemp+=split[i];
+							String pk = split[i].trim();
+							String [] attrArr =new String[datalist_Attr.get(list_Rel.getSelectedIndex()).size()];
+							datalist_Attr.get(list_Rel.getSelectedIndex()).copyInto(attrArr);;
+							for(int j = 0; j < attrArr.length; j++) {
+								if(!attrArr[j].equals(pk)) {
+									datalist_FD.get(list_Rel.getSelectedIndex()).addElement(pk + "->" + attrArr[j]);
+								}
+							}
 						}
 					}
 
