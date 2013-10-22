@@ -187,17 +187,16 @@ public class Bernstein{
 		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
 		//Characteristic of Partition is that all the LHS has to be the same
 		
-		//Get F+
-		ArrayList<FD> Fplus = new ArrayList<FD>();
+		//Get All the FD
+		ArrayList<FD> FDlist = new ArrayList<FD>();
 		for(int i=0;i<partArray.size();i++){
-			Fplus.addAll(partArray.get(i).getfDList());
+			FDlist.addAll(partArray.get(i).getfDList());
 		}
-		Fplus = getFPlus(Fplus);
 
 		//Generate closure for each partition
 		ArrayList<String> closureArray = new ArrayList<String>();
 		for(int i=0;i<partArray.size();i++){
-			closureArray.add(Relation.computeClosure(partArray.get(i).getLHS(), Fplus));
+			closureArray.add(Relation.computeClosure(partArray.get(i).getLHS(), FDlist));
 		}
 		
 		//Find a partition with LHS inside each closure.
