@@ -292,7 +292,30 @@ public class Home2 {
 				if(index>=0){
 					if(evt.getClickCount()==2){
 						//Double click
-						datalist_PriKey.get(list_Rel.getSelectedIndex()).remove(index);
+						String pk = datalist_PriKey.get(list_Rel.getSelectedIndex()).get(index);
+						String [] attrArr =new String[datalist_Attr.get(list_Rel.getSelectedIndex()).size()];
+						datalist_Attr.get(list_Rel.getSelectedIndex()).copyInto(attrArr);
+						String fds = "";
+						for(int j = 0; j < attrArr.length; j++) {
+							if(!attrArr[j].equals(pk)) {
+								fds += pk + "->" + attrArr[j];
+							}
+							if(j > 0 && j < attrArr.length-1) {
+								
+								fds += ", ";
+							}
+						}
+						int choice = JOptionPane.showConfirmDialog(null, "Deleting this Primary Key will also remove the following FDs: " + fds + " \nDo you want to Proceed?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+						if(choice == JOptionPane.YES_OPTION) {
+						//JOptionPane.showConfirmDialog(null, "Deleting this Primary Key will also remove the following FDs: \nDo you want to Proceed?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+							for(int j = 0; j < attrArr.length; j++) {
+								if(!attrArr[j].equals(pk)) {
+									datalist_FD.get(list_Rel.getSelectedIndex()).removeElement(pk + "->" + attrArr[j]);
+								}
+							}
+							
+							datalist_PriKey.get(list_Rel.getSelectedIndex()).remove(index);
+						}
 					}
 					list_PriKeys.clearSelection();
 				}
@@ -690,14 +713,19 @@ public class Home2 {
 			String printString="Testing closure of LHS";
 			Log.getInstance().println(printString);
 			ArrayList<FD> fd = arrayRel.get(i).fDList;
-			for(int x = 0; x < fd.size(); x++) {
-					printString = "";
-					String closure = arrayRel.get(i).computeClosure(fd.get(x).LHS);
-					printString += "{" + Attribute.getInstance().getAttrString(fd.get(x).LHS) + "} =";
-					printString += "{" + Attribute.getInstance().getAttrString(closure) + "}";
-					Log.getInstance().println(printString);
+			if(fd.isEmpty()) {
+				printString = "Error: There are currently no Functional Dependencies defined.";
+				Log.getInstance().println(printString);
+				
+			}else {
+				for(int x = 0; x < fd.size(); x++) {
+						printString = "";
+						String closure = arrayRel.get(i).computeClosure(fd.get(x).LHS);
+						printString += "{" + Attribute.getInstance().getAttrString(fd.get(x).LHS) + "} =";
+						printString += "{" + Attribute.getInstance().getAttrString(closure) + "}";
+						Log.getInstance().println(printString);
+				}
 			}
-			//Log.getInstance().println(printString);
 			//Show candidate keys
 			ArrayList<String> tempCandidate = arrayRel.get(i).getCandidateKeys();
 			printString = "";
