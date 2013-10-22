@@ -40,6 +40,7 @@ import logic.Relation;
 import logic.Bernstein;
 import logic.FD;
 import logic.Partition;
+import logic.Violation;
 
 public class Home2 {
 
@@ -674,9 +675,10 @@ public class Home2 {
 	}
 
 	private void performDetection(){
+		Violation v = new Violation();
 		for(int i=0;i<arrayRel.size();i++){
 			//Show R(A,B,C) with underline of current primary keys			
-			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
+			Log.getInstance().println(arrayRel.get(i).getRelationDisplay()+" is in "+v.checkRelationNF(arrayRel.get(i)));
 			String printString="Testing closure of LHS";
 			Log.getInstance().println(printString);
 			ArrayList<FD> fd = arrayRel.get(i).fDList;
@@ -698,6 +700,12 @@ public class Home2 {
 				printString+='{'+tempCandidate.get(j)+'}';
 			}
 			Log.getInstance().println("Possible candidate keys are: " +printString);
+			if(fd.size()>0)
+				Log.getInstance().println("Functional Dependencies:");
+			for(int y = 0; y<fd.size();y++)
+			{				
+				Log.getInstance().println(fd.get(y).toString() +" is in " +v.checkNF(arrayRel.get(i), fd.get(y)));
+			}
 			
 			//new line for next relation
 			Log.getInstance().newln();

@@ -106,6 +106,13 @@ public class ViolationTest {
 		assertEquals(Violation.checkRelation3NF(tempRel), false);
 		
 		tempRel.fDList.clear();
+		tempRel.fDList.add(new FD("100", "010"));//A->B
+		tempRel.fDList.add(new FD("010", "001"));//B->C
+		tempRel.fDList.add(new FD("100", "001"));//A->C
+		assertEquals(Violation.check3NF(tempRel, tempRel.fDList.get(2)), false);
+		assertEquals(Violation.checkRelation3NF(tempRel), false);
+		
+		tempRel.fDList.clear();
 		tempRel.fDList.add(new FD("101", "010"));
 		tempRel.fDList.add(new FD("010", "001"));
 		assertEquals(Violation.checkRelation3NF(tempRel), true);

@@ -4,6 +4,38 @@ import java.util.ArrayList;
 
 public class Violation {
 
+	public static String checkRelationNF(Relation R)
+	{
+		if(checkRelationBCNF(R))
+		{
+			return "BCNF";
+		}
+		else if(checkRelation3NF(R))
+		{
+			return "3NF";
+		}
+		else if(checkRelation2NF(R))
+		{
+			return "2NF";
+		}
+		else return "1NF";				
+	}
+	public static String checkNF(Relation R, FD fd)
+	{
+		if(checkBCNF(R, fd))
+		{
+			return "BCNF";
+		}
+		else if(check3NF(R, fd))
+		{
+			return "3NF";
+		}
+		else if(check2NF(R, fd))
+		{
+			return "2NF";
+		}
+		else return "1NF";			
+	}
 	//every non-prime attribute of R is fully dependent on each key of R
 	//non trivial FD: LHS not proper subset of candidate key OR RHS is part of candidate key
 	public static Boolean checkRelation2NF(Relation R)
@@ -125,16 +157,17 @@ public class Violation {
 	}
 	public static Boolean check3NF(Relation R, FD fd)//eg A->B B->C if fd is A->C
 	{
+		if(!check2NF(R, fd))
+		{
+			//System.out.println("Not in 2NF");
+			return false;
+		}
 		ArrayList<FD> Fplus = Bernstein.getFPlus(R.fDList);
 
 		ArrayList<FD> tempArray = new ArrayList<FD>();
 		//check closure of LHS. If any subset of the closure determines RHS, 
 		//and the subset does not determine LHS, then transitive
-		if(!check2NF(R, fd))
-		{
-			System.out.println("Not in 2NF");
-			return false;
-		}
+
 		/**start of splitRHS for single fd**/
 		//Find all single variables
 		int nextIndex = 0;
@@ -192,6 +225,8 @@ public class Violation {
 	}
 	public static Boolean checkRelationBCNF(Relation R)
 	{
+		if(!checkRelation3NF(R))
+			return false;
 		ArrayList<FD> fds = Bernstein.splitRHS(R.fDList);
 		for(int i = 0; i< fds.size();i++)
 		{
@@ -205,6 +240,8 @@ public class Violation {
 	{
 		if(FDisTrivial(fd))
 			return true;
+		if(!check3NF(R, fd))
+			return false;
 		ArrayList<String> keyStrings = R.getCandidateBitStrings();
 		ArrayList<String> temp = Attribute.ALL_PROPER_SUBSET_OF(fd.LHS);
 		for(int k = 0; k<keyStrings.size();k++)		
