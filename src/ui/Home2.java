@@ -699,6 +699,12 @@ public class Home2 {
 			}
 			Log.getInstance().println("Possible candidate keys are: " +printString);
 			
+			for(int f=0;f<fd.size();f++){
+				Log.getInstance().println("FD: "+fd.get(f)+" preserved?: "+((FD)fd.get(f)).checkPerserve(arrayRel));
+			}
+			for(int g=0;g<arrayRel.size();g++){
+				Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(fd, arrayRel.get(g)));
+			}
 			//new line for next relation
 			Log.getInstance().newln();
 		}

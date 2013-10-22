@@ -74,9 +74,8 @@ public class FD implements Comparable<FD>{
 		int tokenSizeL=0;
 		int checkTokenQuota=0;
 		int checkToken=0;
-		
-				stzL = new StringTokenizer(LHS,",");								//Check the LHS to separate attribute via ","
-				stzR = new StringTokenizer(RHS,",");								//Check the RHS to separate attribute via ","
+				stzL = new StringTokenizer(Attribute.getInstance().getAttrString(LHS),",");								//Check the LHS to separate attribute via ","
+				stzR = new StringTokenizer(Attribute.getInstance().getAttrString(RHS),",");								//Check the RHS to separate attribute via ","
 				for(int b=0;b<relList.size();b++){									//Check if the relation contains the attribute
 					tempR=(Relation)relList.get(b);
 					tempRAttr=tempR.GetAttrList();
@@ -95,8 +94,8 @@ public class FD implements Comparable<FD>{
 								}
 							}else{																	//Enter Else if FD attribute not found in relation
 								checkToken=0;	
-								stzL = new StringTokenizer(LHS,",");								//Reset the stzL 
-								stzR = new StringTokenizer(RHS,",");								//Reset the stzR 
+								stzL = new StringTokenizer(Attribute.getInstance().getAttrString(LHS),",");								//Reset the stzL 
+								stzR = new StringTokenizer(Attribute.getInstance().getAttrString(RHS),",");								//Reset the stzR 
 								break;
 							}
 					}

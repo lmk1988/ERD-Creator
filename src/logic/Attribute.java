@@ -205,102 +205,59 @@ public class Attribute{
 	}
 	
 	/*
-	 * checkLossless(ArrayList fdList, ArrayList relList) check if the relations are lossless with the input of FDs in fdList and all the relations in relList. 
+	 * checkLossless(ArrayList fdList, Relation rel) check if the relations are lossless with the input of FDs in fdList and the relation in rel. 
 	 * It will return true if lossless.
 	 */
-	public boolean checkLossless(ArrayList fdList, ArrayList relList){
-		ArrayList tAttrList = new ArrayList();
-		ArrayList evalRelList = new ArrayList();
-		ArrayList rAttrList = new ArrayList();
+	public boolean checkLossless(ArrayList fdList, Relation rel){
 		ArrayList tFDList = new ArrayList();
+		ArrayList attrList = new ArrayList();
 		tFDList=(ArrayList) fdList.clone();
-		int attrSize=attrList.size();
-		int totalFDcount=0;
-		int lossCount=0;
-		int counter=0;
-		int FDcounter=0;											//Set a temp LHS FDcount to check total LHS is ok before moving to RHS
+		int attrSize=(rel.GetAttrList()).size();										//Set a temp LHS FDcount to check total LHS is ok before moving to RHS
 		int totalTokenL=0;
 		int totalTokenR=0;
-		String tempCompare="";
 		String tempFD,tempFD1,tempFD2;
 		StringTokenizer stzL,stzR;
+		int checkCount=0;
 		int tempIndex=-1;
-		boolean result = false;
+		boolean result = true;
 		boolean attrSlot[] = new boolean[attrSize];		
 		boolean tAttrSlot[] = new boolean[attrSize];	
 		
-		for(int i=0;i<relList.size();i++){						//Setting up the different relation slots for evaluation
-			evalRelList.add(attrSlot.clone());
-		}
-		for(int i=0;i<relList.size();i++){
-			rAttrList=((Relation) relList.get(i)).GetAttrList();
-			tAttrSlot=(boolean[]) evalRelList.get(i);
-			for(int a=0;a<rAttrList.size();a++){
-				tempCompare=rAttrList.get(a).toString();								//Compare with origin attribute list
-				tempIndex = attrList.indexOf(tempCompare);								//Record the index of the match and mark it out in evalRelList later
-				tAttrSlot[tempIndex]=true;														//Mark those found attribute in the relations as true.
-			}
-			evalRelList.set(i,tAttrSlot);
-			tAttrSlot= new boolean[attrSize];						//Reset temp AttrSlot
-			tempIndex=-1;											//Reset Index
-		}
-		
-	while((!tFDList.isEmpty()) & totalFDcount<=(fdList.size()*2)){						//Loop again to go through another round of remaining FDs
+		attrList=rel.GetAttrList();
 		for(int c=0;c<tFDList.size();c++){
-			tempFD=((FD)tFDList.get(c)).LHS;
+			tempFD=getInstance().getAttrString(((FD)tFDList.get(c)).LHS);
 			stzL= new StringTokenizer(tempFD,",");		
 			totalTokenL=stzL.countTokens();
 			while(stzL.hasMoreTokens()){
 				tempFD1=stzL.nextToken();
 				tempIndex=attrList.indexOf(tempFD1);
-				for(int i=0;i<evalRelList.size();i++){					//Walk through the list to check if tempFD1 is contains in all the list
-					tAttrSlot=(boolean[]) evalRelList.get(i);
-					if(tAttrSlot[tempIndex]==true){
-						counter++;
+				if(tempIndex!=-1){
+					attrSlot[tempIndex]=true;	
+				}
+			}
+			tempFD=getInstance().getAttrString(((FD)tFDList.get(c)).RHS);					//Setting the RHS of the FD
+			stzR=new StringTokenizer(tempFD,",");		
+			totalTokenR=stzR.countTokens();
+				while(stzR.hasMoreTokens()){
+					tempFD2=stzR.nextToken();
+					tempIndex=attrList.indexOf(tempFD2);
+					if(tempIndex!=-1){
+						attrSlot[tempIndex]=true;	
 					}
 				}
-				if(counter==evalRelList.size()){						//Check if the current FD attribute contains in all relations before checking another one
-					counter=0;
-					FDcounter++;
-					if(FDcounter==totalTokenL){
-						tempFD=((FD)tFDList.get(c)).RHS;					//Setting the RHS of the FD
-						stzR=new StringTokenizer(tempFD,",");		
-						totalTokenR=stzR.countTokens();
-								while(stzR.hasMoreTokens()){
-									tempFD2=stzR.nextToken();
-									tempIndex=attrList.indexOf(tempFD2);
-									for(int i=0;i<evalRelList.size();i++){					//Walk through the list to check if tempFD1 is contains in all the list
-										tAttrSlot=(boolean[]) evalRelList.get(i);
-										tAttrSlot[tempIndex]=true;
-										}
-									}
-						FDcounter=0;									//Reset 
-						tFDList.remove(c);
+				for(int b=0;b<tAttrSlot.length;b++){	//counter to check for lossless relations
+					if(attrSlot[b]==false){
+						result=false;
+						checkCount=0;
+						break;
+					}else{
+						checkCount++;
 					}
-					continue;
-				}else{
-					counter=0;
-					FDcounter=0;										//Reset
+				}
+				if(checkCount==tAttrSlot.length){
+					checkCount=0;
 					break;
 				}
-			}
-			totalFDcount++;
-		}
-	}	
-
-		for(int i=0;i<evalRelList.size();i++){							//counter to check for lossless relations
-			tAttrSlot=(boolean[]) evalRelList.get(i);
-			for(int b=0;b<tAttrSlot.length;b++){
-				if(tAttrSlot[b]){
-					lossCount++;
-				}
-			}
-			if(lossCount==tAttrSlot.length){
-				result=true;											//The rel is lossless.
-				break;
-			}else{
-				lossCount=0;
-			}
 		}
 		return result;
 	}
