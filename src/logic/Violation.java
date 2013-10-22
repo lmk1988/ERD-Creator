@@ -99,7 +99,7 @@ public class Violation {
 					for(int k = 0; k< keyStrings.size(); k++)
 					{
 						//get proper subset of keyStrings. 
-						ArrayList<String> subsets = Attribute.ALL_PROPER_SUBSET_OF(keyStrings.get(i));
+						ArrayList<String> subsets = Attribute.ALL_PROPER_SUBSET_OF(keyStrings.get(k));
 						for(int m = 0; m<subsets.size();m++)
 						{
 							//if the LHS is a subset of keyString (ie nonprime not fully dependent)
