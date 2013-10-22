@@ -4,9 +4,11 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+
 import java.awt.BorderLayout;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
@@ -26,9 +28,11 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JList;
 import javax.swing.UIManager;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
+
 import javax.swing.JTextPane;
 
 import logic.Attribute;
@@ -82,6 +86,7 @@ public class Home2 {
 				try {
 					Home2 window = new Home2();
 					window.frmNfdetector.setVisible(true);
+					window.frmNfdetector.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -382,6 +387,7 @@ public class Home2 {
 					if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(textField_Attr.getText())){
 						datalist_Attr.get(list_Rel.getSelectedIndex()).addElement(textField_Attr.getText());
 						textField_Attr.setText("");
+						
 					}
 				}
 			}
@@ -396,7 +402,7 @@ public class Home2 {
 					String[] split=textField_PriKeys.getText().split(",");
 					for(int i=0;i<split.length;i++){
 						if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(split[i].trim())){
-							return;
+							JOptionPane.showMessageDialog(null, "Unable to assign Primary Key. Attribute " +  split[i].trim() + " is not found in the Relation.", "Error", JOptionPane.ERROR_MESSAGE);
 						}else{
 							if(i!=0){
 								properTemp+=",";
@@ -427,7 +433,8 @@ public class Home2 {
 					String[] LHSsplit=textField_LHS.getText().split(",");
 					for(int i=0;i<LHSsplit.length;i++){
 						if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(LHSsplit[i].trim())){
-							return;
+							JOptionPane.showMessageDialog(null, "Attribute " +  LHSsplit[i].trim() + " is not found in the Relation. Please add Attribute first.", "Error", JOptionPane.ERROR_MESSAGE);
+							textField_LHS.grabFocus();
 						}else{
 							if(i!=0){
 								properLHS+=",";
@@ -438,7 +445,8 @@ public class Home2 {
 					String[] RHSsplit=textField_RHS.getText().split(",");
 					for(int i=0;i<RHSsplit.length;i++){
 						if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(RHSsplit[i].trim())){
-							return;
+							JOptionPane.showMessageDialog(null, "Attribute " + RHSsplit[i].trim() + " is not found in the Relation. Please add Attribute first.", "Error", JOptionPane.ERROR_MESSAGE);
+							textField_RHS.grabFocus();
 						}else{
 							if(i!=0){
 								properRHS+=",";
@@ -449,9 +457,24 @@ public class Home2 {
 
 					//check if there exist the same combination in FD
 					if(!datalist_FD.get(list_Rel.getSelectedIndex()).contains(properLHS+"->"+properRHS)){
+						if(properLHS.length() == 0 || properRHS.length() == 0) {
+							
+						}else {
 						datalist_FD.get(list_Rel.getSelectedIndex()).addElement(properLHS+"->"+properRHS);
 						textField_LHS.setText("");
 						textField_RHS.setText("");
+						textField_LHS.grabFocus();
+						}
+					}
+				}else {
+					if(textField_LHS.getText().length()==0 && textField_RHS.getText().length()==0) {
+						JOptionPane.showMessageDialog(null, "Please enter an Attribute on both LHS and RHS", "Error", JOptionPane.ERROR_MESSAGE);
+					}else if(textField_LHS.getText().length()==0 && textField_RHS.getText().length()!=0) {
+						
+						JOptionPane.showMessageDialog(null, "Please enter an Attribute on LHS", "Error", JOptionPane.ERROR_MESSAGE);
+					}else if(textField_LHS.getText().length()!=0 && textField_RHS.getText().length()==0) {
+						
+						JOptionPane.showMessageDialog(null, "Please enter an Attribute on RHS", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -539,6 +562,9 @@ public class Home2 {
 	private void refreshDisplay(int index){
 		if(index<0){
 			disablePanels();
+			((DefaultListModel<String>)list_FD.getModel()).removeAllElements();
+			((DefaultListModel<String>)list_Attr.getModel()).removeAllElements();
+			((DefaultListModel<String>)list_PriKeys.getModel()).removeAllElements();
 		}else{
 			enablePanels();
 			textField_Name.setText(data_Rel.get(index));
@@ -651,10 +677,20 @@ public class Home2 {
 		for(int i=0;i<arrayRel.size();i++){
 			//Show R(A,B,C) with underline of current primary keys			
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
-
+			String printString="Testing closure of LHS";
+			Log.getInstance().println(printString);
+			ArrayList<FD> fd = arrayRel.get(i).fDList;
+			for(int x = 0; x < fd.size(); x++) {
+					printString = "";
+					String closure = arrayRel.get(i).computeClosure(fd.get(x).LHS);
+					printString += "{" + Attribute.getInstance().getAttrString(fd.get(x).LHS) + "} =";
+					printString += "{" + Attribute.getInstance().getAttrString(closure) + "}";
+					Log.getInstance().println(printString);
+			}
+			//Log.getInstance().println(printString);
 			//Show candidate keys
 			ArrayList<String> tempCandidate = arrayRel.get(i).getCandidateKeys();
-			String printString="";
+			printString = "";
 			for(int j=0;j<tempCandidate.size();j++){
 				if(j!=0){
 					printString+=", ";
@@ -740,6 +776,14 @@ public class Home2 {
 		for(int i=0;i<arrayRel.size();i++){
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
 			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
+		}	
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Alternative Decomposition</b>");
+		ArrayList<Relation> BCNFArray = Bernstein.convertBCNF(arrayRel);
+		for(int i=0;i<BCNFArray.size();i++){
+			Log.getInstance().println(BCNFArray.get(i).getRelationDisplay());
+			Log.getInstance().println(BCNFArray.get(i).getFDDisplay());
 		}	
 	}
 }

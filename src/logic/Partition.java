@@ -77,12 +77,12 @@ public class Partition {
 			String joinString = "";
 			for(int i=0;i<joinList.size();i++){
 				if(i!=0){
-					printString+="&emsp;";
+					joinString+="&emsp;";
 				}
 				joinString+=joinList.get(i);
 			}
 			joinString = "J{"+joinString+"}";
-			printString = joinString +"</br>"+ printString;
+			printString = joinString +"<br/>"+ printString;
 		}
 		
 		return printString;
