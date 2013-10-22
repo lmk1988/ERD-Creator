@@ -106,6 +106,5 @@ public class FD implements Comparable<FD>{
 				}else{
 					return false;
 				}
-			
 	}
 }
