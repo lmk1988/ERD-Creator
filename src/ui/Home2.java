@@ -747,18 +747,7 @@ public class Home2 {
 			{
 				Log.getInstance().println(fd.get(y).toString() + " is in " + v.checkNF(arrayRel.get(i), fd.get(y)));
 
-<<<<<<< HEAD
-				}
-				Log.getInstance().println("Recommendation: Please modify the Functional Dependencies or Click on Suggest tab to start Normalization.");
-			}else  {
-				
-				Log.getInstance().println("Recommendation: No action required. The Relation is already in 3NF/BCNF.");
-				
 			}
-			//new line for next relation
-=======
-			}
->>>>>>> 38d7e20deb153b82f54538ecd9eb17e5f087031a
 			Log.getInstance().newln();
 		}
 	}
@@ -837,11 +826,11 @@ public class Home2 {
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
 			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
 		}	
-		Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(unionRelation.fDList, Bernstein.getOriRel()));
 		
 		for(int f=0;f<unionRelation.fDList.size();f++){
 			Log.getInstance().println("FD: "+unionRelation.fDList.get(f)+" preserved?: "+((FD)unionRelation.fDList.get(f)).checkPerserve(arrayRel));
 		}
+		
 		
 		Log.getInstance().newln();
 		Log.getInstance().println("<b>Remove Superfluous Attribute</b>");
