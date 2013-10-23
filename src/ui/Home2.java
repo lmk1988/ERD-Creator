@@ -833,6 +833,14 @@ public class Home2 {
 		}	
 		
 		Log.getInstance().newln();
+		Log.getInstance().println("<b>Remove Superfluous Attribute</b>");
+		arrayRel = Bernstein.removeSuperfluous(arrayRel);
+		for(int i=0;i<arrayRel.size();i++){
+			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
+			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
+		}
+		
+		Log.getInstance().newln();
 		Log.getInstance().println("<b>Alternative Decomposition</b>");
 		ArrayList<Relation> BCNFArray = Bernstein.convertBCNF(arrayRel);
 		for(int i=0;i<BCNFArray.size();i++){

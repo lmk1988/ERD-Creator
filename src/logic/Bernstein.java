@@ -48,6 +48,27 @@ public class Bernstein{
 		return tempArray;
 	}
 	
+	public static Relation removeTrivial(Relation rel){
+		Relation tempRel = new Relation(rel);
+		
+		//Remove everything associated with primary key since it is trivial
+		for(int i=0;i<tempRel.priKeyList.size();i++){
+			String bitString = Attribute.getInstance().getBitString(tempRel.priKeyList.get(i));
+			
+			for(int k=0;k<tempRel.fDList.size();k++){
+				if(Attribute.IS_BIT_EQUAL(tempRel.fDList.get(k).LHS,bitString)){
+					tempRel.fDList.remove(k);
+					k--;
+				}
+			}
+		}
+		
+		tempRel.fDList = removeTrivial(tempRel.fDList);
+		
+		
+		return tempRel;
+	}
+	
 	//Input an arrayList of FD
 	public static ArrayList<FD> removeExtraneousAttribute(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
@@ -97,6 +118,23 @@ public class Bernstein{
 				i--;
 			}
 		}
+		return tempArray;
+	}
+	
+	public static ArrayList<FD> combineRHS(ArrayList<FD> fDArray){
+		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
+		
+		for(int i=0;i<tempArray.size();i++){
+			for(int j=i+1;j<tempArray.size();j++){
+				if(Attribute.IS_BIT_EQUAL(tempArray.get(i).LHS, tempArray.get(j).LHS)){
+					tempArray.get(i).RHS = Attribute.OR(tempArray.get(i).RHS, tempArray.get(j).RHS);
+					tempArray.remove(j);
+					j--;
+				}
+			}
+			
+		}
+		
 		return tempArray;
 	}
 	
@@ -561,6 +599,93 @@ public class Bernstein{
 		}
 		
 		relArray = fix3NFLossless(relArray);
+		
+		return relArray;
+	}
+
+	public static ArrayList<Relation> removeSuperfluous(ArrayList<Relation> relationArray){
+		ArrayList<Relation> relArray = new ArrayList<Relation>(relationArray);
+		
+		for(int i=0;i<relArray.size();i++){
+			for(int j=0;j<relArray.get(i).attrList.size();j++){
+				
+				String currentAttributeBitString = Attribute.getInstance().getBitString(relArray.get(i).attrList.get(j)).trim();
+				//Check for each attribute the FD associated with it
+				ArrayList<FD> fPlus = getFPlus(new ArrayList<FD>(relArray.get(i).fDList));
+				ArrayList<FD> associatedFD = new ArrayList<FD>();
+				
+				//generate for each pri key
+				for(int k=0;k<relArray.get(i).priKeyList.size();k++){
+					String tempLHSBit = Attribute.getInstance().getBitString(relArray.get(i).priKeyList.get(k));
+					while(tempLHSBit.length()<Attribute.getInstance().numOfAttributes()){
+						tempLHSBit = "0"+tempLHSBit;
+					}
+					String tempRHSBit = Attribute.AND(Attribute.INVERSE(tempLHSBit), relArray.get(i).getAttrBitString());
+					fPlus.add(new FD(tempLHSBit,tempRHSBit));
+				}
+				
+				fPlus = splitRHS(fPlus);
+				
+				for(int k=0;k<fPlus.size();k++){
+					if(Attribute.IS_BIT_EQUAL(Attribute.AND(fPlus.get(k).LHS, currentAttributeBitString),currentAttributeBitString) || 
+							Attribute.IS_BIT_EQUAL(Attribute.AND(fPlus.get(k).RHS, currentAttributeBitString),currentAttributeBitString)){
+						//if LHS or RHS of FD includes attribute, add into associatedFD
+						associatedFD.add(fPlus.get(k));
+					}
+				}
+				
+				fPlus.removeAll(associatedFD);
+				
+				ArrayList<FD> allfDs = new ArrayList<FD>(fPlus);
+				//Check 1: check that you can form back the Relation using fDs from other relations
+				for(int k=0;k<relArray.size();k++){
+					if(k==i){
+						continue;
+					}
+					allfDs.addAll(relArray.get(k).fDList);
+				}
+				
+				String bitString = Attribute.AND(relArray.get(i).getAttrBitString(), Attribute.INVERSE(currentAttributeBitString));
+				if(!Attribute.IS_BIT_EQUAL(Attribute.AND(Relation.computeClosure(bitString,allfDs),currentAttributeBitString), currentAttributeBitString)){
+					//Cannot form back the relation so it is not superfluous
+					continue;
+				}
+				
+				//Check 2: check that you can get back the fD using other relations as well
+				boolean bol_foundAll=true;
+				for(int k=0;k<associatedFD.size() && bol_foundAll==true;k++){
+					if(!Attribute.IS_BIT_EQUAL(Attribute.AND(Relation.computeClosure(associatedFD.get(k).LHS, allfDs),associatedFD.get(k).RHS),associatedFD.get(k).RHS)){
+						bol_foundAll=false;
+					}
+				}
+				
+				if(bol_foundAll==false){
+					//Cannot get all the fD from other relations
+					continue;
+				}else{
+					//Has passed both check1 and check2
+					//Remove primary key
+					for(int k=0;k<relArray.get(i).priKeyList.size();k++){
+						String[] prikey = relArray.get(i).priKeyList.get(k).split(",");
+						for(int m=0;m<prikey.length;m++){
+							if(prikey[m].trim().compareTo(relArray.get(i).attrList.get(j))==0){
+								relArray.get(i).priKeyList.remove(k);
+								k--;
+								break;
+							}
+						}
+					}
+					//remove attribute from Relation
+					relArray.get(i).attrList.remove(j);
+					j--;
+					
+					//Remove FDs
+					Log.getInstance().setLogging(false);
+					relArray.get(i).fDList=removeTrivial(combineRHS(fPlus));
+					Log.getInstance().setLogging(true);
+				}
+			}
+		}
 		
 		return relArray;
 	}

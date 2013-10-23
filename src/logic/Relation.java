@@ -24,6 +24,13 @@ public class Relation {
 		}
 	}
 	
+	public Relation(Relation rel){
+		relName = rel.relName;
+		attrList = new ArrayList<String>(rel.attrList);
+		fDList = new ArrayList<FD>(rel.fDList);
+		priKeyList = new ArrayList<String>(rel.priKeyList);
+	}
+	
 	public static Relation UNION(Relation rel1, Relation rel2){
 		ArrayList<String> tempAttrList = new ArrayList<String>();
 		
@@ -52,6 +59,8 @@ public class Relation {
 				tempFDList.add(rel2.fDList.get(i));
 			}
 		}
+		
+		//leave primary key empty though
 		
 		Relation returnRelation = new Relation(rel1.relName+" U "+rel2.relName,tempAttrList);
 		returnRelation.fDList = tempFDList;
