@@ -7,14 +7,20 @@ public class Relation {
 	public ArrayList<FD> fDList;
 	public ArrayList<String> priKeyList; 
 	public String relName;
-	
+/**
+ * Create a new Relation
+ */
 	public Relation(){
 		attrList = new ArrayList<String>();
 		fDList = new ArrayList<FD>();
 		priKeyList = new ArrayList<String>();
 		relName = "";
 	}
-	
+	/**
+	 * Create a new Relation
+	 * @param relName
+	 * @param attrList
+	 */
 	public Relation(String relName,ArrayList<String> attrList){
 		this();
 		this.relName=relName;
@@ -23,14 +29,22 @@ public class Relation {
 			Attribute.getInstance().addAttribute(attrList.get(i));
 		}
 	}
-	
+/**
+ * Create a new Relation 
+ * @param rel
+ */
 	public Relation(Relation rel){
 		relName = rel.relName;
 		attrList = new ArrayList<String>(rel.attrList);
 		fDList = new ArrayList<FD>(rel.fDList);
 		priKeyList = new ArrayList<String>(rel.priKeyList);
 	}
-	
+	/**
+	 * Union 2 relations together
+	 * @param rel1
+	 * @param rel2
+	 * @return Relation
+	 */
 	public static Relation UNION(Relation rel1, Relation rel2){
 		ArrayList<String> tempAttrList = new ArrayList<String>();
 		
@@ -67,7 +81,11 @@ public class Relation {
 		
 		return returnRelation;
 	}
-
+	/**
+	 * Union all the relations
+	 * @param relList
+	 * @return Relation
+	 */
 	public static Relation UNION(ArrayList<Relation> relList){
 		if(relList.isEmpty()){
 			return new Relation();
@@ -80,19 +98,34 @@ public class Relation {
 		return finalRel;
 	}
 
-	
+	/**
+	 * Get list of attributes
+	 * @return ArrayList<String>
+	 */
 	public ArrayList<String> GetAttrList(){
 		return new ArrayList<String>(attrList);
 	}
-	
+	/**
+	 * Get the number of attribute
+	 * @return int
+	 */
 	public int numOfAttr(){
 		return attrList.size();
 	}
-	
+	/**
+	 * Compute the closure
+	 * @param inputBit
+	 * @return String
+	 */
 	public String computeClosure(String inputBit){
 		return computeClosure(inputBit,fDList);
 	}
-
+	/**
+	 * Compute the Closure with addition input of FDs
+	 * @param inputBit
+	 * @param FDs
+	 * @return String
+	 */
 	public static String computeClosure(String inputBit,ArrayList<FD> FDs){
 		String currentClosure = inputBit;
 		String ClosureBefore;
@@ -113,7 +146,10 @@ public class Relation {
 		
 		return currentClosure;
 	}
-	
+	/**
+	 * Get attribute in bit string
+	 * @return String
+	 */
 	public String getAttrBitString(){
 		if(attrList.isEmpty()){
 			return "";
@@ -127,7 +163,10 @@ public class Relation {
 		
 		return bitString;
 	}
-	
+	/**
+	 * Get list of candidate keys in bit string
+	 * @return ArrayList<String>
+	 */
 	public ArrayList<String> getCandidateBitStrings(){
 		ArrayList<String> tempArrayList = new ArrayList<String>();
 		String attrBitString = getAttrBitString();
@@ -153,7 +192,10 @@ public class Relation {
 		
 		return tempArrayList;
 	}
-	
+	/**
+	 * Get list of candidate keys
+	 * @return ArrayList
+	 */
 	public ArrayList<String> getCandidateKeys(){
 		ArrayList<String> tempArrayList = getCandidateBitStrings();
 		ArrayList<String> tempAttrList = new ArrayList<String>();
@@ -162,7 +204,10 @@ public class Relation {
 		}
 		return tempAttrList;
 	}
-	
+	/**
+	 * Get Relation attribute and also print out the primary key for display 
+	 * @return String
+	 */
 	public String getRelationDisplay(){
 		//Show R(A,B,C) with underline of current primary keys
 		String printString = "";
@@ -244,7 +289,10 @@ public class Relation {
 		
 		return finalPrint;
 	}
-
+	/**
+	 * Get Left hand side and Right hand side FDs and display properly with " -> "
+	 * @return String
+	 */
 	public String getFDDisplay(){
 		String printString = "";
 		for(int i=0;i<fDList.size();i++){

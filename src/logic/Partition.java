@@ -13,20 +13,32 @@ public class Partition {
 		joinList = new ArrayList<FD>();
 		partitionName = "";
 	}
-	
+	/**
+	 * Create a new Partition object
+	 * @return ArrayList<FD>
+	 */
 	public Partition(FD fd){
 		this();
 		fDList.add(fd);
 	}
-	
+	/**
+	 * Get FDList
+	 * @return ArrayList<FD>
+	 */
 	public ArrayList<FD> getfDList(){
 		return new ArrayList<FD>(fDList);
 	}
-	
+	/**
+	 * Get size of FD list
+	 * @return void
+	 */
 	public int getFDSize(){
 		return fDList.size();
 	}
-	
+	/**
+	 * Adds a single FD
+	 * @return void
+	 */
 	public void addFD(FD fd){
 		if(fDList.isEmpty() || (fd.LHS.compareTo(getLHS())==0 && !fDList.contains(fd))){
 			fDList.add(fd);
@@ -40,17 +52,26 @@ public class Partition {
 			}
 		}
 	}
-	
+	/**
+	 * Adds a list of FDs
+	 * @return void
+	 */
 	public void addFDs(ArrayList<FD> fd){
 		for(int i=0;i<fd.size();i++){
 			addFD(fd.get(i));
 		}
 	}
-	
+	/**
+	 * Remove FD from fdList arraylist
+	 * @param fd
+	 */
 	public void removeFD(FD fd){
 		fDList.remove(fd);
 	}
-	
+	/**
+	 * Get Left Hand Size of the FDs
+	 * @return String
+	 */
 	public String getLHS(){
 		//Only returns the LHS of FDs before join.
 		//Reason being, after join, if the join LHS is functionalEquivalent to something else, it should be covered by F+

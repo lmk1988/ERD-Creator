@@ -5,11 +5,19 @@ import java.util.*;
 public class FD implements Comparable<FD>{
 	public String LHS,RHS;
 	
+	/**
+	 * Create a new FD
+	 * @param LHS
+	 * @param RHS
+	 */
 	public FD(String LHS,String RHS){
 		this.LHS = LHS;
 		this.RHS = RHS;
 	}
-	
+	/**
+	 * Create a new FD clone
+	 * @param clone
+	 */
 	public FD(FD clone){
 		this.LHS = clone.LHS;
 		this.RHS = clone.RHS;
@@ -60,10 +68,10 @@ public class FD implements Comparable<FD>{
 		}
 	}
 	
-	/*
-	 * checkPerserve(relList) - Check the current FD for preserve through all the input relation lists.
-	 * eg: fd2.checkPerserve(relList); will return true if fd2 is preserved else return false.
-	 * To check for all FDs, need to loop through all the FDs and evaluate whether all are true which show these FDs are preserving. 
+	/**
+	 * Check the current FD for preserve through all the input relation lists.
+	 * @param relList
+	 * @return boolean
 	 */
 	public boolean checkPerserve(ArrayList relList){
 		Relation tempR;

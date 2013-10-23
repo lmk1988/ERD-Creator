@@ -3,7 +3,11 @@ package logic;
 import java.util.ArrayList;
 
 public class Violation {
-
+/**
+ * Return NF outcome based on the result
+ * @param R
+ * @return String
+ */
 	public static String checkRelationNF(Relation R)
 	{
 		if(checkRelationBCNF(R))
@@ -20,6 +24,12 @@ public class Violation {
 		}
 		else return "1NF";				
 	}
+	/**
+	 * Check the relation in which NF
+	 * @param R
+	 * @param fd
+	 * @return String
+	 */
 	public static String checkNF(Relation R, FD fd)
 	{
 		if(checkBCNF(R, fd))
@@ -63,6 +73,12 @@ public class Violation {
 		}
 		return true;
 	}
+	/**
+	 * Check relation 2NF
+	 * @param R
+	 * @param fd
+	 * @return boolean
+	 */
 	public static Boolean check2NF(Relation R, FD fd)
 	{
 		ArrayList<FD> tempArray = new ArrayList<FD>();
@@ -114,6 +130,11 @@ public class Violation {
 	}
 	//if in 2NF and each non-prime attribute of R is not transitively dependent on arbitrarily chosen key of R
 	//non trivial FD: LHS must be superkey OR RHS is part of candidate key
+	/**
+	 * Check relation 3NF
+	 * @param R
+	 * @return boolean
+	 */
 	public static Boolean checkRelation3NF(Relation R)
 	{
 		if(!checkRelation2NF(R))
@@ -155,6 +176,12 @@ public class Violation {
 		}
 		return true;		
 	}
+	/**
+	 * Check relation is 3NF based FD
+	 * @param R
+	 * @param fd
+	 * @return boolean
+	 */
 	public static Boolean check3NF(Relation R, FD fd)//eg A->B B->C if fd is A->C
 	{
 		if(!check2NF(R, fd))
@@ -223,6 +250,11 @@ public class Violation {
 		}
 		return true;
 	}
+	/**
+	 * Check relation BCNF 
+	 * @param R
+	 * @return boolean
+	 */
 	public static Boolean checkRelationBCNF(Relation R)
 	{
 		if(!checkRelation3NF(R))
@@ -236,6 +268,12 @@ public class Violation {
 		return true;
 	}
 	//for non trivial FD, LHS must be key or superkey
+	/**
+	 * Check if it is BCNF 
+	 * @param R
+	 * @param fd
+	 * @return boolean
+	 */
 	public static Boolean checkBCNF(Relation R, FD fd)
 	{
 		if(FDisTrivial(fd))
@@ -260,6 +298,11 @@ public class Violation {
 		return false;
 	}
 	//returns bitstrings of nonprimes
+	/**
+	 * Get Non-Prime attributes in the relation
+	 * @param R
+	 * @return ArrayList<String>
+	 */
 	public static ArrayList<String> getNonPrimeAttributes(Relation R)
 	{
 		ArrayList<String> keyStrings = R.getCandidateBitStrings();
@@ -293,6 +336,11 @@ public class Violation {
 		return nonprimes;
 	}
 	//FD: X -> Y is called trivial if Y is a subset of X
+	/**
+	 * Check if  the Fd is trivial
+	 * @param fd
+	 * @return boolean
+	 */
 	public static Boolean FDisTrivial(FD fd)
 	{
 		if(Attribute.IS_BIT_EQUAL(fd.LHS, fd.RHS))

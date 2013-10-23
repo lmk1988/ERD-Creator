@@ -7,7 +7,11 @@ import ui.Log;
 public class Bernstein{
 	
 	static ArrayList<Relation> oriRel;
-	
+	/**
+	 * Remove trivial FD
+	 * @param fDArray
+	 * @return ArrayList<FD>
+	 */
 	public static ArrayList<FD> removeTrivial(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		for(int i=0;i<tempArray.size();i++){
@@ -50,7 +54,11 @@ public class Bernstein{
 		}
 		return tempArray;
 	}
-	
+	/**
+	 * Remove Trivial FDs
+	 * @param rel
+	 * @return Relation
+	 */
 	public static Relation removeTrivial(Relation rel){
 		Relation tempRel = new Relation(rel);
 		
@@ -73,6 +81,11 @@ public class Bernstein{
 	}
 	
 	//Input an arrayList of FD
+	/**
+	 * Remove Extraneous Attribute
+	 * @param fDArray
+	 * @return return ArrayList<FD>
+	 */
 	public static ArrayList<FD> removeExtraneousAttribute(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		Log.getInstance().setLogging(false);
@@ -102,7 +115,11 @@ public class Bernstein{
 		}
 		return tempArray;
 	}
-	
+	/**
+	 * Remove FD using covering
+	 * @param fDArray
+	 * @return ArrayList<FD>
+	 */
 	public static ArrayList<FD> removeFDUsingCovering(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		Log.getInstance().setLogging(false);
@@ -123,7 +140,11 @@ public class Bernstein{
 		}
 		return tempArray;
 	}
-	
+	/**
+	 * Combine Right Hand Side FDs
+	 * @param fDArray
+	 * @return ArrayList<FD>
+	 */
 	public static ArrayList<FD> combineRHS(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		
@@ -143,6 +164,11 @@ public class Bernstein{
 	
 	//F+
 	//For each FD, try to see if it can be expanded further
+	/**
+	 * Get F+ 
+	 * @param fDArray
+	 * @return ArrayList<FD>
+	 */
 	public static ArrayList<FD> getFPlus(ArrayList<FD> fDArray){
 		Log.getInstance().setLogging(false);
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
@@ -174,6 +200,11 @@ public class Bernstein{
 	}
 	
 	//Split all RHS (e.g. A->BC = A->B and A->C)
+	/**
+	 * Split Right Hand Side of FDs
+	 * @param fDArray
+	 * @return ArrayList<FD>
+	 */
 	public static ArrayList<FD> splitRHS(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>();
 		
@@ -201,6 +232,11 @@ public class Bernstein{
 	}
 	
 	//partition from FDs
+	/**
+	 * Partition from FD
+	 * @param fDArray
+	 * @return ArrayList<Partition>
+	 */
 	public static ArrayList<Partition> partitionFromFD(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		ArrayList<Partition> partArray = new ArrayList<Partition>();
@@ -231,6 +267,11 @@ public class Bernstein{
 	//Return an array list of FD that is properEquivalent e.g. A->B B->A
 	//Only checks between 2 partitions. Please loop it if required to check for a list of partition
 	//fDArray is required because there might be a hidden transitive FD that is properEquivalent
+	/**
+	 * Merge proper equivalent partition
+	 * @param partitionArray
+	 * @return ArrayList<Partition>
+	 */
 	public static ArrayList<Partition> MergeProperEquivalent(ArrayList<Partition> partitionArray){
 		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
 		//Characteristic of Partition is that all the LHS has to be the same
@@ -290,6 +331,11 @@ public class Bernstein{
 	}
 
 	//transitive dependency
+	/**
+	 * Eliminate Transitive Dependency
+	 * @param partitionArray
+	 * @return ArrayList<Partition>
+	 */
 	public static ArrayList<Partition> eliminateTransitiveDependency(ArrayList<Partition> partitionArray){
 		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
 		
@@ -329,7 +375,12 @@ public class Bernstein{
 		
 		return partArray;
 	}
-	
+	/**
+	 * Remove FDs from partitions
+	 * @param fd
+	 * @param partitionArray
+	 * @return ArrayList<Partition>
+	 */
 	public static ArrayList<Partition> removeFDFromPartitions(FD fd,ArrayList<Partition> partitionArray){
 		ArrayList<Partition> partArray = new ArrayList<Partition>(partitionArray);
 		for(int i=0;i<partArray.size();i++){
@@ -343,7 +394,11 @@ public class Bernstein{
 		}
 		return partArray;
 	}
-	
+	/**
+	 * Convert relation to BCNF
+	 * @param relationArray
+	 * @return ArrayList<Relation>
+	 */
 	public static ArrayList<Relation> convertBCNF(ArrayList<Relation> relationArray){
 		ArrayList<Relation> relArray = new ArrayList<Relation>(relationArray);
 		
@@ -431,7 +486,11 @@ public class Bernstein{
 		
 		return relArray;
 	}
-	
+	/**
+	 * Fix 3NF lossless
+	 * @param relationArray
+	 * @return ArrayList<Relation>
+	 */
 	public static ArrayList<Relation> fix3NFLossless(ArrayList<Relation> relationArray){
 		ArrayList<Relation>	relArray = new ArrayList<Relation>(relationArray);
 		
@@ -499,6 +558,11 @@ public class Bernstein{
 	}
 	
 	//construct Relation using Partition
+	/**
+	 * Construct relations based on partition
+	 * @param partitionArray
+	 * @return ArrayList<Relation>
+	 */
 	public static ArrayList<Relation> constructRelations(ArrayList<Partition> partitionArray){
 		ArrayList<Relation> relArray = new ArrayList<Relation>();
 							   oriRel=new ArrayList<Relation>();
@@ -606,7 +670,11 @@ public class Bernstein{
 		
 		return relArray;
 	}
-
+	/**
+	 *Remove superfluous from relations 
+	 * @param relationArray
+	 * @return ArrayList<Relation>
+	 */
 	public static ArrayList<Relation> removeSuperfluous(ArrayList<Relation> relationArray){
 		ArrayList<Relation> relArray = new ArrayList<Relation>(relationArray);
 		

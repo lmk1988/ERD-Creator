@@ -11,22 +11,35 @@ public class Attribute{
 	private Attribute(){
 		attrList = new ArrayList<String>();
 	}
-	
+	/**
+	 * Get an instance of attribute
+	 * @return attrList List of Attributes
+	 */
 	public static Attribute getInstance(){
 		if(instance==null){
 			instance = new Attribute();
 		}
 		return instance;
 	}
-	
+	/**
+	 * Clear ArrayList - AttrList variable
+	 * @return attrList List of Attributes
+	 */
 	public void clear(){
 		attrList = new ArrayList<String>();
 	}
-	
+	/**
+	 * Retrieve the size of attribute list
+	 * @return attrList List of Attributes
+	 */
 	public int numOfAttributes(){
 		return attrList.size();
 	}
-	
+	/**
+	 * Add a attribute and return a string of bits 
+	 * @param variable
+	 * @return String
+	 */
 	public String addAttribute(String variable){
 		if(!attrList.contains(variable) && numOfAttributes()<31){
 			attrList.add(variable);
@@ -35,6 +48,11 @@ public class Attribute{
 	}
 	
 	//Returns the bitString representing the variable
+	/**
+	 * Return the bits string assigned to the input variable
+	 * @param variable
+	 * @return String
+	 */
 	public String getBitString(String variable){
 		int index =attrList.indexOf(variable);
 		if(index<0){
@@ -56,6 +74,11 @@ public class Attribute{
 	
 	//returns the attribute represented by the bitString
 	//For display purpose, please put {} when showing on UI
+	/**
+	 * Get Attribute name with the input bitString 
+	 * @param bitString bits start from right to left
+	 * @return String
+	 */
 	public String getAttrString(String bitString){
 		int currentLength = numOfAttributes();
 		if(currentLength==0){
@@ -79,7 +102,12 @@ public class Attribute{
 		
 		return tempAttr;
 	}
-	
+	/**
+	 * Do a AND operation between the two inputs - inputBits1, inputBits2
+	 * @param inputBit1 
+	 * @param inputBit2
+	 * @return String
+	 */
 	public static String AND(String inputBit1,String inputBit2){
 		if(inputBit1.length()==0 || inputBit2.length()==0){
 			return "";
@@ -96,7 +124,12 @@ public class Attribute{
 		}
 		return tempOutput;
 	}
-	
+	/**
+	 * Do a OR operation between the two inputs - inputBits1, inputBits2
+	 * @param inputBit1
+	 * @param inputBit2
+	 * @return String
+	 */
 	public static String OR(String inputBit1,String inputBit2){			//OR operation between 2 string bits
 		if(inputBit1.length()==0){
 			return inputBit2;
@@ -115,7 +148,11 @@ public class Attribute{
 		}
 		return tempOutput;
 	}
-	
+	/**
+	 * Inverse the input bits string
+	 * @param inputBit bits start from right to left
+	 * @return String
+	 */
 	public static String INVERSE(String inputBit){
 		if(inputBit.length()==0){
 			return "";
@@ -124,7 +161,11 @@ public class Attribute{
 		String output = Integer.toBinaryString(~bit);
 		return output.substring(output.length()-inputBit.length());
 	}
-	
+	/**
+	 * Retrieve all attributes that is proper subset of the inputBits
+	 * @param inputBit bits start from right to left
+	 * @return ArrayList
+	 */
 	public static ArrayList<String> ALL_PROPER_SUBSET_OF(String inputBit){
 		ArrayList<String> finalArray = new ArrayList<String>();
 		
@@ -165,7 +206,12 @@ public class Attribute{
 		
 		return finalArray;
 	}
-	
+	/**
+	 * Compare if the 2 bit string - inputBits1, inputBits2 are equal
+	 * @param inputBit1
+	 * @param inputBit2
+	 * @return boolean. True if they are equal
+	 */
 	public static boolean IS_BIT_EQUAL(String inputBit1, String inputBit2){
 		while(inputBit2.length()<inputBit1.length()){
 			inputBit2 = "0"+inputBit2;
@@ -176,7 +222,11 @@ public class Attribute{
 		return (inputBit1.compareTo(inputBit2)==0);
 	}
 	
-	//Counts the number of ones 
+	/**
+	 * Count the numbers of ones
+	 * @param inputBit bits start from right to left
+	 * @return int 
+	 */
 	public static int NUM_OF_ONES(String inputBit){
 		int count=0;
 		int index = inputBit.indexOf("1");
@@ -186,7 +236,11 @@ public class Attribute{
 		}
 		return count;
 	}
-	
+	/**
+	 * Check if the attribute bits string is all ones
+	 * @param inputBit bits start from right to left
+	 * @return boolean. True if all the attribute bits are ones.
+	 */
 	public static boolean IS_ALL_ONES(String inputBit){
 		if(inputBit.length()==0){
 			return false;
@@ -195,7 +249,12 @@ public class Attribute{
 		int bit = Integer.parseInt(inputBit,2);
 		return bit==((Math.pow(2,(inputBit.length())))-1);
 	}
-	
+	/**
+	 * Check if the attribute is a superkey
+	 * @param bitStringKey 
+	 * @param bitStringSuper
+	 * @return boolean. True if it is a superkey
+	 */
 	public static boolean IS_SUPERKEY(String bitStringKey, String bitStringSuper){
 		if(IS_BIT_EQUAL(AND(bitStringKey,bitStringSuper),bitStringKey)){
 			return true;
@@ -204,9 +263,10 @@ public class Attribute{
 		}
 	}
 	
-	/*
-	 * checkLossless(ArrayList fdList, Relation rel) check if the relations are lossless with the input of FDs in fdList and the relation in rel. 
-	 * It will return true if lossless.
+	/**Check if the relations are lossless with the list of FDs input in fdList and the relation in rel. 
+	 * @param fdList List of FDs
+	 * @param rel Relation object
+	 * @return boolean. True if it is lossless.
 	 */
 	public boolean checkLossless(ArrayList<FD> fdList, ArrayList<Relation> relList){
 		ArrayList tAttrList = new ArrayList();
