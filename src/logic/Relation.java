@@ -163,6 +163,7 @@ public class Relation {
 			}
 			printString+="<u>"+priKeyList.get(j)+"</u>";
 		}
+		
 		for(int j=0;j<attrList.size();j++){
 			boolean bol_shouldPrint = true;
 			for(int k=0;k<priKeyList.size();k++){
@@ -179,7 +180,60 @@ public class Relation {
 			}
 		}
 		
-		return relName+"("+printString+")";
+		String finalPrint = relName+"("+printString+")";
+		
+		ArrayList<String> tempPriKeyList = new ArrayList<String>(priKeyList);
+		for(int j=0;j<tempPriKeyList.size();j++){
+			//Check for primary keys that have the same keys
+			//only pick one for those that have the same key
+			for(int k=j+1;k<tempPriKeyList.size();k++){
+				String[] compare1 = tempPriKeyList.get(j).split(",");
+				String[] compare2 = tempPriKeyList.get(k).split(",");
+				boolean bol_found = false;
+				for(int m=0;m<compare1.length && bol_found==false;m++){
+					for(int n=0;n<compare2.length && bol_found==false;n++){
+						if(compare1[m].trim().compareTo(compare2[n].trim())==0){
+							tempPriKeyList.remove(k);
+							k--;
+							bol_found=true;
+						}
+					}
+				}
+			}
+		}
+		
+		
+		//Copy and paste the same printing algo again
+		if(tempPriKeyList.size()!=priKeyList.size()){
+			finalPrint+=" = ";
+			printString="";
+			
+			for(int j=0;j<tempPriKeyList.size();j++){
+				if(j!=0){
+					printString+=", ";
+				}
+				printString+="<u>"+tempPriKeyList.get(j)+"</u>";
+			}
+			
+			for(int j=0;j<attrList.size();j++){
+				boolean bol_shouldPrint = true;
+				for(int k=0;k<tempPriKeyList.size();k++){
+					if(tempPriKeyList.get(k).indexOf(attrList.get(j))>=0){
+						bol_shouldPrint=false;
+						break;
+					}
+				}
+				if(bol_shouldPrint){
+					if(printString.length()!=0){
+						printString+=", ";
+					}
+					printString+=attrList.get(j);
+				}
+			}
+			finalPrint+= relName+"("+printString+")";
+		}
+		
+		return finalPrint;
 	}
 
 	public String getFDDisplay(){

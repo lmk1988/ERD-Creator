@@ -478,8 +478,8 @@ public class Bernstein{
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						LHSpriKeyBit = Attribute.OR(LHSpriKeyBit, bitString);
 					}
+					LHSpriKeyBit = Attribute.OR(LHSpriKeyBit, bitString);
 					index = partitionArray.get(i).joinList.get(j).LHS.indexOf("1",index+1);
 				}
 				
@@ -498,8 +498,8 @@ public class Bernstein{
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						RHSpriKeyBit = Attribute.OR(RHSpriKeyBit, bitString);
 					}
+					RHSpriKeyBit = Attribute.OR(RHSpriKeyBit, bitString);
 					index = partitionArray.get(i).joinList.get(j).RHS.indexOf("1",index+1);
 				}
 				
@@ -522,8 +522,8 @@ public class Bernstein{
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						priKeyBit = Attribute.OR(priKeyBit, bitString);
 					}
+					priKeyBit = Attribute.OR(priKeyBit, bitString);
 					index = fDList.get(j).LHS.indexOf("1",index+1);
 				}
 				
