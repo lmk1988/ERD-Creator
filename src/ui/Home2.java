@@ -764,11 +764,6 @@ public class Home2 {
 				Log.getInstance().println("Recommendation: No action required. The Relation is already in 3NF/BCNF.");
 				
 			}
-			
-			/*for(int f=0;f<fd.size();f++){
-				Log.getInstance().println("FD: "+fd.get(f)+" preserved?: "+((FD)fd.get(f)).checkPerserve(arrayRel));
-			}
-				Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(fd, arrayRel.get(i)));*/
 			//new line for next relation
 			Log.getInstance().newln();
 		}
@@ -848,11 +843,11 @@ public class Home2 {
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
 			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
 		}	
+		Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(unionRelation.fDList, Bernstein.getOriRel()));
 		
 		for(int f=0;f<unionRelation.fDList.size();f++){
 			Log.getInstance().println("FD: "+unionRelation.fDList.get(f)+" preserved?: "+((FD)unionRelation.fDList.get(f)).checkPerserve(arrayRel));
 		}
-		
 		
 		Log.getInstance().newln();
 		Log.getInstance().println("<b>Alternative Decomposition</b>");

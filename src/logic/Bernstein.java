@@ -1,9 +1,12 @@
 package logic;
 
 import java.util.*;
+
 import ui.Log;
 
 public class Bernstein{
+	
+	static ArrayList<Relation> oriRel;
 	
 	public static ArrayList<FD> removeTrivial(ArrayList<FD> fDArray){
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
@@ -460,6 +463,7 @@ public class Bernstein{
 	//construct Relation using Partition
 	public static ArrayList<Relation> constructRelations(ArrayList<Partition> partitionArray){
 		ArrayList<Relation> relArray = new ArrayList<Relation>();
+							   oriRel=new ArrayList<Relation>();
 		
 		for(int i=0;i<partitionArray.size();i++){
 			ArrayList<String> attrList = new ArrayList<String>();
@@ -559,9 +563,12 @@ public class Bernstein{
 			
 			relArray.add(tempRelation);
 		}
-		
+		oriRel=(ArrayList<Relation>)relArray.clone();
 		relArray = fix3NFLossless(relArray);
-		
 		return relArray;
+	}
+	
+	public static ArrayList<Relation> getOriRel(){
+		return oriRel;
 	}
 }
