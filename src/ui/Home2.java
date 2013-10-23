@@ -759,18 +759,11 @@ public class Home2 {
 			for(int y = 0; y<fd.size();y++)
 			{
 				Log.getInstance().println(fd.get(y).toString() + " is in " + v.checkNF(arrayRel.get(i), fd.get(y)));
-<<<<<<< HEAD
 
 			}
 			//new line for next relation
 			Log.getInstance().newln();
 			}
-=======
-
-			}
-			Log.getInstance().newln();
-		}
->>>>>>> c6c183a3dd31b660c997489040bf96bf9b70c22c
 	}
 
 	private void performSuggestion(){
