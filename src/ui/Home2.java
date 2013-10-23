@@ -110,6 +110,7 @@ public class Home2 {
 	 */
 	private void initialize() {
 		frmNfdetector = new JFrame();
+		frmNfdetector.setResizable(false);
 		frmNfdetector.setTitle("NF_Detector");
 		frmNfdetector.setBounds(100, 100, 600, 416);
 		frmNfdetector.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -841,7 +842,7 @@ public class Home2 {
 			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
 		}
 		Log.getInstance().newln();
-		Log.getInstance().println("<b>Alternative Decomposition</b>");
+		Log.getInstance().println("<b>BCNF Decomposition</b>");
 		ArrayList<Relation> BCNFArray = Bernstein.convertBCNF(arrayRel);
 		for(int i=0;i<BCNFArray.size();i++){
 			Log.getInstance().println(BCNFArray.get(i).getRelationDisplay());

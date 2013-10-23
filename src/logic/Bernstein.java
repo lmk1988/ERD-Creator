@@ -601,7 +601,7 @@ public class Bernstein{
 			
 			relArray.add(tempRelation);
 		}
-		oriRel=(ArrayList<Relation>)relArray.clone();
+		oriRel=new ArrayList<Relation>(relArray);
 		relArray = fix3NFLossless(relArray);
 		
 		return relArray;
