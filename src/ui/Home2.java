@@ -779,6 +779,7 @@ public class Home2 {
 		
 		
 		Relation unionRelation = Relation.UNION(arrayRel);
+		unionRelation.relName = "R";
 		if(arrayRel.size()>1){
 			Log.getInstance().println("<b>Combine:</b>");
 		}

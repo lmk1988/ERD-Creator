@@ -9,6 +9,13 @@ public class Bernstein{
 		ArrayList<FD> tempArray = new ArrayList<FD>(fDArray);
 		for(int i=0;i<tempArray.size();i++){
 			FD currentFD = tempArray.get(i);
+			
+			if(currentFD.LHS.length()==0 || currentFD.RHS.length()==0 || Integer.parseInt(currentFD.LHS)==0 || Integer.parseInt(currentFD.RHS)==0){
+				tempArray.remove(i);
+				i--;
+				continue;
+			}
+			
 			if(Attribute.IS_BIT_EQUAL(currentFD.LHS, currentFD.RHS)){
 				Log.getInstance().println("Trivial "+currentFD+" is removed");
 				//LHS and RHS is the same
@@ -306,6 +313,7 @@ public class Bernstein{
 				
 				//Run through all candidate keys to check if it is a super key
 				ArrayList<String> candidateKeyBits = relArray.get(i).getCandidateBitStrings();
+
 				for(int p=0;p<candidateKeyBits.size() && bol_isSuperKey==false;p++){
 					if(Attribute.IS_SUPERKEY(candidateKeyBits.get(p), relArray.get(i).fDList.get(j).LHS)){
 						bol_isSuperKey=true;
@@ -383,6 +391,72 @@ public class Bernstein{
 		return relArray;
 	}
 	
+	public static ArrayList<Relation> fix3NFLossless(ArrayList<Relation> relationArray){
+		ArrayList<Relation>	relArray = new ArrayList<Relation>(relationArray);
+		
+		String bitFinal = "";
+		while(bitFinal.length()<Attribute.getInstance().numOfAttributes()){
+			bitFinal+="1";
+		}
+		
+		//Remove all RHS from the bitFinal
+		for(int i=0;i<relArray.size();i++){
+			for(int j=0;j<relArray.get(i).fDList.size();j++){
+				bitFinal = Attribute.AND(bitFinal, Attribute.INVERSE(relArray.get(i).fDList.get(j).RHS));
+			}
+		}
+		
+		//if more than 1 candidate key, remove
+		for(int i=0;i<relArray.size();i++){
+			ArrayList<String> candidateKeyBits = relArray.get(i).getCandidateBitStrings();
+			if(candidateKeyBits.size()>1){
+				for(int k=0;k<candidateKeyBits.size();k++){
+					bitFinal = Attribute.AND(bitFinal, Attribute.INVERSE(candidateKeyBits.get(k)));
+				}
+			}
+		}
+		
+		ArrayList<String> attrList = new ArrayList<String>();
+		int index = bitFinal.indexOf("1");
+		while(index>=0){
+			String bitString = Integer.toBinaryString((int)Math.pow(2,(Attribute.getInstance().numOfAttributes()-1)-index));
+			attrList.add(Attribute.getInstance().getAttrString(bitString));
+			index = bitFinal.indexOf("1", index+1);
+		}
+		
+		//Check if should add this additional relArray by checking if any of the attribute is not inside the relations
+		boolean bol_foundFinal = true;
+		for(int i=0;i<attrList.size() && bol_foundFinal==true;i++){
+			boolean bol_foundIndividual = false;
+			for(int j=0;j<relArray.size() && bol_foundIndividual==false;j++){
+				if(relArray.get(j).attrList.contains(attrList.get(i).trim())){
+					bol_foundIndividual = true;
+				}
+			}
+			if(bol_foundIndividual==false){
+				bol_foundFinal = false;
+			}
+		}
+		
+		if(bol_foundFinal == false){
+			//one or more attribute is missing and should add a new relation to make it non-lossless
+			Relation tempRel = new Relation();
+			tempRel.relName = "Non-loss";
+			tempRel.attrList = attrList;
+			String priKey ="";
+			for(int i=0;i<attrList.size();i++){
+				if(i!=0){
+					priKey+=",";
+				}
+				priKey+=attrList.get(i);
+			}
+			tempRel.priKeyList.add(priKey);
+			relArray.add(tempRel);
+		}
+		
+		return relArray;
+	}
+	
 	//construct Relation using Partition
 	public static ArrayList<Relation> constructRelations(ArrayList<Partition> partitionArray){
 		ArrayList<Relation> relArray = new ArrayList<Relation>();
@@ -404,8 +478,8 @@ public class Bernstein{
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						LHSpriKeyBit = Attribute.OR(LHSpriKeyBit, bitString);
 					}
+					LHSpriKeyBit = Attribute.OR(LHSpriKeyBit, bitString);
 					index = partitionArray.get(i).joinList.get(j).LHS.indexOf("1",index+1);
 				}
 				
@@ -424,8 +498,8 @@ public class Bernstein{
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						RHSpriKeyBit = Attribute.OR(RHSpriKeyBit, bitString);
 					}
+					RHSpriKeyBit = Attribute.OR(RHSpriKeyBit, bitString);
 					index = partitionArray.get(i).joinList.get(j).RHS.indexOf("1",index+1);
 				}
 				
@@ -448,8 +522,8 @@ public class Bernstein{
 					String attribute = Attribute.getInstance().getAttrString(bitString);
 					if(!attrList.contains(attribute)){
 						attrList.add(attribute);
-						priKeyBit = Attribute.OR(priKeyBit, bitString);
 					}
+					priKeyBit = Attribute.OR(priKeyBit, bitString);
 					index = fDList.get(j).LHS.indexOf("1",index+1);
 				}
 				
@@ -474,10 +548,19 @@ public class Bernstein{
 			}
 			
 			Relation tempRelation = new Relation("R"+(i+1),attrList);
+			//Add join to fD as well
+			for(int j=0;j<partitionArray.get(i).joinList.size();j++){
+				if(!fDList.contains(partitionArray.get(i).joinList.get(j))){
+					fDList.add(partitionArray.get(i).joinList.get(j));
+				}
+			}
 			tempRelation.fDList = fDList;
 			tempRelation.priKeyList = priKeyList;
+			
 			relArray.add(tempRelation);
 		}
+		
+		relArray = fix3NFLossless(relArray);
 		
 		return relArray;
 	}
