@@ -601,15 +601,11 @@ public class Bernstein{
 			
 			relArray.add(tempRelation);
 		}
-		oriRel=(ArrayList<Relation>)relArray.clone();
+		oriRel=new ArrayList<Relation>(relArray);
 		relArray = fix3NFLossless(relArray);
+		
 		return relArray;
 	}
-<<<<<<< HEAD
-	
-	public static ArrayList<Relation> getOriRel(){
-		return oriRel;
-=======
 
 	public static ArrayList<Relation> removeSuperfluous(ArrayList<Relation> relationArray){
 		ArrayList<Relation> relArray = new ArrayList<Relation>(relationArray);
@@ -694,8 +690,10 @@ public class Bernstein{
 				}
 			}
 		}
-		
 		return relArray;
->>>>>>> 38d7e20deb153b82f54538ecd9eb17e5f087031a
+	}
+	
+	public static ArrayList<Relation> getOriRel(){
+		return oriRel;
 	}
 }

@@ -110,6 +110,7 @@ public class Home2 {
 	 */
 	private void initialize() {
 		frmNfdetector = new JFrame();
+		frmNfdetector.setResizable(false);
 		frmNfdetector.setTitle("NF_Detector");
 		frmNfdetector.setBounds(100, 100, 600, 416);
 		frmNfdetector.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -758,11 +759,18 @@ public class Home2 {
 			for(int y = 0; y<fd.size();y++)
 			{
 				Log.getInstance().println(fd.get(y).toString() + " is in " + v.checkNF(arrayRel.get(i), fd.get(y)));
+<<<<<<< HEAD
 
 			}
 			//new line for next relation
 			Log.getInstance().newln();
 			}
+=======
+
+			}
+			Log.getInstance().newln();
+		}
+>>>>>>> c6c183a3dd31b660c997489040bf96bf9b70c22c
 	}
 
 	private void performSuggestion(){
@@ -845,6 +853,7 @@ public class Home2 {
 			Log.getInstance().println("FD: "+unionRelation.fDList.get(f)+" preserved?: "+((FD)unionRelation.fDList.get(f)).checkPerserve(arrayRel));
 		}
 		
+		
 		Log.getInstance().newln();
 		Log.getInstance().println("<b>Remove Superfluous Attribute</b>");
 		arrayRel = Bernstein.removeSuperfluous(arrayRel);
@@ -852,9 +861,8 @@ public class Home2 {
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
 			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
 		}
-		
 		Log.getInstance().newln();
-		Log.getInstance().println("<b>Alternative Decomposition</b>");
+		Log.getInstance().println("<b>BCNF Decomposition</b>");
 		ArrayList<Relation> BCNFArray = Bernstein.convertBCNF(arrayRel);
 		for(int i=0;i<BCNFArray.size();i++){
 			Log.getInstance().println(BCNFArray.get(i).getRelationDisplay());
