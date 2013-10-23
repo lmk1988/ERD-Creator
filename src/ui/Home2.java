@@ -741,17 +741,29 @@ public class Home2 {
 				printString+='{'+tempCandidate.get(j)+'}';
 			}
 			Log.getInstance().println("Possible candidate keys are: " +printString);
-			if(fd.size()>0)
-				Log.getInstance().println("Functional Dependencies:");
-			for(int y = 0; y<fd.size();y++)
-			{				
-				Log.getInstance().println(fd.get(y).toString() +" is in " +v.checkNF(arrayRel.get(i), fd.get(y)));
+			String nf = v.checkRelationNF(arrayRel.get(i)).trim();
+			boolean is3NF;
+			if(!(nf.equals("3NF") || nf.equals("BCNF"))) {
+				Log.getInstance().println("List of Functional Dependencies which violate 3NF/BCNF:");
+				for(int y = 0; y<fd.size();y++)
+				{
+					is3NF = v.check3NF(arrayRel.get(i), fd.get(y));
+					if(!is3NF) {
+						Log.getInstance().println(fd.get(y).toString());
+					}
+
+				}
+				Log.getInstance().println("Recommendation: Please modify the Functional Dependencies or Click on Suggest tab to start Normalization.");
+			}else  {
+				
+				Log.getInstance().println("Recommendation: No action required. The Relation is already in 3NF/BCNF.");
+				
 			}
 			
-			for(int f=0;f<fd.size();f++){
+			/*for(int f=0;f<fd.size();f++){
 				Log.getInstance().println("FD: "+fd.get(f)+" preserved?: "+((FD)fd.get(f)).checkPerserve(arrayRel));
 			}
-				Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(fd, arrayRel.get(i)));
+				Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(fd, arrayRel.get(i)));*/
 			//new line for next relation
 			Log.getInstance().newln();
 		}
