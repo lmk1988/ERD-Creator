@@ -742,21 +742,12 @@ public class Home2 {
 			}
 			Log.getInstance().println("Possible candidate keys are: " +printString);
 			String nf = v.checkRelationNF(arrayRel.get(i)).trim();
-			boolean is3NF, isBCNF, is2NF, is1NF;
-			if(!(nf.equals("3NF") || nf.equals("BCNF"))) {
-				Log.getInstance().println("List of Functional Dependencies which violate 3NF/BCNF:");
-				for(int y = 0; y<fd.size();y++)
-				{
-					is3NF = v.check3NF(arrayRel.get(i), fd.get(y));
-					if(!is3NF) {
-						Log.getInstance().println(fd.get(y).toString());
-					}else {
-						isBCNF = v.checkBCNF(arrayRel.get(i), fd.get(y));
-						if(!isBCNF) {
-							Log.getInstance().println(fd.get(y).toString());
-						}
-					}
+			Log.getInstance().println("Functional Dependencies: ");
+			for(int y = 0; y<fd.size();y++)
+			{
+				Log.getInstance().println(fd.get(y).toString() + " is in " + v.checkNF(arrayRel.get(i), fd.get(y)));
 
+<<<<<<< HEAD
 				}
 				Log.getInstance().println("Recommendation: Please modify the Functional Dependencies or Click on Suggest tab to start Normalization.");
 			}else  {
@@ -765,6 +756,9 @@ public class Home2 {
 				
 			}
 			//new line for next relation
+=======
+			}
+>>>>>>> 38d7e20deb153b82f54538ecd9eb17e5f087031a
 			Log.getInstance().newln();
 		}
 	}
@@ -847,6 +841,14 @@ public class Home2 {
 		
 		for(int f=0;f<unionRelation.fDList.size();f++){
 			Log.getInstance().println("FD: "+unionRelation.fDList.get(f)+" preserved?: "+((FD)unionRelation.fDList.get(f)).checkPerserve(arrayRel));
+		}
+		
+		Log.getInstance().newln();
+		Log.getInstance().println("<b>Remove Superfluous Attribute</b>");
+		arrayRel = Bernstein.removeSuperfluous(arrayRel);
+		for(int i=0;i<arrayRel.size();i++){
+			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
+			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
 		}
 		
 		Log.getInstance().newln();
