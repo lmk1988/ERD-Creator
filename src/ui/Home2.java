@@ -742,7 +742,7 @@ public class Home2 {
 			}
 			Log.getInstance().println("Possible candidate keys are: " +printString);
 			String nf = v.checkRelationNF(arrayRel.get(i)).trim();
-			boolean is3NF;
+			boolean is3NF, isBCNF, is2NF, is1NF;
 			if(!(nf.equals("3NF") || nf.equals("BCNF"))) {
 				Log.getInstance().println("List of Functional Dependencies which violate 3NF/BCNF:");
 				for(int y = 0; y<fd.size();y++)
@@ -750,6 +750,11 @@ public class Home2 {
 					is3NF = v.check3NF(arrayRel.get(i), fd.get(y));
 					if(!is3NF) {
 						Log.getInstance().println(fd.get(y).toString());
+					}else {
+						isBCNF = v.checkBCNF(arrayRel.get(i), fd.get(y));
+						if(!isBCNF) {
+							Log.getInstance().println(fd.get(y).toString());
+						}
 					}
 
 				}
