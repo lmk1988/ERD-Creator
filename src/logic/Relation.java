@@ -70,39 +70,7 @@ public class Relation {
 		}
 		return finalRel;
 	}
-	
-	public static Relation INTERSECT(Relation rel1,Relation rel2){
-		//GetAttrList will return a clone of that list
-		ArrayList<String> tempAttrList1 = rel1.GetAttrList(); 
-		ArrayList<String> tempAttrList2 = rel2.GetAttrList();
-		ArrayList<String> finalAttrList = new ArrayList<String>();
-		//
-		for(int i=0;i<tempAttrList1.size();i++){
-			for(int j=0;j<tempAttrList2.size();j++){
-				if(tempAttrList1.get(i).compareTo(tempAttrList2.get(j))==0){
-					finalAttrList.add(tempAttrList2.get(j));
-					tempAttrList2.remove(j);
-					tempAttrList1.remove(i);
-					j--;
-					i--;
-					break;
-				}
-			}
-		}
-		return new Relation(rel1.relName+" Intersect "+rel2.relName,finalAttrList);
-	}
-	
-	public static Relation INTERSECT(ArrayList<Relation> relList){
-		if(relList.isEmpty()){
-			return new Relation();
-		}
-		
-		Relation finalRel = relList.get(0);
-		for(int i=1;i<relList.size();i++){
-			finalRel = INTERSECT(finalRel,relList.get(i));
-		}
-		return finalRel;
-	}
+
 	
 	public ArrayList<String> GetAttrList(){
 		return new ArrayList<String>(attrList);
@@ -158,11 +126,14 @@ public class Relation {
 
 		for(int i=0;i<subSets.size();i++){
 			if(!tempArrayList.isEmpty() && Attribute.NUM_OF_ONES(tempArrayList.get(0))<Attribute.NUM_OF_ONES(subSets.get(i))){
-				break;
+				continue;
 			}
 			
 			String closure = computeClosure(subSets.get(i));
 			if(Attribute.IS_BIT_EQUAL(Attribute.AND(closure, attrBitString),attrBitString)){
+				while(subSets.get(i).length()<Attribute.getInstance().numOfAttributes()){
+					subSets.set(i, "0"+subSets.get(i));
+				}
 				tempArrayList.add(subSets.get(i));
 			}
 		}
