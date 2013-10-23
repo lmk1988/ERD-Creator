@@ -741,18 +741,13 @@ public class Home2 {
 				printString+='{'+tempCandidate.get(j)+'}';
 			}
 			Log.getInstance().println("Possible candidate keys are: " +printString);
-			if(fd.size()>0)
-				Log.getInstance().println("Functional Dependencies:");
+			String nf = v.checkRelationNF(arrayRel.get(i)).trim();
+			Log.getInstance().println("Functional Dependencies: ");
 			for(int y = 0; y<fd.size();y++)
-			{				
-				Log.getInstance().println(fd.get(y).toString() +" is in " +v.checkNF(arrayRel.get(i), fd.get(y)));
+			{
+				Log.getInstance().println(fd.get(y).toString() + " is in " + v.checkNF(arrayRel.get(i), fd.get(y)));
+
 			}
-			
-			for(int f=0;f<fd.size();f++){
-				Log.getInstance().println("FD: "+fd.get(f)+" preserved?: "+((FD)fd.get(f)).checkPerserve(arrayRel));
-			}
-				Log.getInstance().println("Lossless result: "+Attribute.getInstance().checkLossless(fd, arrayRel.get(i)));
-			//new line for next relation
 			Log.getInstance().newln();
 		}
 	}
@@ -831,6 +826,11 @@ public class Home2 {
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay());
 			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
 		}	
+		
+		for(int f=0;f<unionRelation.fDList.size();f++){
+			Log.getInstance().println("FD: "+unionRelation.fDList.get(f)+" preserved?: "+((FD)unionRelation.fDList.get(f)).checkPerserve(arrayRel));
+		}
+		
 		
 		Log.getInstance().newln();
 		Log.getInstance().println("<b>Remove Superfluous Attribute</b>");
