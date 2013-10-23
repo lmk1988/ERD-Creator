@@ -292,29 +292,33 @@ public class Home2 {
 				if(index>=0){
 					if(evt.getClickCount()==2){
 						//Double click
-						String pk = datalist_PriKey.get(list_Rel.getSelectedIndex()).get(index);
-						String [] attrArr =new String[datalist_Attr.get(list_Rel.getSelectedIndex()).size()];
-						datalist_Attr.get(list_Rel.getSelectedIndex()).copyInto(attrArr);
-						String fds = "";
-						for(int j = 0; j < attrArr.length; j++) {
-							if(!attrArr[j].equals(pk)) {
-								fds += pk + "->" + attrArr[j];
-							}
-							if(j > 0 && j < attrArr.length-1) {
-								
-								fds += ", ";
-							}
-						}
-						int choice = JOptionPane.showConfirmDialog(null, "Deleting this Primary Key will also remove the following FDs: " + fds + " \nDo you want to Proceed?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-						if(choice == JOptionPane.YES_OPTION) {
-						//JOptionPane.showConfirmDialog(null, "Deleting this Primary Key will also remove the following FDs: \nDo you want to Proceed?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+						String [] pkList = datalist_PriKey.get(list_Rel.getSelectedIndex()).get(index).split(",");
+						for(int i = 0; i < pkList.length; i++) {
+							String pk = pkList[i];
+							String [] attrArr =new String[datalist_Attr.get(list_Rel.getSelectedIndex()).size()];
+							datalist_Attr.get(list_Rel.getSelectedIndex()).copyInto(attrArr);
+							String fds = "";
 							for(int j = 0; j < attrArr.length; j++) {
 								if(!attrArr[j].equals(pk)) {
-									datalist_FD.get(list_Rel.getSelectedIndex()).removeElement(pk + "->" + attrArr[j]);
+									fds += pk + "->" + attrArr[j];
+								}
+								if(j > 0 && j < attrArr.length-1) {
+									
+									fds += ", ";
 								}
 							}
-							
-							datalist_PriKey.get(list_Rel.getSelectedIndex()).remove(index);
+							int choice = JOptionPane.showConfirmDialog(null, "Deleting this Primary Key will also remove the following FDs: " + fds + " \nDo you want to Proceed?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+							if(choice == JOptionPane.YES_OPTION) {
+							//JOptionPane.showConfirmDialog(null, "Deleting this Primary Key will also remove the following FDs: \nDo you want to Proceed?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+								for(int j = 0; j < attrArr.length; j++) {
+									if(!attrArr[j].equals(pk)) {
+										datalist_FD.get(list_Rel.getSelectedIndex()).removeElement(pk + "->" + attrArr[j]);
+									}
+								}
+								if(!datalist_PriKey.get(list_Rel.getSelectedIndex()).isEmpty()) {
+									datalist_PriKey.get(list_Rel.getSelectedIndex()).remove(index);
+								}
+						}
 						}
 					}
 					list_PriKeys.clearSelection();
@@ -710,18 +714,19 @@ public class Home2 {
 		for(int i=0;i<arrayRel.size();i++){
 			//Show R(A,B,C) with underline of current primary keys			
 			Log.getInstance().println(arrayRel.get(i).getRelationDisplay()+" is in "+v.checkRelationNF(arrayRel.get(i)));
-			String printString="Testing closure of LHS";
+			String printString="Testing closure of all Attributes";
 			Log.getInstance().println(printString);
 			ArrayList<FD> fd = arrayRel.get(i).fDList;
+			ArrayList<String> attrList = arrayRel.get(i).GetAttrList();
 			if(fd.isEmpty()) {
 				printString = "Error: There are currently no Functional Dependencies defined.";
 				Log.getInstance().println(printString);
 				
 			}else {
-				for(int x = 0; x < fd.size(); x++) {
+				for(int x = 0; x < attrList.size(); x++) {
 						printString = "";
-						String closure = arrayRel.get(i).computeClosure(fd.get(x).LHS);
-						printString += "{" + Attribute.getInstance().getAttrString(fd.get(x).LHS) + "} =";
+						String closure = arrayRel.get(i).computeClosure(Attribute.getInstance().getBitString(attrList.get(x)));
+						printString += "{" + attrList.get(x) + "} =";
 						printString += "{" + Attribute.getInstance().getAttrString(closure) + "}";
 						Log.getInstance().println(printString);
 				}
