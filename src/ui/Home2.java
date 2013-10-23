@@ -292,34 +292,36 @@ public class Home2 {
 				if(index>=0){
 					if(evt.getClickCount()==2){
 						//Double click
-						String [] pkList = datalist_PriKey.get(list_Rel.getSelectedIndex()).get(index).split(",");
-						for(int i = 0; i < pkList.length; i++) {
-							String pk = pkList[i];
+						String pkList = datalist_PriKey.get(list_Rel.getSelectedIndex()).get(index);
+							String [] pk = pkList.split(",");
 							String [] attrArr =new String[datalist_Attr.get(list_Rel.getSelectedIndex()).size()];
 							datalist_Attr.get(list_Rel.getSelectedIndex()).copyInto(attrArr);
 							String fds = "";
+							ArrayList<String> fdList = new ArrayList<String>();
 							for(int j = 0; j < attrArr.length; j++) {
-								if(!attrArr[j].equals(pk)) {
-									fds += pk + "->" + attrArr[j];
+								if(pk.length == 1) {
+									if(!attrArr[j].equals(pk[0])) {
+										fdList.add(pk[0] + "->" + attrArr[j]);
+									}
+								}else if(pk.length == 2) {
+									if(!attrArr[j].equals(pk[0])&& !attrArr[j].equals(pk[1])) {
+										fdList.add(pk[0] + "," + pk[1] + "->" + attrArr[j]);
+									}
 								}
-								if(j > 0 && j < attrArr.length-1) {
-									
-									fds += ", ";
-								}
+							}
+							for(int x = 0; x < fdList.size(); x++){
+								
+								fds += fdList.get(x) + " ";
 							}
 							int choice = JOptionPane.showConfirmDialog(null, "Deleting this Primary Key will also remove the following FDs: " + fds + " \nDo you want to Proceed?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 							if(choice == JOptionPane.YES_OPTION) {
-							//JOptionPane.showConfirmDialog(null, "Deleting this Primary Key will also remove the following FDs: \nDo you want to Proceed?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-								for(int j = 0; j < attrArr.length; j++) {
-									if(!attrArr[j].equals(pk)) {
-										datalist_FD.get(list_Rel.getSelectedIndex()).removeElement(pk + "->" + attrArr[j]);
-									}
+								for(int j = 0; j < fdList.size(); j++) {
+									datalist_FD.get(list_Rel.getSelectedIndex()).removeElement(fdList.get(j));
 								}
 								if(!datalist_PriKey.get(list_Rel.getSelectedIndex()).isEmpty()) {
 									datalist_PriKey.get(list_Rel.getSelectedIndex()).remove(index);
 								}
-						}
-						}
+							}
 					}
 					list_PriKeys.clearSelection();
 				}
@@ -427,33 +429,43 @@ public class Home2 {
 				if(textField_PriKeys.getText().length()!=0 && list_Rel.getSelectedIndex()>=0){
 					String properTemp="";
 					//check if pri key exist in attributes
-					String[] split=textField_PriKeys.getText().split(",");
-					for(int i=0;i<split.length;i++){
-						if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(split[i].trim())){
-							JOptionPane.showMessageDialog(null, "Unable to assign Primary Key. Attribute " +  split[i].trim() + " is not found in the Relation.", "Error", JOptionPane.ERROR_MESSAGE);
-						}else{
-							if(i!=0){
-								properTemp+=",";
+					String [] split=textField_PriKeys.getText().split(",");
+						for(int i=0;i<split.length;i++){
+							if(!datalist_Attr.get(list_Rel.getSelectedIndex()).contains(split[i].trim())){
+								JOptionPane.showMessageDialog(null, "Unable to assign Primary Key. Attribute " +  split[i].trim() + " is not found in the Relation.", "Error", JOptionPane.ERROR_MESSAGE);
 							}
-							properTemp+=split[i];
-							String pk = split[i].trim();
-							String [] attrArr =new String[datalist_Attr.get(list_Rel.getSelectedIndex()).size()];
-							datalist_Attr.get(list_Rel.getSelectedIndex()).copyInto(attrArr);;
-							for(int j = 0; j < attrArr.length; j++) {
-								if(!attrArr[j].equals(pk)) {
-									datalist_FD.get(list_Rel.getSelectedIndex()).addElement(pk + "->" + attrArr[j]);
+							
+							else {
+								if(i!=0){
+									properTemp+=",";
+								}
+						properTemp+=split[i];
+							}
+
+						}
+						//check if there is existing pri key
+						if(!datalist_PriKey.get(list_Rel.getSelectedIndex()).contains(properTemp)){
+							datalist_PriKey.get(list_Rel.getSelectedIndex()).addElement(properTemp);
+							textField_PriKeys.setText("");
+						}
+						
+						String [] pk = split;
+						String [] attrArr =new String[datalist_Attr.get(list_Rel.getSelectedIndex()).size()];
+						datalist_Attr.get(list_Rel.getSelectedIndex()).copyInto(attrArr);;
+						for(int j = 0; j < attrArr.length; j++) {
+								if(pk.length == 2) {
+									if(!attrArr[j].equals(pk[0])) {
+										if(!attrArr[j].equals(pk[1]))
+										datalist_FD.get(list_Rel.getSelectedIndex()).addElement(pk[0] + "," + pk[1] + "->" + attrArr[j]);
+									}
+								}else if(pk.length == 1) {
+									if(!attrArr[j].equals(pk[0])) {
+										datalist_FD.get(list_Rel.getSelectedIndex()).addElement(pk[0]+ "->" + attrArr[j]);
+									}
 								}
 							}
 						}
-					}
-
-					//check if there is existing pri key
-					if(!datalist_PriKey.get(list_Rel.getSelectedIndex()).contains(properTemp)){
-						datalist_PriKey.get(list_Rel.getSelectedIndex()).addElement(properTemp);
-						textField_PriKeys.setText("");
-					}
 				}
-			}
 		});
 
 		btn_addFD.addActionListener(new ActionListener() {
@@ -747,20 +759,10 @@ public class Home2 {
 			{
 				Log.getInstance().println(fd.get(y).toString() + " is in " + v.checkNF(arrayRel.get(i), fd.get(y)));
 
-<<<<<<< HEAD
-				}
-				Log.getInstance().println("Recommendation: Please modify the Functional Dependencies or Click on Suggest tab to start Normalization.");
-			}else  {
-				
-				Log.getInstance().println("Recommendation: No action required. The Relation is already in 3NF/BCNF.");
-				
 			}
 			//new line for next relation
-=======
-			}
->>>>>>> 38d7e20deb153b82f54538ecd9eb17e5f087031a
 			Log.getInstance().newln();
-		}
+			}
 	}
 
 	private void performSuggestion(){
