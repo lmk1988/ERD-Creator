@@ -849,6 +849,11 @@ public class Home2 {
 			Log.getInstance().println(arrayRel.get(i).getFDDisplay());
 		}	
 		
+		for(int f=0;f<unionRelation.fDList.size();f++){
+			Log.getInstance().println("FD: "+unionRelation.fDList.get(f)+" preserved?: "+((FD)unionRelation.fDList.get(f)).checkPerserve(arrayRel));
+		}
+		
+		
 		Log.getInstance().newln();
 		Log.getInstance().println("<b>Alternative Decomposition</b>");
 		ArrayList<Relation> BCNFArray = Bernstein.convertBCNF(arrayRel);
